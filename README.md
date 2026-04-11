@@ -6,11 +6,15 @@ Este curso busca proporcionar a los estudiantes una inmersión profunda, combina
 
 ## **🌐 Plataforma Interactiva del Curso**
 
-El material teórico de este módulo está diseñado en formato de **Single Page Applications (SPAs) interactivas**.
+Un material de apoyo de este módulo está diseñado en formato de **Single Page Applications (SPAs) interactivas**.
 
 Puedes acceder al índice principal y navegar por las clases desde cualquier dispositivo ingresando a nuestro sitio web:
 
 👉 [**Acceder a la Plataforma Web del Módulo**](https://pastor-e-perez-estigarribia.github.io/curso-iaa/)
+👉 [**Acceder a la NotebookLM del módulo**](https://notebooklm.google.com/notebook/e564a7c8-11a3-43bb-bd67-7793d7f3e6e6)
+👉 [**Acceder al google drive del Módulo**](https://drive.google.com/drive/folders/1ku3CxdFkTQGb3RukwgpemzRmZtUl7HFl?usp=sharing)
+
+
 
 ## **🎯 Objetivos del Módulo**
 
