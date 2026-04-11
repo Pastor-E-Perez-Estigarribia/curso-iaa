@@ -11,7 +11,11 @@ Un material de apoyo de este módulo está diseñado en formato de **Single Page
 Puedes acceder al índice principal y navegar por las clases desde cualquier dispositivo ingresando a nuestro sitio web:
 
 👉 [**Acceder a la Plataforma Web del Módulo**](https://pastor-e-perez-estigarribia.github.io/curso-iaa/)
+
+Otros recursos en línea:
+
 👉 [**Acceder a la NotebookLM del módulo**](https://notebooklm.google.com/notebook/e564a7c8-11a3-43bb-bd67-7793d7f3e6e6)
+
 👉 [**Acceder al google drive del Módulo**](https://drive.google.com/drive/folders/1ku3CxdFkTQGb3RukwgpemzRmZtUl7HFl?usp=sharing)
 
 
