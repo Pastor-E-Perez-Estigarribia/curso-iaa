@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Introducción al Aprendizaje Automático</title>
+
+    <!-- Chosen Palette: Warm Neutrals & Ocean Blues (Slate-50 background, Slate-800 text, Blue-600 primary, Emerald-500 success) -->
+    <!-- Application Structure Plan: The SPA is designed as an interactive "Learning Dashboard". Instead of a linear document, content is divided into logical, task-oriented modules accessible via a sidebar navigation. This structure prioritizes user agency, allowing students to explore theoretical concepts (Paradigms, Types), interact with dynamic models (Chart.js), follow the project workflow sequentially, and immediately apply knowledge in practical interactive quizzes. This non-linear, exploratory architecture maximizes engagement and retention for introductory technical content. -->
+    <!-- Visualization & Content Choices: 
+         - Concept Comparison -> CSS Flexbox Cards -> Goal: Compare -> Visually contrasts traditional vs ML paradigms using layout and text formatting.
+         - Types of Learning -> Chart.js Scatter Plot -> Goal: Compare/Inform -> Interactive toggle shows how labels (colors) define supervised learning vs unsupervised (uncolored). Library: Chart.js.
+         - ML Workflow -> CSS/JS Interactive Stepper -> Goal: Organize -> Breaks down the 5-step process into digestible, clickable chunks to prevent cognitive overload.
+         - Practical Activity -> JS Dynamic Forms -> Goal: Organize/Assess -> Applies the 5 specific cases using dropdowns for immediate knowledge validation.
+         - Mini-Quiz -> JS Dynamic Quiz -> Goal: Assess -> Simulates the NotebookLM conceptual check. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        body {
+            background-color: #f8fafc;
+            color: #1e293b;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 400px;
+        }
+
+        .nav-button {
+            transition: all 0.2s ease;
+        }
+
+        .nav-button.active {
+            background-color: #eff6ff;
+            color: #2563eb;
+            border-right-width: 4px;
+            border-right-color: #2563eb;
+            font-weight: 600;
+        }
+
+        .section-pane {
+            display: none;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .section-pane.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .step-button.active-step {
+            background-color: #2563eb;
+            color: white;
+            transform: scale(1.05);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body class="flex flex-col md:flex-row h-screen overflow-hidden">
+
+    <nav class="w-full md:w-72 bg-white shadow-lg h-auto md:h-full flex flex-col z-20 shrink-0">
+        <div class="p-6 bg-slate-800 text-white">
+            <h1 class="text-2xl font-bold">Módulo IAA</h1>
+            <p class="text-sm text-slate-300 mt-2">Clase 1: Fundamentos</p>
+        </div>
+        <div class="flex-1 overflow-y-auto py-4 flex flex-row md:flex-col overflow-x-auto md:overflow-hidden hide-scrollbar">
+            <button onclick="navigate('intro')" id="btn-intro" class="nav-button active text-left px-6 py-4 hover:bg-slate-50 flex items-center gap-3 whitespace-nowrap md:whitespace-normal">
+                <span class="text-xl">🎯</span> Objetivos e Inicio
+            </button>
+            <button onclick="navigate('conceptos')" id="btn-conceptos" class="nav-button text-left px-6 py-4 hover:bg-slate-50 flex items-center gap-3 whitespace-nowrap md:whitespace-normal">
+                <span class="text-xl">🧠</span> ¿Qué es el ML?
+            </button>
+            <button onclick="navigate('tipos')" id="btn-tipos" class="nav-button text-left px-6 py-4 hover:bg-slate-50 flex items-center gap-3 whitespace-nowrap md:whitespace-normal">
+                <span class="text-xl">📊</span> Tipos de Aprendizaje
+            </button>
+            <button onclick="navigate('flujo')" id="btn-flujo" class="nav-button text-left px-6 py-4 hover:bg-slate-50 flex items-center gap-3 whitespace-nowrap md:whitespace-normal">
+                <span class="text-xl">🔄</span> Flujo de Proyecto
+            </button>
+            <button onclick="navigate('casos')" id="btn-casos" class="nav-button text-left px-6 py-4 hover:bg-slate-50 flex items-center gap-3 whitespace-nowrap md:whitespace-normal">
+                <span class="text-xl">🕹️</span> Actividad: 5 Casos
+            </button>
+            <button onclick="navigate('lab')" id="btn-lab" class="nav-button text-left px-6 py-4 hover:bg-slate-50 flex items-center gap-3 whitespace-nowrap md:whitespace-normal">
+                <span class="text-xl">💻</span> Laboratorio y Colab
+            </button>
+            <button onclick="navigate('quiz')" id="btn-quiz" class="nav-button text-left px-6 py-4 hover:bg-slate-50 flex items-center gap-3 whitespace-nowrap md:whitespace-normal">
+                <span class="text-xl">🤖</span> Mini-Quiz Conceptual
+            </button>
+        </div>
+    </nav>
+
+    <main class="flex-1 overflow-y-auto p-6 md:p-12 bg-slate-50 relative">
+
+        <section id="intro" class="section-pane active max-w-4xl mx-auto">
+            <h2 class="text-4xl font-extrabold text-slate-800 mb-6">Introducción al Aprendizaje Automático</h2>
+            <p class="text-lg text-slate-600 mb-8 bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                Esta sección establece el marco de nuestra primera clase. Aquí conocerás los propósitos del módulo, cómo se conecta con aplicaciones reales que usas todos los días y la ruta de aprendizaje que seguiremos para dominar los fundamentos del Machine Learning.
+            </p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-white p-6 rounded-xl shadow-sm border-t-4 border-blue-500">
+                    <h3 class="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2"><span>🎯</span> Objetivos de la Clase</h3>
+                    <ul class="space-y-3 text-slate-600">
+                        <li class="flex items-start gap-2"><span class="text-blue-500 font-bold">✓</span> Presentar el módulo, expectativas y bibliografía.</li>
+                        <li class="flex items-start gap-2"><span class="text-blue-500 font-bold">✓</span> Introducir conceptos fundamentales del Aprendizaje Automático.</li>
+                        <li class="flex items-start gap-2"><span class="text-blue-500 font-bold">✓</span> Conectar con aplicaciones reales y motivación.</li>
+                        <li class="flex items-start gap-2"><span class="text-blue-500 font-bold">✓</span> Realizar actividades prácticas de reconocimiento.</li>
+                    </ul>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-sm border-t-4 border-emerald-500">
+                    <h3 class="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2"><span>📚</span> Contenidos Clave</h3>
+                    <ul class="space-y-3 text-slate-600">
+                        <li class="flex items-start gap-2"><span class="text-emerald-500 font-bold">→</span> El paradigma del Machine Learning.</li>
+                        <li class="flex items-start gap-2"><span class="text-emerald-500 font-bold">→</span> Aprendizaje Supervisado vs No Supervisado.</li>
+                        <li class="flex items-start gap-2"><span class="text-emerald-500 font-bold">→</span> De los Datos a los Modelos (Flujo).</li>
+                        <li class="flex items-start gap-2"><span class="text-emerald-500 font-bold">→</span> Interacción con NotebookLM Studio.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="conceptos" class="section-pane max-w-4xl mx-auto">
+            <h2 class="text-4xl font-extrabold text-slate-800 mb-6">El Cambio de Paradigma</h2>
+            <p class="text-lg text-slate-600 mb-8 bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                Para entender qué es el Aprendizaje Automático, primero debemos contrastarlo con la programación clásica. Esta sección te muestra interactivamente cómo el ML invierte el proceso lógico: en lugar de programar reglas estrictas, dejamos que los algoritmos infieran esas reglas a partir de generalizaciones útiles sobre los datos.
+            </p>
+
+            <div class="flex flex-col lg:flex-row gap-8 items-center justify-center">
+                <div class="flex-1 bg-slate-100 p-8 rounded-2xl border border-slate-300 w-full">
+                    <h3 class="text-xl font-bold text-center text-slate-700 mb-6">Paradigma Tradicional</h3>
+                    <div class="flex flex-col gap-3">
+                        <div class="bg-white p-4 rounded text-center shadow-sm font-bold text-slate-600">Datos</div>
+                        <div class="text-center text-2xl font-bold text-slate-400">+</div>
+                        <div class="bg-white p-4 rounded text-center shadow-sm font-bold text-slate-600">Reglas <br><span class="text-xs font-normal">(Programadas explícitamente)</span></div>
+                        <div class="text-center text-2xl font-bold text-slate-400">=</div>
+                        <div class="bg-slate-800 text-white p-4 rounded text-center shadow font-bold">Respuestas</div>
+                    </div>
+                </div>
+
+                <div class="text-4xl font-bold text-blue-500 transform rotate-90 lg:rotate-0">»</div>
+
+                <div class="flex-1 bg-blue-50 p-8 rounded-2xl border border-blue-200 w-full shadow-md">
+                    <h3 class="text-xl font-bold text-center text-blue-800 mb-6">Machine Learning</h3>
+                    <div class="flex flex-col gap-3">
+                        <div class="bg-white p-4 rounded text-center shadow-sm font-bold text-blue-700 border border-blue-100">Datos</div>
+                        <div class="text-center text-2xl font-bold text-blue-400">+</div>
+                        <div class="bg-white p-4 rounded text-center shadow-sm font-bold text-blue-700 border border-blue-100">Respuestas <br><span class="text-xs font-normal">(Ejemplos / Etiquetas)</span></div>
+                        <div class="text-center text-2xl font-bold text-blue-400">=</div>
+                        <div class="bg-blue-600 text-white p-4 rounded text-center shadow-lg font-extrabold animate-pulse">Reglas (Modelo)</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="tipos" class="section-pane max-w-5xl mx-auto">
+            <h2 class="text-4xl font-extrabold text-slate-800 mb-6">Tipos de Aprendizaje</h2>
+            <p class="text-lg text-slate-600 mb-8 bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                Explora las diferencias visuales entre los dos enfoques principales del ML. Utiliza los botones bajo el gráfico para alternar entre el <strong>Aprendizaje Supervisado</strong> (donde los datos tienen etiquetas conocidas) y el <strong>Aprendizaje No Supervisado</strong> (donde el algoritmo busca patrones ocultos por sí solo).
+            </p>
+
+            <div class="bg-white p-6 rounded-2xl shadow border border-slate-200">
+                <div class="chart-container">
+                    <canvas id="learningTypesChart"></canvas>
+                </div>
+                
+                <div class="flex flex-col sm:flex-row justify-center gap-4 mt-8">
+                    <button onclick="updateChart('supervised')" id="btn-chart-sup" class="px-6 py-3 bg-blue-600 text-white font-bold rounded-lg shadow hover:bg-blue-700 transition">
+                        Supervisado (Clasificación)
+                    </button>
+                    <button onclick="updateChart('unsupervised')" id="btn-chart-unsup" class="px-6 py-3 bg-slate-200 text-slate-700 font-bold rounded-lg shadow hover:bg-slate-300 transition">
+                        No Supervisado (Clustering)
+                    </button>
+                </div>
+
+                <div class="mt-8 p-6 bg-slate-50 rounded-xl border border-slate-100 h-32 flex items-center justify-center text-center">
+                    <p id="chart-description" class="text-slate-700 text-lg">
+                        <strong>Aprendizaje Supervisado:</strong> El modelo se entrena con datos etiquetados (conocemos la "respuesta"). El gráfico muestra dos clases distintas separadas visualmente (ej: Spam vs No Spam).
+                    </p>
+                </div>
+            </div>
+
+            <div class="mt-6 bg-amber-50 border-l-4 border-amber-500 p-4 rounded-r-lg">
+                <p class="text-amber-800 font-medium"><span class="text-xl">🕹️</span> <strong>Aprendizaje por Refuerzo:</strong> Existe un tercer tipo donde un agente aprende a tomar decisiones maximizando recompensas a través de prueba y error en un entorno dinámico.</p>
+            </div>
+        </section>
+
+        <section id="flujo" class="section-pane max-w-5xl mx-auto">
+            <h2 class="text-4xl font-extrabold text-slate-800 mb-6">Flujo General de un Proyecto de ML</h2>
+            <p class="text-lg text-slate-600 mb-8 bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                Un proyecto de Machine Learning no es solo entrenar un algoritmo. Es un ciclo de vida completo. Interactúa con las fases a continuación para descubrir qué sucede en cada etapa crítica, desde la recolección de los datos crudos hasta la puesta en producción.
+            </p>
+
+            <div class="flex flex-col md:flex-row gap-2 mb-8">
+                <button onclick="setWorkflowStep(1)" id="flow-btn-1" class="step-button active-step flex-1 py-4 px-2 bg-slate-200 text-slate-700 font-bold rounded-lg transition text-sm md:text-base border-b-4 border-slate-300">1. Datos</button>
+                <div class="hidden md:flex items-center justify-center text-slate-400">▶</div>
+                <button onclick="setWorkflowStep(2)" id="flow-btn-2" class="step-button flex-1 py-4 px-2 bg-slate-200 text-slate-700 font-bold rounded-lg transition text-sm md:text-base border-b-4 border-slate-300">2. Atributos</button>
+                <div class="hidden md:flex items-center justify-center text-slate-400">▶</div>
+                <button onclick="setWorkflowStep(3)" id="flow-btn-3" class="step-button flex-1 py-4 px-2 bg-slate-200 text-slate-700 font-bold rounded-lg transition text-sm md:text-base border-b-4 border-slate-300">3. Modelos</button>
+                <div class="hidden md:flex items-center justify-center text-slate-400">▶</div>
+                <button onclick="setWorkflowStep(4)" id="flow-btn-4" class="step-button flex-1 py-4 px-2 bg-slate-200 text-slate-700 font-bold rounded-lg transition text-sm md:text-base border-b-4 border-slate-300">4. Evaluación</button>
+                <div class="hidden md:flex items-center justify-center text-slate-400">▶</div>
+                <button onclick="setWorkflowStep(5)" id="flow-btn-5" class="step-button flex-1 py-4 px-2 bg-slate-200 text-slate-700 font-bold rounded-lg transition text-sm md:text-base border-b-4 border-slate-300">5. Despliegue</button>
+            </div>
+
+            <div class="bg-white p-8 rounded-2xl shadow-lg border border-slate-200 min-h-[200px] flex flex-col justify-center">
+                <h3 id="flow-title" class="text-2xl font-bold text-blue-600 mb-4 flex items-center gap-3">
+                    <span id="flow-icon" class="text-4xl">📊</span> 1. Datos
+                </h3>
+                <p id="flow-desc" class="text-xl text-slate-600 leading-relaxed">
+                    Recolección y exploración inicial de los datos crudos. Entender la naturaleza del problema y la disponibilidad de información.
+                </p>
+            </div>
+        </section>
+
+        <section id="casos" class="section-pane max-w-4xl mx-auto">
+            <h2 class="text-4xl font-extrabold text-slate-800 mb-6">Actividad Práctica: Identificación de Casos</h2>
+            <p class="text-lg text-slate-600 mb-8 bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                Es momento de aplicar lo aprendido. Analiza los siguientes 5 escenarios reales del entorno empresarial y tecnológico. Selecciona en los menús desplegables qué tipo de aprendizaje automático es el más adecuado para resolver cada problema. Recibirás validación inmediata al responder.
+            </p>
+
+            <div class="space-y-4" id="cases-container">
+            </div>
+
+            <div class="mt-8 p-6 bg-slate-800 text-white rounded-xl text-center hidden" id="cases-success">
+                <span class="text-4xl block mb-2">🎉</span>
+                <h3 class="text-2xl font-bold">¡Excelente trabajo!</h3>
+                <p class="text-slate-300 mt-2">Has identificado correctamente el paradigma de aprendizaje para todos los escenarios prácticos.</p>
+            </div>
+        </section>
+
+        <section id="lab" class="section-pane max-w-5xl mx-auto">
+            <h2 class="text-4xl font-extrabold text-slate-800 mb-6">Laboratorio: Código y GenAI</h2>
+            <p class="text-lg text-slate-600 mb-8 bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                La práctica moderna del Machine Learning combina la escritura de código tradicional con el uso de Inteligencia Artificial generativa. En esta sección, analizaremos un script base y utilizaremos Google Colab con Gemini para generar y comparar modelos avanzados.
+            </p>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Ejercicio 1: Código de Ejemplo -->
+                <div class="bg-slate-900 rounded-2xl shadow-xl overflow-hidden flex flex-col border border-slate-700">
+                    <div class="bg-slate-800 px-4 py-3 border-b border-slate-700 flex items-center gap-2">
+                        <span class="text-xl">🧑‍💻</span>
+                        <h3 class="text-white font-bold text-sm tracking-wide">Ejercicio 1: Tu Primer Modelo</h3>
+                    </div>
+                    <div class="p-6 flex-1 overflow-x-auto">
+                        <p class="text-slate-400 text-sm mb-4">Ejemplo funcional de clasificación (aprendizaje supervisado) utilizando la librería <code class="text-blue-300 bg-slate-800 px-1 rounded">scikit-learn</code>.</p>
+                        <pre class="text-sm leading-relaxed font-mono text-slate-300"><code><span class="text-slate-500"># 1. Importar librerías</span>
+<span class="text-pink-400">from</span> sklearn.datasets <span class="text-pink-400">import</span> make_classification
+<span class="text-pink-400">from</span> sklearn.linear_model <span class="text-pink-400">import</span> LogisticRegression
+
+<span class="text-slate-500"># 2. Generar datos (Características X y Etiquetas y)</span>
+X, y = make_classification(n_samples=<span class="text-orange-300">100</span>, n_features=<span class="text-orange-300">2</span>, random_state=<span class="text-orange-300">42</span>)
+
+<span class="text-slate-500"># 3. Entrenar el modelo (Aprender reglas)</span>
+modelo = LogisticRegression()
+modelo.fit(X, y)
+
+<span class="text-slate-500"># 4. Evaluar la precisión</span>
+precision = modelo.score(X, y)
+<span class="text-blue-400">print</span>(<span class="text-green-400">f"Precisión del modelo: </span><span class="text-orange-300">{</span>precision * <span class="text-orange-300">100}</span><span class="text-green-400">%"</span>)</code></pre>
+                    </div>
+                </div>
+
+                <!-- Ejercicio 2: Gemini en Colab -->
+                <div class="bg-white rounded-2xl shadow-md border border-slate-200 overflow-hidden flex flex-col">
+                    <div class="bg-blue-50 px-6 py-4 border-b border-blue-100 flex items-center justify-between">
+                        <h3 class="font-bold text-blue-800 flex items-center gap-2"><span class="text-xl">✨</span> Ejercicio 2: Prompting en Colab</h3>
+                    </div>
+                    <div class="p-6 flex-1">
+                        <p class="text-slate-600 mb-4 text-sm">Abre <strong>Google Colab</strong>, crea un nuevo cuaderno y utiliza la herramienta integrada de Gemini (botón "Generar con IA") introduciendo el siguiente <em>prompt</em>:</p>
+                        
+                        <div class="bg-slate-50 p-4 rounded-lg border-l-4 border-blue-500 font-medium text-slate-700 italic shadow-inner text-sm mb-4">
+                            "Actúa como un experto en Machine Learning. Genera un script en Python para Google Colab usando scikit-learn. El script debe generar datos sintéticos y mostrar dos gráficas comparativas utilizando matplotlib: un ejemplo de aprendizaje supervisado (ej. Regresión Logística mostrando la frontera de decisión) y un ejemplo de aprendizaje no supervisado (ej. K-Means mostrando los clústeres descubiertos). Explica las diferencias conceptuales entre ambos enfoques en los comentarios del código."
+                        </div>
+
+                        <div class="bg-emerald-50 border border-emerald-100 p-4 rounded-lg">
+                            <h4 class="font-bold text-emerald-800 text-sm mb-1">Misión del Estudiante:</h4>
+                            <ul class="text-sm text-emerald-700 list-disc list-inside space-y-1 mt-2">
+                                <li>Ejecuta el código generado por Gemini.</li>
+                                <li>Modifica el parámetro <code>n_samples</code> en el código para ver cómo reaccionan y cambian las gráficas con un mayor volumen de datos.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="quiz" class="section-pane max-w-4xl mx-auto">
+            <h2 class="text-4xl font-extrabold text-slate-800 mb-6">Mini-Quiz Conceptual</h2>
+            <p class="text-lg text-slate-600 mb-8 bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                Para consolidar tu asimilación de la Clase 1, completa este quiz rápido inspirado en las evaluaciones generadas por NotebookLM Studio. Selecciona la opción que consideres correcta para avanzar.
+            </p>
+
+            <div class="bg-white p-8 rounded-2xl shadow border border-slate-200">
+                <div id="quiz-header" class="flex justify-between items-center border-b pb-4 mb-6">
+                    <span class="text-sm font-bold text-blue-600 uppercase tracking-wide">Pregunta <span id="quiz-current">1</span> de <span id="quiz-total">3</span></span>
+                    <span class="text-sm font-medium text-slate-500">NotebookLM Check</span>
+                </div>
+                
+                <h3 id="quiz-question" class="text-2xl font-bold text-slate-800 mb-6"></h3>
+                
+                <div id="quiz-options" class="flex flex-col gap-3">
+                </div>
+
+                <div id="quiz-feedback" class="mt-6 p-4 rounded-lg hidden font-medium"></div>
+
+                <div class="mt-8 flex justify-end">
+                    <button id="quiz-next-btn" onclick="nextQuizQuestion()" class="hidden px-6 py-2 bg-slate-800 text-white font-bold rounded-lg hover:bg-slate-700 transition">Siguiente ➔</button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        const navState = { current: 'intro' };
+
+        function navigate(sectionId) {
+            const buttons = document.querySelectorAll('.nav-button');
+            for (let i = 0; i < buttons.length; i++) {
+                buttons[i].classList.remove('active', 'bg-blue-50', 'text-blue-700', 'border-r-4', 'border-blue-600', 'font-bold');
+            }
+            const activeBtn = document.getElementById('btn-' + sectionId);
+            if (activeBtn) {
+                activeBtn.classList.add('active', 'bg-blue-50', 'text-blue-700', 'border-r-4', 'border-blue-600', 'font-bold');
+            }
+
+            const panes = document.querySelectorAll('.section-pane');
+            for (let i = 0; i < panes.length; i++) {
+                panes[i].classList.remove('active');
+            }
+            document.getElementById(sectionId).classList.add('active');
+            navState.current = sectionId;
+
+            if (sectionId === 'tipos' && !window.myChart) {
+                initChart();
+            }
+        }
+
+        let myChart = null;
+        const chartDataSup = [
+            {x: 20, y: 30}, {x: 25, y: 35}, {x: 15, y: 40}, {x: 30, y: 25}, {x: 22, y: 45}, {x: 18, y: 32},
+            {x: 70, y: 80}, {x: 75, y: 75}, {x: 80, y: 85}, {x: 65, y: 70}, {x: 85, y: 60}, {x: 72, y: 82}
+        ];
+        const chartColorsSup = [
+            '#3b82f6','#3b82f6','#3b82f6','#3b82f6','#3b82f6','#3b82f6',
+            '#ef4444','#ef4444','#ef4444','#ef4444','#ef4444','#ef4444'
+        ];
+        const chartColorsUnsup = Array(12).fill('#94a3b8');
+
+        function initChart() {
+            const ctx = document.getElementById('learningTypesChart').getContext('2d');
+            myChart = new Chart(ctx, {
+                type: 'scatter',
+                data: {
+                    datasets: [{
+                        label: 'Datos de Entrenamiento',
+                        data: chartDataSup,
+                        backgroundColor: chartColorsSup,
+                        pointRadius: 8,
+                        pointHoverRadius: 10
+                    }]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return 'Dato [' + context.parsed.x + ', ' + context.parsed.y + ']';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: { min: 0, max: 100, grid: { color: '#f1f5f9' } },
+                        y: { min: 0, max: 100, grid: { color: '#f1f5f9' } }
+                    },
+                    animation: { duration: 800 }
+                }
+            });
+        }
+
+        function updateChart(type) {
+            if (!myChart) return;
+            const btnSup = document.getElementById('btn-chart-sup');
+            const btnUnsup = document.getElementById('btn-chart-unsup');
+            const desc = document.getElementById('chart-description');
+
+            if (type === 'supervised') {
+                myChart.data.datasets[0].backgroundColor = chartColorsSup;
+                btnSup.className = "px-6 py-3 bg-blue-600 text-white font-bold rounded-lg shadow hover:bg-blue-700 transition";
+                btnUnsup.className = "px-6 py-3 bg-slate-200 text-slate-700 font-bold rounded-lg shadow hover:bg-slate-300 transition";
+                desc.innerHTML = "<strong>Aprendizaje Supervisado:</strong> El modelo se entrena con datos etiquetados (conocemos la 'respuesta'). El gráfico muestra dos clases distintas separadas visualmente (ej: Spam vs No Spam).";
+            } else {
+                myChart.data.datasets[0].backgroundColor = chartColorsUnsup;
+                btnSup.className = "px-6 py-3 bg-slate-200 text-slate-700 font-bold rounded-lg shadow hover:bg-slate-300 transition";
+                btnUnsup.className = "px-6 py-3 bg-emerald-600 text-white font-bold rounded-lg shadow hover:bg-emerald-700 transition";
+                desc.innerHTML = "<strong>Aprendizaje No Supervisado:</strong> Buscamos patrones en datos sin etiquetas. El algoritmo ve todos los puntos iguales (grises) y debe inferir la estructura, agrupando por cercanía (Clustering).";
+            }
+            myChart.update();
+        }
+
+        const workflowContent = {
+            1: { title: "1. Datos", icon: "📊", desc: "Recolección y exploración inicial. Consiste en obtener la información cruda, analizar distribuciones y entender el problema." },
+            2: { title: "2. Atributos", icon: "🛠️", desc: "Limpieza y selección de variables (Ingeniería de atributos). Transformamos los datos crudos en formatos numéricos útiles para el algoritmo." },
+            3: { title: "3. Modelos", icon: "🧠", desc: "Selección, entrenamiento y ajuste del algoritmo. El núcleo del aprendizaje donde se establece la relación matemática." },
+            4: { title: "4. Evaluación", icon: "📐", desc: "Validación cruzada y métricas (Accuracy, RMSE). Medimos qué tan bien generaliza el modelo ante datos que nunca ha visto." },
+            5: { title: "5. Despliegue", icon: "🚀", desc: "Puesta en producción e inferencia. El modelo se integra en una aplicación real para generar predicciones continuas." }
+        };
+
+        function setWorkflowStep(step) {
+            const buttons = document.querySelectorAll('.step-button');
+            for(let i=0; i<buttons.length; i++) {
+                buttons[i].classList.remove('active-step', 'bg-blue-600', 'text-white', 'border-blue-700');
+                buttons[i].classList.add('bg-slate-200', 'text-slate-700', 'border-slate-300');
+            }
+            
+            const activeBtn = document.getElementById('flow-btn-' + step);
+            activeBtn.classList.remove('bg-slate-200', 'text-slate-700', 'border-slate-300');
+            activeBtn.classList.add('active-step', 'bg-blue-600', 'text-white', 'border-blue-700');
+
+            document.getElementById('flow-title').innerHTML = `<span id="flow-icon" class="text-4xl">${workflowContent[step].icon}</span> ${workflowContent[step].title}`;
+            document.getElementById('flow-desc').innerText = workflowContent[step].desc;
+        }
+
+        const casesData = [
+            { text: "1. Predecir el precio de una casa basado en su tamaño y ubicación.", answer: "sup", options: { sup: "Supervisado", unsup: "No Supervisado", ref: "Refuerzo" } },
+            { text: "2. Agrupar clientes de un supermercado según sus hábitos de compra.", answer: "unsup", options: { sup: "Supervisado", unsup: "No Supervisado", ref: "Refuerzo" } },
+            { text: "3. Detectar transacciones bancarias fraudulentas.", answer: "sup", options: { sup: "Supervisado", unsup: "No Supervisado", ref: "Refuerzo" } },
+            { text: "4. Enseñar a un brazo robótico a apilar cajas.", answer: "ref", options: { sup: "Supervisado", unsup: "No Supervisado", ref: "Refuerzo" } },
+            { text: "5. Filtrar correos electrónicos como 'Spam' o 'No Spam'.", answer: "sup", options: { sup: "Supervisado", unsup: "No Supervisado", ref: "Refuerzo" } }
+        ];
+
+        function renderCases() {
+            const container = document.getElementById('cases-container');
+            let html = '';
+            for (let i = 0; i < casesData.length; i++) {
+                let optHtml = '<option value="">-- Selecciona --</option>';
+                for (const key in casesData[i].options) {
+                    optHtml += `<option value="${key}">${casesData[i].options[key]}</option>`;
+                }
+                html += `
+                    <div id="case-box-${i}" class="flex flex-col md:flex-row justify-between items-center bg-slate-50 p-4 rounded-lg border border-slate-200 transition-colors">
+                        <p class="font-medium text-slate-700 flex-1 mb-3 md:mb-0">${casesData[i].text}</p>
+                        <select id="case-sel-${i}" onchange="validateCase(${i})" class="w-full md:w-48 p-2 rounded border border-slate-300 bg-white outline-none focus:border-blue-500">
+                            ${optHtml}
+                        </select>
+                    </div>
+                `;
+            }
+            container.innerHTML = html;
+        }
+
+        function validateCase(index) {
+            const select = document.getElementById(`case-sel-${index}`);
+            const box = document.getElementById(`case-box-${index}`);
+            const val = select.value;
+
+            box.classList.remove('bg-slate-50', 'bg-emerald-50', 'bg-red-50', 'border-emerald-400', 'border-red-400', 'border-slate-200');
+
+            if (val === casesData[index].answer) {
+                box.classList.add('bg-emerald-50', 'border-emerald-400');
+            } else if (val !== "") {
+                box.classList.add('bg-red-50', 'border-red-400');
+            } else {
+                box.classList.add('bg-slate-50', 'border-slate-200');
+            }
+
+            checkAllCases();
+        }
+
+        function checkAllCases() {
+            let correctCount = 0;
+            for (let i = 0; i < casesData.length; i++) {
+                const select = document.getElementById(`case-sel-${i}`);
+                if (select.value === casesData[i].answer) {
+                    correctCount++;
+                }
+            }
+            if (correctCount === casesData.length) {
+                document.getElementById('cases-success').classList.remove('hidden');
+            } else {
+                document.getElementById('cases-success').classList.add('hidden');
+            }
+        }
+
+        const quizQuestions = [
+            {
+                q: "¿Qué requiere obligatoriamente el Aprendizaje Supervisado que el No Supervisado ignora?",
+                opts: ["Algoritmos de alta complejidad", "Datos etiquetados (la 'respuesta')", "Gran capacidad de procesamiento", "Datos estructurados en tablas"],
+                ans: 1
+            },
+            {
+                q: "En el flujo de un proyecto de ML, ¿qué etapa busca medir la capacidad de generalización del modelo?",
+                opts: ["Ingeniería de atributos", "Exploración de datos inicial", "Evaluación y validación cruzada", "Despliegue en producción"],
+                ans: 2
+            },
+            {
+                q: "El Machine Learning es un cambio de paradigma porque en lugar de programar reglas explícitas...",
+                opts: ["El algoritmo deduce las reglas a partir de los datos y las respuestas.", "Solo requiere hardware avanzado para crear reglas aleatorias.", "Las reglas son descargadas automáticamente desde la nube.", "Elimina la necesidad de utilizar datos estadísticos."],
+                ans: 0
+            }
+        ];
+
+        let currentQIndex = 0;
+        let quizCompleted = false;
+
+        function loadQuiz() {
+            if (quizCompleted) return;
+            const qObj = quizQuestions[currentQIndex];
+            document.getElementById('quiz-current').innerText = currentQIndex + 1;
+            document.getElementById('quiz-total').innerText = quizQuestions.length;
+            document.getElementById('quiz-question').innerText = qObj.q;
+            
+            const optContainer = document.getElementById('quiz-options');
+            let optsHtml = '';
+            for(let i=0; i<qObj.opts.length; i++) {
+                optsHtml += `
+                    <button id="opt-${i}" onclick="selectQuizOption(${i})" class="w-full text-left p-4 rounded-lg border-2 border-slate-200 bg-slate-50 hover:bg-slate-100 hover:border-blue-300 transition font-medium text-slate-700">
+                        ${qObj.opts[i]}
+                    </button>
+                `;
+            }
+            optContainer.innerHTML = optsHtml;
+            
+            document.getElementById('quiz-feedback').classList.add('hidden');
+            document.getElementById('quiz-next-btn').classList.add('hidden');
+        }
+
+        function selectQuizOption(optIndex) {
+            if (quizCompleted) return;
+            const qObj = quizQuestions[currentQIndex];
+            const feedback = document.getElementById('quiz-feedback');
+            const nextBtn = document.getElementById('quiz-next-btn');
+
+            for(let i=0; i<qObj.opts.length; i++) {
+                document.getElementById(`opt-${i}`).disabled = true;
+                document.getElementById(`opt-${i}`).classList.remove('hover:bg-slate-100', 'hover:border-blue-300');
+            }
+
+            const selectedBtn = document.getElementById(`opt-${optIndex}`);
+            const correctBtn = document.getElementById(`opt-${qObj.ans}`);
+
+            if (optIndex === qObj.ans) {
+                selectedBtn.classList.replace('border-slate-200', 'border-emerald-500');
+                selectedBtn.classList.replace('bg-slate-50', 'bg-emerald-50');
+                feedback.innerHTML = "¡Correcto! Respuesta acertada.";
+                feedback.className = "mt-6 p-4 rounded-lg font-medium bg-emerald-100 text-emerald-800 block";
+            } else {
+                selectedBtn.classList.replace('border-slate-200', 'border-red-500');
+                selectedBtn.classList.replace('bg-slate-50', 'bg-red-50');
+                correctBtn.classList.replace('border-slate-200', 'border-emerald-500');
+                correctBtn.classList.replace('bg-slate-50', 'bg-emerald-50');
+                feedback.innerHTML = "Incorrecto. La respuesta resaltada en verde era la correcta.";
+                feedback.className = "mt-6 p-4 rounded-lg font-medium bg-red-100 text-red-800 block";
+            }
+
+            if (currentQIndex < quizQuestions.length - 1) {
+                nextBtn.innerText = "Siguiente ➔";
+                nextBtn.classList.remove('hidden');
+            } else {
+                quizCompleted = true;
+                nextBtn.innerText = "Finalizar Módulo";
+                nextBtn.classList.remove('hidden');
+                nextBtn.onclick = function() {
+                    alert("¡Módulo completado con éxito! Has finalizado la Clase 1.");
+                    navigate('intro');
+                };
+            }
+        }
+
+        function nextQuizQuestion() {
+            currentQIndex++;
+            loadQuiz();
+        }
+
+        window.onload = function() {
+            renderCases();
+            loadQuiz();
+        };
+
+    </script>
+</body>
+</html>

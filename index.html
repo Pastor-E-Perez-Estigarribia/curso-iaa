@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Módulo IAA - Introducción al Aprendizaje Automático</title>
+    
+    <!-- Chosen Palette: Academic Slate & Teal (Slate-900 bg, Slate-50 panels, Teal-600 accents) -->
+    <!-- Application Structure Plan: Master Index/Landing Page for the IAA module. Features a hero section with course info, an overview section detailing objectives and bibliography from the syllabus, and a responsive CSS Grid displaying the 7 specific classes outlined in the 'Organización del Módulo IAA' document. Class 1 is active, while 2-7 are visually indicated as upcoming to set student expectations. -->
+    <!-- Visualization & Content Choices: 
+         - Layout: CSS Grid/Flexbox via Tailwind -> Goal: Organize -> Provides a clean, modern dashboard feel.
+         - Icons: Unicode emojis -> Goal: Inform -> Avoids SVG dependencies while maintaining visual hierarchy.
+         - Interactive Cards: CSS hover states -> Goal: Engagement -> Distinguishes between available content (Clase 1) and locked content (Clases 2-7). -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { 
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; 
+            background-color: #f8fafc; 
+        }
+        .hero-pattern {
+            background-color: #0f172a;
+            background-image: radial-gradient(#1e293b 1.5px, transparent 1.5px);
+            background-size: 24px 24px;
+        }
+        .class-card { 
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+        }
+        .class-card.active:hover { 
+            transform: translateY(-5px); 
+            box-shadow: 0 10px 25px -5px rgba(13, 148, 136, 0.2); 
+            border-color: #0d9488;
+        }
+        .class-card.disabled { 
+            opacity: 0.65; 
+            filter: grayscale(80%);
+            cursor: not-allowed; 
+        }
+        .class-card.disabled:hover {
+            opacity: 0.8;
+            filter: grayscale(40%);
+        }
+        .badge {
+            animation: pulse-badge 2s infinite;
+        }
+        @keyframes pulse-badge {
+            0% { box-shadow: 0 0 0 0 rgba(20, 184, 166, 0.4); }
+            70% { box-shadow: 0 0 0 6px rgba(20, 184, 166, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(20, 184, 166, 0); }
+        }
+    </style>
+</head>
+<body class="text-slate-800 antialiased selection:bg-teal-200 selection:text-teal-900">
+
+    <!-- Hero Section -->
+    <header class="hero-pattern text-white py-20 px-6 md:px-12 border-b-8 border-teal-600 shadow-xl relative overflow-hidden">
+        <div class="max-w-7xl mx-auto relative z-10">
+            <div class="inline-block px-4 py-1.5 bg-teal-500/20 text-teal-300 rounded-full text-sm font-bold tracking-widest uppercase mb-6 border border-teal-500/30 backdrop-blur-sm">
+                Postgrado FP-UNA
+            </div>
+            <h1 class="text-4xl md:text-6xl lg:text-7xl font-extrabold mb-6 tracking-tight leading-tight">
+                Introducción al <br><span class="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-emerald-300">Aprendizaje Automático</span>
+            </h1>
+            <p class="text-xl md:text-2xl text-slate-300 max-w-3xl leading-relaxed font-light">
+                Plataforma interactiva del Módulo IAA. Explora los conceptos, algoritmos y prácticas modernas del Machine Learning de manera dinámica.
+            </p>
+        </div>
+        <div class="absolute right-0 top-0 opacity-10 text-[20rem] pointer-events-none transform translate-x-1/4 -translate-y-1/4">
+            🤖
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-6 md:px-12 py-16">
+        
+        <!-- Descripción y Bibliografía -->
+        <section class="mb-20 grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div class="lg:col-span-2 bg-white p-8 md:p-10 rounded-2xl shadow-sm border border-slate-200">
+                <h2 class="text-2xl font-bold text-slate-800 mb-6 flex items-center gap-3">
+                    <span class="text-3xl">🎯</span> Propósito del Módulo
+                </h2>
+                <div class="space-y-4 text-slate-600 text-lg leading-relaxed">
+                    <p>
+                        El aprendizaje automático consiste en entrenar algoritmos de inteligencia artificial para realizar generalizaciones útiles. Es un campo de conocimiento que evoluciona continuamente, aplicado en múltiples industrias y tecnologías.
+                    </p>
+                    <p>
+                        Este plan de estudio, que consta de <strong>7 clases teórico-prácticas</strong>, busca proporcionar a los estudiantes una inmersión profunda examinando conceptos fundamentales y desarrollando habilidades de programación aplicada mediante <code class="bg-slate-100 text-slate-800 px-2 py-0.5 rounded text-sm font-mono border border-slate-200">scikit-learn</code> y Google Colab.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="bg-slate-800 text-white p-8 md:p-10 rounded-2xl shadow-lg relative overflow-hidden">
+                <div class="absolute -right-6 -bottom-6 text-7xl opacity-20">📚</div>
+                <h2 class="text-xl font-bold mb-6 flex items-center gap-3 relative z-10">
+                    <span class="text-teal-400">📚</span> Bibliografía Base
+                </h2>
+                <ul class="space-y-5 text-sm md:text-base text-slate-300 relative z-10">
+                    <li class="flex items-start gap-3">
+                        <span class="text-teal-400 font-bold mt-0.5">1.</span> 
+                        <span class="leading-snug"><strong>Marc Scott (2023).</strong> Machine Learning: Unsupervised and Supervised Learning.</span>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <span class="text-teal-400 font-bold mt-0.5">2.</span> 
+                        <span class="leading-snug"><strong>Hailiang Du (2023).</strong> Machine Learning Part II.</span>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <span class="text-teal-400 font-bold mt-0.5">3.</span> 
+                        <span class="leading-snug"><strong>Molnar, C. (2020).</strong> Interpretable machine learning.</span>
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Grilla de Clases -->
+        <section>
+            <div class="flex items-center justify-between mb-10 border-b-2 border-slate-200 pb-4">
+                <h2 class="text-3xl md:text-4xl font-extrabold text-slate-800 tracking-tight">Índice de Clases</h2>
+                <span class="bg-slate-100 text-slate-600 px-4 py-1.5 rounded-full text-sm font-bold border border-slate-200">
+                    7 Módulos
+                </span>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
+                
+                <!-- CLASE 1 (Activa) -->
+                <a href="clase_1_spa.html" class="class-card active block bg-white rounded-2xl shadow-sm border-2 border-teal-500 relative overflow-visible h-full flex flex-col">
+                    <div class="absolute -top-3 -right-3 bg-teal-500 text-white text-xs font-bold px-4 py-1.5 rounded-full z-10 shadow-md badge tracking-wide">
+                        DISPONIBLE
+                    </div>
+                    <div class="bg-slate-50 p-6 rounded-t-xl border-b border-slate-100">
+                        <span class="text-teal-600 font-extrabold text-xs tracking-widest uppercase">Clase 1</span>
+                        <h3 class="text-xl font-bold text-slate-800 mt-2 leading-tight">Introducción al Aprendizaje Automático</h3>
+                    </div>
+                    <div class="p-6 flex-1 flex flex-col justify-between">
+                        <p class="text-slate-600 text-sm mb-6 leading-relaxed">Conceptos y fundamentos. Paradigma tradicional vs ML, tipos de aprendizaje y flujo general de un proyecto.</p>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="bg-blue-50 text-blue-700 border border-blue-200 px-2 py-1 rounded text-xs font-semibold">Teoría</span>
+                            <span class="bg-amber-50 text-amber-700 border border-amber-200 px-2 py-1 rounded text-xs font-semibold">NotebookLM</span>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- CLASE 2 (Próximamente) -->
+                <div class="class-card disabled bg-white rounded-2xl shadow-sm border border-slate-200 relative h-full flex flex-col">
+                    <div class="bg-slate-50 p-6 rounded-t-xl border-b border-slate-100">
+                        <span class="text-slate-500 font-extrabold text-xs tracking-widest uppercase">Clase 2</span>
+                        <h3 class="text-xl font-bold text-slate-800 mt-2 leading-tight">Preparación de Datos y Atributos</h3>
+                    </div>
+                    <div class="p-6 flex-1 flex flex-col justify-between">
+                        <p class="text-slate-600 text-sm mb-6 leading-relaxed">Importancia del preprocesamiento. Limpieza, normalización, codificación y selección de atributos.</p>
+                        <div class="flex items-center gap-2 text-xs font-bold text-slate-400 bg-slate-100 w-fit px-3 py-1.5 rounded-md">
+                            <span>🔒 Próximamente</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CLASE 3 (Próximamente) -->
+                <div class="class-card disabled bg-white rounded-2xl shadow-sm border border-slate-200 relative h-full flex flex-col">
+                    <div class="bg-slate-50 p-6 rounded-t-xl border-b border-slate-100">
+                        <span class="text-slate-500 font-extrabold text-xs tracking-widest uppercase">Clase 3</span>
+                        <h3 class="text-xl font-bold text-slate-800 mt-2 leading-tight">Modelos Supervisados I</h3>
+                    </div>
+                    <div class="p-6 flex-1 flex flex-col justify-between">
+                        <p class="text-slate-600 text-sm mb-6 leading-relaxed">Modelos lineales, Árboles de decisión y Ensambles (Bosques aleatorios). Interpretabilidad vs rendimiento.</p>
+                        <div class="flex items-center gap-2 text-xs font-bold text-slate-400 bg-slate-100 w-fit px-3 py-1.5 rounded-md">
+                            <span>🔒 Próximamente</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CLASE 4 (Próximamente) -->
+                <div class="class-card disabled bg-white rounded-2xl shadow-sm border border-slate-200 relative h-full flex flex-col">
+                    <div class="bg-slate-50 p-6 rounded-t-xl border-b border-slate-100">
+                        <span class="text-slate-500 font-extrabold text-xs tracking-widest uppercase">Clase 4</span>
+                        <h3 class="text-xl font-bold text-slate-800 mt-2 leading-tight">Modelos Supervisados II</h3>
+                    </div>
+                    <div class="p-6 flex-1 flex flex-col justify-between">
+                        <p class="text-slate-600 text-sm mb-6 leading-relaxed">Máquinas de Vectores de Soporte (SVM) y fundamentos de Redes Neuronales (Perceptrón Multicapa - MLP).</p>
+                        <div class="flex items-center gap-2 text-xs font-bold text-slate-400 bg-slate-100 w-fit px-3 py-1.5 rounded-md">
+                            <span>🔒 Próximamente</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CLASE 5 (Próximamente) -->
+                <div class="class-card disabled bg-white rounded-2xl shadow-sm border border-slate-200 relative h-full flex flex-col">
+                    <div class="bg-slate-50 p-6 rounded-t-xl border-b border-slate-100">
+                        <span class="text-slate-500 font-extrabold text-xs tracking-widest uppercase">Clase 5</span>
+                        <h3 class="text-xl font-bold text-slate-800 mt-2 leading-tight">Aprendizaje No Supervisado</h3>
+                    </div>
+                    <div class="p-6 flex-1 flex flex-col justify-between">
+                        <p class="text-slate-600 text-sm mb-6 leading-relaxed">Técnicas sin etiquetas. Algoritmos de Clustering (K-means, DBSCAN) y reducción de dimensionalidad (PCA).</p>
+                        <div class="flex items-center gap-2 text-xs font-bold text-slate-400 bg-slate-100 w-fit px-3 py-1.5 rounded-md">
+                            <span>🔒 Próximamente</span>
+                        </div>
+                    </div>
+                </div>
+
+                 <!-- CLASE 6 (Próximamente) -->
+                 <div class="class-card disabled bg-white rounded-2xl shadow-sm border border-slate-200 relative h-full flex flex-col">
+                    <div class="bg-slate-50 p-6 rounded-t-xl border-b border-slate-100">
+                        <span class="text-slate-500 font-extrabold text-xs tracking-widest uppercase">Clase 6</span>
+                        <h3 class="text-xl font-bold text-slate-800 mt-2 leading-tight">Evaluación y Selección de Modelos</h3>
+                    </div>
+                    <div class="p-6 flex-1 flex flex-col justify-between">
+                        <p class="text-slate-600 text-sm mb-6 leading-relaxed">Matriz de confusión, curvas ROC, Validación Cruzada (k-fold) y afinamiento mediante Grid Search.</p>
+                        <div class="flex items-center gap-2 text-xs font-bold text-slate-400 bg-slate-100 w-fit px-3 py-1.5 rounded-md">
+                            <span>🔒 Próximamente</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CLASE 7 (Próximamente) -->
+                <div class="class-card disabled bg-white rounded-2xl shadow-sm border border-slate-200 relative h-full flex flex-col md:col-span-2 lg:col-span-1 xl:col-span-2 bg-gradient-to-br from-slate-50 to-slate-100">
+                    <div class="bg-slate-100/50 p-6 rounded-t-xl border-b border-slate-200">
+                        <span class="text-slate-500 font-extrabold text-xs tracking-widest uppercase">Clase 7 (Final)</span>
+                        <h3 class="text-xl font-bold text-slate-800 mt-2 leading-tight">Integración y Pipelines</h3>
+                    </div>
+                    <div class="p-6 flex-1 flex flex-col justify-between">
+                        <p class="text-slate-600 text-sm mb-6 leading-relaxed">Construcción de pipelines reproducibles en scikit-learn. Mini-proyecto final: desde los datos crudos hasta la justificación del modelo final elegido.</p>
+                        <div class="flex items-center gap-2 text-xs font-bold text-slate-400 bg-slate-200 w-fit px-3 py-1.5 rounded-md">
+                            <span>🏁 Proyecto Final</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-400 py-10 mt-16 border-t-4 border-slate-800">
+        <div class="max-w-7xl mx-auto px-6 text-center md:flex md:justify-between md:items-center">
+            <p class="text-sm font-medium">© 2026 Plataforma Interactiva Módulo IAA.</p>
+            <p class="text-sm mt-4 md:mt-0 flex items-center justify-center gap-2">
+                Desarrollado para <span class="text-teal-400 font-bold">FP-UNA</span>
+            </p>
+        </div>
+    </footer>
+
+</body>
+</html>
