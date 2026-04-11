@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clase 2: Preparación de Datos y Atributos - Módulo IAA</title>
+    
+    <!-- Chosen Palette: Slate & Indigo (Slate-50 bg, Slate-800 text, Indigo-600 primary action, Emerald-500 success) -->
+    <!-- Application Structure Plan: The SPA follows the established "Learning Hub" dashboard pattern. Navigation is non-linear via a sidebar. 
+         Sections: 1. Importancia (Theory context), 2. Transformaciones (Interactive Chart.js Scatter plot showing scaling), 3. Selección (Grid cards for Filter/Wrapper/Embedded), 4. Mapa (sklearn ecosystem), 5. Laboratorio (Colab integration + Bar Chart simulation). 
+         The Lab section is specifically designed to prompt the user to open Google Colab, use Gemini to generate the pipeline for the Wine dataset, and compare their real results with the SPA's interactive simulation. -->
+    <!-- Visualization & Content Choices: 
+         - Scaling Concept -> Chart.js Scatter Plot -> Goal: Change/Compare -> Animates data points from distinct, unscaled axes to a standardized distribution to visually explain StandardScaler.
+         - Feature Selection -> CSS Grid Cards -> Goal: Organize -> Breaks down complex methodologies into distinct visual buckets.
+         - Colab Lab Activity -> Interactive Step-by-Step UI + Chart.js Bar Chart -> Goal: Inform/Compare/Apply -> Simulates the model performance gains while explicitly providing the Prompt and instructions for the student to build it in Google Colab. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        body { font-family: 'Segoe UI', system-ui, sans-serif; background-color: #f8fafc; color: #1e293b; }
+        
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container { height: 350px; }
+        }
+
+        .nav-item { transition: all 0.2s ease; }
+        .nav-item.active { background-color: #eef2ff; color: #4f46e5; border-right: 4px solid #4f46e5; font-weight: 600; }
+        
+        .section-content { display: none; animation: fadeIn 0.4s ease-in-out; }
+        .section-content.active { display: block; }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .code-block { font-family: monospace; background: #0f172a; color: #e2e8f0; padding: 1.5rem; border-radius: 0.5rem; overflow-x: auto; font-size: 0.875rem;}
+        .highlight { color: #38bdf8; }
+        .keyword { color: #f472b6; }
+        .comment { color: #64748b; }
+        
+        /* Custom scrollbar for sidebar */
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="flex flex-col md:flex-row h-screen overflow-hidden">
+
+    <!-- Navegación Lateral -->
+    <nav class="w-full md:w-72 bg-white shadow-xl h-auto md:h-full flex flex-col z-20 shrink-0">
+        <div class="p-6 bg-slate-900 text-white border-b-4 border-indigo-500">
+            <h1 class="text-2xl font-bold tracking-tight">Módulo IAA</h1>
+            <p class="text-sm text-indigo-300 mt-1">Clase 2: Preparación de Datos</p>
+        </div>
+        <div class="flex-1 overflow-y-auto py-4 flex flex-row md:flex-col overflow-x-auto hide-scrollbar" id="nav-menu">
+            <button onclick="navigate('intro')" class="nav-item active text-left px-6 py-4 hover:bg-slate-50 whitespace-nowrap md:whitespace-normal flex items-center gap-3 text-indigo-700">
+                <span class="text-xl">🎯</span> Preprocesamiento
+            </button>
+            <button onclick="navigate('transformaciones')" class="nav-item text-left px-6 py-4 hover:bg-slate-50 whitespace-nowrap md:whitespace-normal flex items-center gap-3 text-slate-600">
+                <span class="text-xl">🔧</span> Transformaciones
+            </button>
+            <button onclick="navigate('seleccion')" class="nav-item text-left px-6 py-4 hover:bg-slate-50 whitespace-nowrap md:whitespace-normal flex items-center gap-3 text-slate-600">
+                <span class="text-xl">✂️</span> Selección Atributos
+            </button>
+            <button onclick="navigate('ecosistema')" class="nav-item text-left px-6 py-4 hover:bg-slate-50 whitespace-nowrap md:whitespace-normal flex items-center gap-3 text-slate-600">
+                <span class="text-xl">🗺️</span> Mapa scikit-learn
+            </button>
+            <button onclick="navigate('laboratorio')" class="nav-item text-left px-6 py-4 hover:bg-slate-50 whitespace-nowrap md:whitespace-normal flex items-center gap-3 text-slate-600">
+                <span class="text-xl">🚀</span> Reto Colab (Wine)
+            </button>
+        </div>
+    </nav>
+
+    <!-- Contenido Principal -->
+    <main class="flex-1 overflow-y-auto p-6 md:p-12 bg-slate-50">
+
+        <!-- Sección 1: Introducción -->
+        <section id="intro" class="section-content active max-w-5xl mx-auto">
+            <div class="mb-10">
+                <h2 class="text-4xl font-extrabold text-slate-800 mb-4">La regla de oro del Machine Learning</h2>
+                <p class="text-lg text-slate-600 leading-relaxed bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    <strong>"Garbage in, garbage out"</strong> (Si entra basura, sale basura). El algoritmo más avanzado del mundo no puede extraer valor de datos desordenados. El preprocesamiento y la ingeniería de atributos suelen consumir hasta el 80% del tiempo de un científico de datos.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="bg-white p-8 rounded-2xl shadow-sm border-t-4 border-red-400 transform transition hover:-translate-y-1">
+                    <h3 class="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2"><span>⚠️</span> Datos Crudos (Realidad)</h3>
+                    <ul class="space-y-4 text-slate-600">
+                        <li class="flex items-start gap-2"><span class="text-red-400 font-bold">✗</span> <strong>Incompletos:</strong> Celdas vacías o valores nulos (NaN).</li>
+                        <li class="flex items-start gap-2"><span class="text-red-400 font-bold">✗</span> <strong>Ruidosos:</strong> Errores de medición, outliers extremos.</li>
+                        <li class="flex items-start gap-2"><span class="text-red-400 font-bold">✗</span> <strong>Inconsistentes:</strong> Texto mezclado con números.</li>
+                        <li class="flex items-start gap-2"><span class="text-red-400 font-bold">✗</span> <strong>Magnitudes Dispares:</strong> Edad (0-100) vs Salario (millones).</li>
+                    </ul>
+                </div>
+                
+                <div class="bg-white p-8 rounded-2xl shadow-sm border-t-4 border-indigo-500 transform transition hover:-translate-y-1">
+                    <h3 class="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2"><span>✨</span> Datos Preparados (Ideal)</h3>
+                    <ul class="space-y-4 text-slate-600">
+                        <li class="flex items-start gap-2"><span class="text-indigo-500 font-bold">✓</span> <strong>Completos:</strong> Valores faltantes imputados estadísticamente.</li>
+                        <li class="flex items-start gap-2"><span class="text-indigo-500 font-bold">✓</span> <strong>Limpios:</strong> Outliers acotados o tratados.</li>
+                        <li class="flex items-start gap-2"><span class="text-indigo-500 font-bold">✓</span> <strong>Numéricos:</strong> Categorías codificadas matemáticamente.</li>
+                        <li class="flex items-start gap-2"><span class="text-indigo-500 font-bold">✓</span> <strong>Estandarizados:</strong> Todas las variables en escalas comparables.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección 2: Transformaciones -->
+        <section id="transformaciones" class="section-content max-w-5xl mx-auto">
+            <div class="mb-8">
+                <h2 class="text-4xl font-extrabold text-slate-800 mb-4">Transformaciones Básicas</h2>
+                <p class="text-lg text-slate-600 leading-relaxed bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    Interactúa con el gráfico inferior para entender por qué la <strong>Normalización</strong> es crucial. Algoritmos basados en distancias (como KNN o SVM) se confunden si una variable tiene números gigantes y otra números pequeños.
+                </p>
+            </div>
+
+            <!-- Tarjetas de Teoría -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <div class="bg-indigo-50 p-6 rounded-xl border border-indigo-100 shadow-sm">
+                    <h4 class="font-bold text-indigo-800 text-lg mb-2 flex items-center gap-2"><span>🧹</span> 1. Limpieza e Imputación</h4>
+                    <p class="text-indigo-900/80 text-sm">Los algoritmos matemáticos fallan ante valores nulos. Rellenamos los vacíos con la <strong>media, mediana o moda</strong> de la columna correspondiente para no perder la fila entera.</p>
+                </div>
+                <div class="bg-indigo-50 p-6 rounded-xl border border-indigo-100 shadow-sm">
+                    <h4 class="font-bold text-indigo-800 text-lg mb-2 flex items-center gap-2"><span>🔤</span> 2. Codificación (Encoding)</h4>
+                    <p class="text-indigo-900/80 text-sm">Convertimos texto a números. <strong>Label Encoding</strong> asigna (0,1,2...) a jerarquías. <strong>One-Hot Encoding</strong> crea columnas binarias (1 o 0) para categorías sin orden (ej. Colores).</p>
+                </div>
+            </div>
+
+            <!-- Simulador de Normalización -->
+            <div class="bg-white p-8 rounded-2xl border border-slate-200 shadow-md">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
+                    <div>
+                        <h4 class="font-bold text-2xl text-slate-800 flex items-center gap-2"><span>📏</span> 3. Normalización</h4>
+                        <p class="text-slate-500 text-sm mt-1">Comparando variables con magnitudes dispares.</p>
+                    </div>
+                    <div class="mt-4 md:mt-0 flex gap-2 bg-slate-100 p-1 rounded-lg">
+                        <button onclick="updateScaleChart('raw')" id="btn-scale-raw" class="px-4 py-2 bg-white text-slate-800 shadow-sm rounded text-sm font-bold transition">Datos Crudos</button>
+                        <button onclick="updateScaleChart('norm')" id="btn-scale-norm" class="px-4 py-2 text-slate-600 hover:text-slate-800 rounded text-sm font-bold transition">StandardScaler</button>
+                    </div>
+                </div>
+                
+                <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                    <div class="chart-container">
+                        <canvas id="scalingChart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="mt-4 p-4 bg-blue-50 text-blue-800 text-sm rounded-lg border border-blue-100" id="scale-caption">
+                    <strong>Modo Crudo:</strong> El "Salario" domina el eje Y con valores de hasta 10,000, mientras que la "Edad" en el eje X (0-10) apenas es visible para el algoritmo en el cálculo de distancias.
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección 3: Selección de Atributos -->
+        <section id="seleccion" class="section-content max-w-5xl mx-auto">
+            <div class="mb-8">
+                <h2 class="text-4xl font-extrabold text-slate-800 mb-4">Selección de Atributos (Features)</h2>
+                <p class="text-lg text-slate-600 leading-relaxed bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    Más datos no siempre es mejor. Variables redundantes ("ruido") confunden al modelo, aumentan el riesgo de sobreajuste y ralentizan el cómputo. Existen 3 metodologías para filtrar atributos.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Filtrado -->
+                <div class="bg-white p-8 rounded-2xl border-t-8 border-slate-400 shadow hover:shadow-lg transition flex flex-col">
+                    <div class="text-4xl mb-4">🧮</div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-2">Métodos de Filtrado</h3>
+                    <p class="text-slate-600 text-sm mb-6 flex-1">Evalúan métricas estadísticas de cada variable de forma independiente al modelo.</p>
+                    <div class="bg-slate-50 p-4 rounded-lg border border-slate-100 mb-4">
+                        <ul class="text-sm text-slate-700 font-medium space-y-2">
+                            <li>• Varianza (ANOVA)</li>
+                            <li>• Correlación de Pearson</li>
+                            <li>• Test de Chi-cuadrado</li>
+                        </ul>
+                    </div>
+                    <div class="text-center bg-slate-100 text-slate-600 py-2 rounded font-bold text-xs uppercase tracking-wider">Muy Rápidos</div>
+                </div>
+
+                <!-- Wrapper -->
+                <div class="bg-white p-8 rounded-2xl border-t-8 border-indigo-500 shadow hover:shadow-lg transition flex flex-col">
+                    <div class="text-4xl mb-4">📦</div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-2">Métodos Wrapper</h3>
+                    <p class="text-slate-600 text-sm mb-6 flex-1">Prueban combinaciones de atributos entrenando modelos reales (ensayo y error).</p>
+                    <div class="bg-indigo-50 p-4 rounded-lg border border-indigo-100 mb-4">
+                        <ul class="text-sm text-indigo-900 font-medium space-y-2">
+                            <li>• Eliminación Recursiva (RFE)</li>
+                            <li>• Selección hacia adelante</li>
+                            <li>• Eliminación hacia atrás</li>
+                        </ul>
+                    </div>
+                    <div class="text-center bg-indigo-100 text-indigo-700 py-2 rounded font-bold text-xs uppercase tracking-wider">Precisos pero Lentos</div>
+                </div>
+
+                <!-- Embebidos -->
+                <div class="bg-white p-8 rounded-2xl border-t-8 border-emerald-500 shadow hover:shadow-lg transition flex flex-col">
+                    <div class="text-4xl mb-4">🧬</div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-2">Métodos Embebidos</h3>
+                    <p class="text-slate-600 text-sm mb-6 flex-1">La selección ocurre de forma natural como parte del entrenamiento del propio algoritmo.</p>
+                    <div class="bg-emerald-50 p-4 rounded-lg border border-emerald-100 mb-4">
+                        <ul class="text-sm text-emerald-900 font-medium space-y-2">
+                            <li>• Regularización Lasso (L1)</li>
+                            <li>• Importancia de Random Forest</li>
+                            <li>• División en Árboles de Decisión</li>
+                        </ul>
+                    </div>
+                    <div class="text-center bg-emerald-100 text-emerald-700 py-2 rounded font-bold text-xs uppercase tracking-wider">Balance Ideal</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección 4: Mapa scikit-learn -->
+        <section id="ecosistema" class="section-content max-w-5xl mx-auto">
+            <div class="mb-8">
+                <h2 class="text-4xl font-extrabold text-slate-800 mb-4">Mapa Mental: Scikit-Learn</h2>
+                <p class="text-lg text-slate-600 leading-relaxed bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    Las "Transformaciones del conjunto de datos" se implementan fácilmente usando módulos específicos de Scikit-Learn. Conocer estos sub-módulos te guiará al programar.
+                </p>
+            </div>
+
+            <div class="bg-[#0f172a] rounded-2xl p-8 md:p-12 shadow-2xl relative overflow-hidden">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-10 relative z-10">
+                    <div>
+                        <div class="flex items-center gap-3 mb-6 border-b border-slate-700 pb-3">
+                            <span class="text-3xl">🛠️</span>
+                            <h3 class="text-xl font-bold text-white tracking-wider">sklearn.<span class="text-indigo-400">preprocessing</span></h3>
+                        </div>
+                        <ul class="space-y-4">
+                            <li class="bg-slate-800/50 p-4 rounded-lg border border-slate-700 hover:border-indigo-500 transition">
+                                <code class="text-pink-400 font-bold">StandardScaler()</code>
+                                <p class="text-slate-400 text-sm mt-1">Estandariza removiendo la media y escalando a varianza 1.</p>
+                            </li>
+                            <li class="bg-slate-800/50 p-4 rounded-lg border border-slate-700 hover:border-indigo-500 transition">
+                                <code class="text-pink-400 font-bold">MinMaxScaler()</code>
+                                <p class="text-slate-400 text-sm mt-1">Transforma características escalándolas a un rango dado (ej. 0 a 1).</p>
+                            </li>
+                            <li class="bg-slate-800/50 p-4 rounded-lg border border-slate-700 hover:border-indigo-500 transition">
+                                <code class="text-pink-400 font-bold">OneHotEncoder()</code>
+                                <p class="text-slate-400 text-sm mt-1">Codifica categorías en matrices numéricas binarias (dummy variables).</p>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div>
+                        <div class="flex items-center gap-3 mb-6 border-b border-slate-700 pb-3">
+                            <span class="text-3xl">🎯</span>
+                            <h3 class="text-xl font-bold text-white tracking-wider">sklearn.<span class="text-emerald-400">feature_selection</span></h3>
+                        </div>
+                        <ul class="space-y-4">
+                            <li class="bg-slate-800/50 p-4 rounded-lg border border-slate-700 hover:border-emerald-500 transition">
+                                <code class="text-pink-400 font-bold">SelectKBest()</code>
+                                <p class="text-slate-400 text-sm mt-1">Filtro: Elimina todo menos las 'k' características con puntuación más alta.</p>
+                            </li>
+                            <li class="bg-slate-800/50 p-4 rounded-lg border border-slate-700 hover:border-emerald-500 transition">
+                                <code class="text-pink-400 font-bold">RFE()</code>
+                                <p class="text-slate-400 text-sm mt-1">Wrapper: Eliminación Recursiva de Características dada una estimación de pesos.</p>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección 5: Laboratorio Colab -->
+        <section id="laboratorio" class="section-content max-w-5xl mx-auto">
+            <div class="mb-8">
+                <h2 class="text-4xl font-extrabold text-slate-800 mb-4">Reto Google Colab: Dataset Wine</h2>
+                <p class="text-lg text-slate-600 leading-relaxed bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    Aplica la teoría de la Clase 2 construyendo una libreta de Jupyter. Primero, observa la simulación en el panel izquierdo de lo que esperamos obtener. Luego, sigue las instrucciones para generar y ejecutar el código usando IA en Google Colab.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                
+                <!-- Columna Izquierda: Simulador Interactivo -->
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-md flex flex-col">
+                    <h3 class="font-bold text-slate-800 text-lg mb-2">1. Simulación Visual (Expectativa)</h3>
+                    <p class="text-slate-600 text-sm mb-6">Interactúa con el flujo de preparación para el dataset Wine y observa cómo impacta en el rendimiento de un clasificador simple.</p>
+                    
+                    <div class="space-y-3 mb-6">
+                        <button onclick="labStep(1)" id="lab-btn-1" class="w-full text-left p-3 bg-white border-2 border-indigo-500 bg-indigo-50 rounded-lg flex items-center justify-between">
+                            <span class="font-bold text-indigo-800">1. Entrenar con datos crudos</span>
+                            <span>📊</span>
+                        </button>
+                        <button onclick="labStep(2)" id="lab-btn-2" class="w-full text-left p-3 bg-white border-2 border-slate-200 hover:border-indigo-300 rounded-lg transition flex items-center justify-between opacity-60">
+                            <span class="font-bold text-slate-600">2. Normalizar (StandardScaler)</span>
+                            <span>📏</span>
+                        </button>
+                        <button onclick="labStep(3)" id="lab-btn-3" class="w-full text-left p-3 bg-white border-2 border-slate-200 hover:border-indigo-300 rounded-lg transition flex items-center justify-between opacity-60">
+                            <span class="font-bold text-slate-600">3. Selección (SelectKBest)</span>
+                            <span>✂️</span>
+                        </button>
+                    </div>
+
+                    <div class="flex-1 min-h-[200px] border-t border-slate-100 pt-4">
+                        <div class="chart-container" style="height: 100%;">
+                            <canvas id="labChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Columna Derecha: Instrucciones Colab & Prompt -->
+                <div class="bg-slate-900 p-8 rounded-2xl shadow-xl flex flex-col border border-slate-700">
+                    <div class="flex items-center gap-3 mb-6 pb-4 border-b border-slate-700">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/d/d0/Google_Colaboratory_SVG_Logo.svg" alt="Colab" class="h-8 w-8">
+                        <h3 class="font-bold text-white text-xl">2. Construcción en Colab</h3>
+                    </div>
+                    
+                    <ol class="text-slate-300 text-sm space-y-4 mb-6">
+                        <li><strong>Paso 1:</strong> Abre <a href="https://colab.research.google.com/" target="_blank" class="text-indigo-400 hover:underline font-bold">Google Colab</a> y crea un "Nuevo cuaderno".</li>
+                        <li><strong>Paso 2:</strong> Haz clic en el botón <strong>"Generar con IA"</strong> (o "Gemini") en la barra de herramientas.</li>
+                        <li><strong>Paso 3:</strong> Copia y pega exactamente el siguiente <em>Prompt</em> de ingeniería:</li>
+                    </ol>
+
+                    <div class="bg-slate-800 p-5 rounded-xl border border-indigo-500/30 relative">
+                        <div class="absolute top-0 right-0 bg-indigo-500/20 text-indigo-300 text-xs px-2 py-1 rounded-bl-lg rounded-tr-xl">Prompt</div>
+                        <p class="font-mono text-sm text-emerald-300 italic leading-relaxed">
+                            "Genera un script en Python para scikit-learn utilizando el dataset 'wine' (load_wine). Entrena un clasificador KNeighborsClassifier. 
+                            <br><br>
+                            Muestra 3 resultados de 'accuracy' en el test set: <br>
+                            1. Usando los datos originales (crudos). <br>
+                            2. Aplicando StandardScaler a los datos. <br>
+                            3. Aplicando StandardScaler y luego SelectKBest (k=5). <br><br>
+                            Genera un gráfico de barras comparando los 3 resultados. Explica en los comentarios por qué el preprocesamiento mejora el modelo."
+                        </p>
+                    </div>
+
+                    <div class="mt-6 p-4 bg-indigo-900/40 border border-indigo-500/30 rounded-lg">
+                        <h4 class="text-indigo-300 font-bold text-sm mb-1">Actividad Final:</h4>
+                        <p class="text-xs text-slate-400">Ejecuta el código generado en Colab. ¿Los resultados de tu cuaderno coinciden con la tendencia de mejora mostrada en nuestra simulación interactiva? Analiza la importancia de los pasos 2 y 3.</p>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        // --- Navegación SPA ---
+        const navState = { current: 'intro' };
+        
+        function navigate(sectionId) {
+            document.querySelectorAll('.nav-item').forEach(el => {
+                el.classList.remove('active', 'bg-eef2ff', 'text-indigo-700', 'border-r-4', 'border-indigo-500', 'font-bold');
+                el.classList.add('text-slate-600');
+                el.style.backgroundColor = 'transparent';
+            });
+            
+            const btn = document.querySelector(`button[onclick="navigate('${sectionId}')"]`);
+            if(btn) {
+                btn.classList.add('active', 'text-indigo-700', 'border-r-4', 'border-indigo-500', 'font-bold');
+                btn.classList.remove('text-slate-600');
+                btn.style.backgroundColor = '#eef2ff';
+            }
+
+            document.querySelectorAll('.section-content').forEach(el => el.classList.remove('active'));
+            document.getElementById(sectionId).classList.add('active');
+            navState.current = sectionId;
+
+            if(sectionId === 'transformaciones' && !window.scaleChartObj) initScaleChart();
+            if(sectionId === 'laboratorio' && !window.labChartObj) initLabChart();
+        }
+
+        // --- Simulación de Normalización (Gráfico Scatter) ---
+        let scaleChartObj = null;
+        
+        // Datos crudos simulados (Desproporcionados)
+        const rawData = Array.from({length: 30}, () => ({
+            x: Math.random() * 10,        // Edad (0-10)
+            y: 5000 + Math.random() * 5000 // Salario (5k-10k)
+        }));
+        
+        // Datos estandarizados (Escalados)
+        const normData = rawData.map(p => ({
+            x: (p.x - 5) / 2.5, 
+            y: (p.y - 7500) / 1500 
+        }));
+
+        function initScaleChart() {
+            const ctx = document.getElementById('scalingChart').getContext('2d');
+            scaleChartObj = new Chart(ctx, {
+                type: 'scatter',
+                data: {
+                    datasets: [{
+                        label: 'Instancias (Personas)',
+                        data: rawData,
+                        backgroundColor: '#6366f1', // indigo-500
+                        pointRadius: 6,
+                        pointHoverRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { type: 'linear', position: 'bottom', title: {display: true, text: 'Edad (Años)'} },
+                        y: { title: {display: true, text: 'Salario (USD)'} }
+                    },
+                    animation: { duration: 1200, easing: 'easeInOutQuart' }
+                }
+            });
+        }
+
+        function updateScaleChart(mode) {
+            if(!scaleChartObj) return;
+            const btnRaw = document.getElementById('btn-scale-raw');
+            const btnNorm = document.getElementById('btn-scale-norm');
+            const caption = document.getElementById('scale-caption');
+
+            if(mode === 'raw') {
+                btnRaw.className = "px-4 py-2 bg-white text-slate-800 shadow-sm rounded text-sm font-bold transition";
+                btnNorm.className = "px-4 py-2 text-slate-600 hover:text-slate-800 rounded text-sm font-bold transition";
+                
+                scaleChartObj.data.datasets[0].data = rawData;
+                scaleChartObj.options.scales.x.min = 0; scaleChartObj.options.scales.x.max = 12;
+                scaleChartObj.options.scales.y.min = 0; scaleChartObj.options.scales.y.max = 12000;
+                caption.innerHTML = "<strong>Modo Crudo:</strong> El 'Salario' domina el eje Y con valores altos. Algoritmos basados en distancia (como KNN) darán toda la importancia al salario e ignorarán la edad.";
+                caption.className = "mt-4 p-4 bg-red-50 text-red-800 text-sm rounded-lg border border-red-100";
+            } else {
+                btnNorm.className = "px-4 py-2 bg-white text-slate-800 shadow-sm rounded text-sm font-bold transition";
+                btnRaw.className = "px-4 py-2 text-slate-600 hover:text-slate-800 rounded text-sm font-bold transition";
+                
+                scaleChartObj.data.datasets[0].data = normData;
+                scaleChartObj.options.scales.x.min = -3; scaleChartObj.options.scales.x.max = 3;
+                scaleChartObj.options.scales.y.min = -3; scaleChartObj.options.scales.y.max = 3;
+                caption.innerHTML = "<strong>Modo Estandarizado (StandardScaler):</strong> Media 0 y varianza 1 para ambos ejes. Ahora ambas variables contribuyen equitativamente a los cálculos matemáticos del modelo.";
+                caption.className = "mt-4 p-4 bg-indigo-50 text-indigo-800 text-sm rounded-lg border border-indigo-100";
+            }
+            scaleChartObj.update();
+        }
+
+        // --- Simulación de Laboratorio (Gráfico Barras) ---
+        let labChartObj = null;
+        let labState = { step: 1 };
+
+        function initLabChart() {
+            const ctx = document.getElementById('labChart').getContext('2d');
+            labChartObj = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Datos Crudos'],
+                    datasets: [{
+                        label: 'Accuracy %',
+                        data: [72.5],
+                        backgroundColor: ['#cbd5e1'], // slate-300
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { 
+                        legend: { display: false },
+                        tooltip: { callbacks: { label: (ctx) => `Precisión: ${ctx.raw}%` } }
+                    },
+                    scales: {
+                        y: { min: 0, max: 100, grid: { color: '#f1f5f9' }, title: {display: true, text: 'Precisión del Modelo (%)'} },
+                        x: { grid: { display: false } }
+                    },
+                    animation: { duration: 800 }
+                }
+            });
+            // Activar visualmente el botón 2
+            document.getElementById('lab-btn-2').classList.remove('opacity-60');
+        }
+
+        function labStep(step) {
+            if(!labChartObj || step > labState.step + 1) return; // Prevent skipping steps
+            
+            labState.step = step;
+            const btn = document.getElementById(`lab-btn-${step}`);
+            
+            // Highlight current button
+            btn.classList.remove('border-slate-200', 'hover:border-indigo-300');
+            btn.classList.add('border-indigo-500', 'bg-indigo-50');
+            btn.querySelector('span').classList.replace('text-slate-600', 'text-indigo-800');
+
+            if(step === 2) {
+                // Add Normalization data
+                if(labChartObj.data.labels.length === 1) {
+                    labChartObj.data.labels.push('Normalizados');
+                    labChartObj.data.datasets[0].data.push(95.4);
+                    labChartObj.data.datasets[0].backgroundColor.push('#818cf8'); // indigo-400
+                    labChartObj.update();
+                }
+                document.getElementById('lab-btn-3').classList.remove('opacity-60');
+            } 
+            else if(step === 3) {
+                // Add Selection data
+                if(labChartObj.data.labels.length === 2) {
+                    labChartObj.data.labels.push('Norm + Selección');
+                    labChartObj.data.datasets[0].data.push(98.1);
+                    labChartObj.data.datasets[0].backgroundColor.push('#10b981'); // emerald-500
+                    labChartObj.update();
+                }
+            }
+        }
+    </script>
+</body>
+</html>
