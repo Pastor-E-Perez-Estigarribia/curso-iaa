@@ -5,14 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Módulo IAA - Introducción al Aprendizaje Automático</title>
     
-    <!-- Chosen Palette: Academic Slate & Teal (Slate-900 bg, Slate-50 panels, Teal-600 accents) -->
-    <!-- Application Structure Plan: Master Index/Landing Page for the IAA module. Features a hero section with course info, an overview section detailing objectives and bibliography from the syllabus, and a responsive CSS Grid displaying the 7 specific classes outlined in the 'Organización del Módulo IAA' document. Class 1 is active, while 2-7 are visually indicated as upcoming to set student expectations. -->
-    <!-- Visualization & Content Choices: 
-         - Layout: CSS Grid/Flexbox via Tailwind -> Goal: Organize -> Provides a clean, modern dashboard feel.
-         - Icons: Unicode emojis -> Goal: Inform -> Avoids SVG dependencies while maintaining visual hierarchy.
-         - Interactive Cards: CSS hover states -> Goal: Engagement -> Distinguishes between available content (Clase 1) and locked content (Clases 2-7). -->
-    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
-
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body { 
@@ -30,7 +22,11 @@
         .class-card.active:hover { 
             transform: translateY(-5px); 
             box-shadow: 0 10px 25px -5px rgba(13, 148, 136, 0.2); 
-            border-color: #0d9488;
+        }
+        .class-card.active-indigo:hover {
+            transform: translateY(-5px); 
+            box-shadow: 0 10px 25px -5px rgba(99, 102, 241, 0.2); 
+            border-color: #6366f1;
         }
         .class-card.disabled { 
             opacity: 0.65; 
@@ -48,6 +44,14 @@
             0% { box-shadow: 0 0 0 0 rgba(20, 184, 166, 0.4); }
             70% { box-shadow: 0 0 0 6px rgba(20, 184, 166, 0); }
             100% { box-shadow: 0 0 0 0 rgba(20, 184, 166, 0); }
+        }
+        .badge-indigo {
+            animation: pulse-badge-indigo 2s infinite;
+        }
+        @keyframes pulse-badge-indigo {
+            0% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.4); }
+            70% { box-shadow: 0 0 0 6px rgba(99, 102, 241, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0); }
         }
     </style>
 </head>
@@ -123,7 +127,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
                 
                 <!-- CLASE 1 (Activa) -->
-                <a href="clase_1_spa.html" class="class-card active block bg-white rounded-2xl shadow-sm border-2 border-teal-500 relative overflow-visible h-full flex flex-col">
+                <a href="clase_1_spa.html" class="class-card active block bg-white rounded-2xl shadow-sm border-2 border-teal-500 relative overflow-visible h-full flex flex-col hover:z-10">
                     <div class="absolute -top-3 -right-3 bg-teal-500 text-white text-xs font-bold px-4 py-1.5 rounded-full z-10 shadow-md badge tracking-wide">
                         DISPONIBLE
                     </div>
@@ -140,19 +144,23 @@
                     </div>
                 </a>
 
-                <!-- CLASE 2 (Próximamente) -->
-                <div class="class-card disabled bg-white rounded-2xl shadow-sm border border-slate-200 relative h-full flex flex-col">
-                    <div class="bg-slate-50 p-6 rounded-t-xl border-b border-slate-100">
-                        <span class="text-slate-500 font-extrabold text-xs tracking-widest uppercase">Clase 2</span>
+                <!-- CLASE 2 (ACTIVA - NUEVA) -->
+                <a href="clase_2_spa.html" class="class-card active-indigo block bg-white rounded-2xl shadow-sm border-2 border-indigo-500 relative overflow-visible h-full flex flex-col hover:z-10">
+                    <div class="absolute -top-3 -right-3 bg-indigo-500 text-white text-xs font-bold px-4 py-1.5 rounded-full z-10 shadow-md badge-indigo tracking-wide">
+                        NUEVO
+                    </div>
+                    <div class="bg-indigo-50 p-6 rounded-t-xl border-b border-indigo-100">
+                        <span class="text-indigo-600 font-extrabold text-xs tracking-widest uppercase">Clase 2</span>
                         <h3 class="text-xl font-bold text-slate-800 mt-2 leading-tight">Preparación de Datos y Atributos</h3>
                     </div>
                     <div class="p-6 flex-1 flex flex-col justify-between">
-                        <p class="text-slate-600 text-sm mb-6 leading-relaxed">Importancia del preprocesamiento. Limpieza, normalización, codificación y selección de atributos.</p>
-                        <div class="flex items-center gap-2 text-xs font-bold text-slate-400 bg-slate-100 w-fit px-3 py-1.5 rounded-md">
-                            <span>🔒 Próximamente</span>
+                        <p class="text-slate-600 text-sm mb-6 leading-relaxed">Importancia del preprocesamiento. Limpieza, normalización, codificación y selección de atributos con simulador interactivo.</p>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="bg-blue-50 text-blue-700 border border-blue-200 px-2 py-1 rounded text-xs font-semibold">Teoría</span>
+                            <span class="bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-1 rounded text-xs font-semibold">Colab</span>
                         </div>
                     </div>
-                </div>
+                </a>
 
                 <!-- CLASE 3 (Próximamente) -->
                 <div class="class-card disabled bg-white rounded-2xl shadow-sm border border-slate-200 relative h-full flex flex-col">
@@ -211,7 +219,7 @@
                 </div>
 
                 <!-- CLASE 7 (Próximamente) -->
-                <div class="class-card disabled bg-white rounded-2xl shadow-sm border border-slate-200 relative h-full flex flex-col md:col-span-2 lg:col-span-1 xl:col-span-2 bg-gradient-to-br from-slate-50 to-slate-100">
+                <div class="class-card disabled bg-white rounded-2xl shadow-sm border border-slate-200 relative h-full flex flex-col lg:col-span-2 bg-gradient-to-br from-slate-50 to-slate-100">
                     <div class="bg-slate-100/50 p-6 rounded-t-xl border-b border-slate-200">
                         <span class="text-slate-500 font-extrabold text-xs tracking-widest uppercase">Clase 7 (Final)</span>
                         <h3 class="text-xl font-bold text-slate-800 mt-2 leading-tight">Integración y Pipelines</h3>
