@@ -47,3 +47,4 @@ El módulo está dividido en 7 clases progresivas. Cada clase incluye su teoría
 3. **scikit-learn developers.** *Official User Guide & API Documentation.*
 
 *Módulo desarrollado para la especialización en la Facultad Politécnica \- Universidad Nacional de Asunción (FP-UNA).*
+
