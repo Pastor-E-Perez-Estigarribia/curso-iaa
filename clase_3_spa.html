@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clase 3: Modelos Supervisados I - Módulo IAA</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        body { font-family: 'Segoe UI', system-ui, sans-serif; background-color: #f8fafc; color: #1e293b; }
+        
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) { .chart-container { height: 350px; } }
+
+        .nav-item { transition: all 0.2s ease; }
+        .nav-item.active { background-color: #ecfdf5; color: #059669; border-right: 4px solid #059669; font-weight: 600; }
+        
+        .section-content { display: none; animation: fadeIn 0.4s ease-in-out; }
+        .section-content.active { display: block; }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .tree-node { @apply bg-white border-2 border-emerald-500 rounded-lg p-3 text-center shadow-sm text-sm font-bold text-slate-700; }
+        .tree-line { @apply w-0.5 h-6 bg-emerald-300 mx-auto; }
+    </style>
+</head>
+<body class="flex flex-col md:flex-row h-screen overflow-hidden">
+
+    <nav class="w-full md:w-72 bg-white shadow-xl h-auto md:h-full flex flex-col z-20 shrink-0">
+        <div class="p-6 bg-slate-900 text-white border-b-4 border-emerald-500">
+            <h1 class="text-2xl font-bold tracking-tight">Módulo IAA</h1>
+            <p class="text-sm text-emerald-300 mt-1">Clase 3: Modelos Supervisados I</p>
+        </div>
+        <div class="flex-1 overflow-y-auto py-4 flex flex-row md:flex-col overflow-x-auto hide-scrollbar" id="nav-menu">
+            <button onclick="navigate('intro')" class="nav-item active text-left px-6 py-4 hover:bg-slate-50 whitespace-nowrap md:whitespace-normal flex items-center gap-3 text-emerald-700">
+                <span class="text-xl">🎯</span> Fundamentos
+            </button>
+            <button onclick="navigate('modelos')" class="nav-item text-left px-6 py-4 hover:bg-slate-50 whitespace-nowrap md:whitespace-normal flex items-center gap-3 text-slate-600">
+                <span class="text-xl">🗂️</span> Los 3 Algoritmos
+            </button>
+            <button onclick="navigate('tradeoff')" class="nav-item text-left px-6 py-4 hover:bg-slate-50 whitespace-nowrap md:whitespace-normal flex items-center gap-3 text-slate-600">
+                <span class="text-xl">⚖️</span> El Dilema (Trade-off)
+            </button>
+            <button onclick="navigate('laboratorio')" class="nav-item text-left px-6 py-4 hover:bg-slate-50 whitespace-nowrap md:whitespace-normal flex items-center gap-3 text-slate-600">
+                <span class="text-xl">🚀</span> Reto Colab
+            </button>
+            
+            <a href="https://notebooklm.google.com/notebook/e564a7c8-11a3-43bb-bd67-7793d7f3e6e6" target="_blank" rel="noopener noreferrer" class="md:mt-auto text-left px-6 py-4 bg-amber-50 hover:bg-amber-100 text-amber-800 font-bold flex items-center gap-3 whitespace-nowrap md:whitespace-normal transition-colors border-t border-amber-200 shadow-inner">
+                <span class="text-xl">🤖</span> Asistente NotebookLM
+            </a>
+        </div>
+    </nav>
+
+    <main class="flex-1 overflow-y-auto p-6 md:p-12 bg-slate-50">
+
+        <section id="intro" class="section-content active max-w-5xl mx-auto">
+            <div class="mb-10">
+                <h2 class="text-4xl font-extrabold text-slate-800 mb-4">Aprendizaje Supervisado Clásico</h2>
+                <p class="text-lg text-slate-600 leading-relaxed bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    Recordemos la Clase 1: en el aprendizaje supervisado, contamos con datos <strong>etiquetados</strong>. Nuestro objetivo es entrenar a un algoritmo mostrándole ejemplos (datos históricos) junto con sus respuestas correctas, para que encuentre patrones y pueda predecir respuestas sobre datos futuros y desconocidos.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="bg-white p-8 rounded-2xl shadow-sm border-t-4 border-emerald-500 transform transition hover:-translate-y-1">
+                    <h3 class="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2"><span>🏷️</span> Problemas que resuelve</h3>
+                    <ul class="space-y-4 text-slate-600">
+                        <li class="flex items-start gap-2"><span class="text-emerald-500 font-bold">1.</span> <strong>Clasificación:</strong> La respuesta es una categoría. (Ej: ¿El tumor es Maligno o Benigno? ¿El correo es Spam o No Spam?).</li>
+                        <li class="flex items-start gap-2"><span class="text-emerald-500 font-bold">2.</span> <strong>Regresión:</strong> La respuesta es un número continuo. (Ej: ¿Cuál será el precio de esta casa? ¿Cuántos grados hará mañana?).</li>
+                    </ul>
+                </div>
+                
+                <div class="bg-slate-800 p-8 rounded-2xl shadow-sm border-t-4 border-blue-400 text-white transform transition hover:-translate-y-1">
+                    <h3 class="text-xl font-bold text-white mb-4 flex items-center gap-2"><span>🧠</span> Enfoque de esta clase</h3>
+                    <p class="text-slate-300 leading-relaxed">
+                        Nos centraremos en problemas de <strong>Clasificación</strong> estudiando el ciclo evolutivo de los modelos: desde una aproximación matemática pura (Regresión Logística), pasando por reglas lógicas humanas (Árboles), hasta llegar al consenso estadístico avanzado (Bosques Aleatorios).
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section id="modelos" class="section-content max-w-5xl mx-auto">
+            <div class="mb-8">
+                <h2 class="text-4xl font-extrabold text-slate-800 mb-4">Los 3 Algoritmos Fundamentales</h2>
+                <p class="text-lg text-slate-600 leading-relaxed bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    Cada modelo tiene una "forma de pensar" matemática distinta. No existe el "mejor modelo universal", la elección depende del problema, los datos y si necesitamos explicar nuestras decisiones.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow hover:shadow-lg transition flex flex-col relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-16 h-16 bg-blue-100 rounded-bl-full z-0"></div>
+                    <div class="relative z-10">
+                        <div class="text-4xl mb-4">📈</div>
+                        <h3 class="text-xl font-bold text-slate-800 mb-2">Regresión Logística</h3>
+                        <p class="text-slate-600 text-sm mb-4 h-20">Utiliza la función Sigmoide matemática para estimar la <strong>probabilidad</strong> (de 0 a 1) de que una instancia pertenezca a una clase.</p>
+                        
+                        <div class="bg-slate-50 p-4 rounded-lg text-sm">
+                            <p class="text-emerald-600 font-bold mb-1">👍 Ventajas:</p>
+                            <p class="text-slate-600 mb-3 text-xs">Muy rápida, simple y altamente interpretable estadísticamente.</p>
+                            
+                            <p class="text-red-500 font-bold mb-1">👎 Limitaciones:</p>
+                            <p class="text-slate-600 text-xs">Asume que las clases se pueden separar con una línea recta (linealidad).</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow hover:shadow-lg transition flex flex-col relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-16 h-16 bg-emerald-100 rounded-bl-full z-0"></div>
+                    <div class="relative z-10">
+                        <div class="text-4xl mb-4">🌲</div>
+                        <h3 class="text-xl font-bold text-slate-800 mb-2">Árbol de Decisión</h3>
+                        <p class="text-slate-600 text-sm mb-4 h-20">Divide los datos mediante preguntas secuenciales de tipo <strong>"Si/Entonces"</strong> (Ej: ¿Edad > 50? -> Sí -> ¿Fuma?).</p>
+                        
+                        <div class="bg-slate-50 p-4 rounded-lg text-sm">
+                            <p class="text-emerald-600 font-bold mb-1">👍 Ventajas:</p>
+                            <p class="text-slate-600 mb-3 text-xs">100% explicable a humanos. No requiere normalizar los datos.</p>
+                            
+                            <p class="text-red-500 font-bold mb-1">👎 Limitaciones:</p>
+                            <p class="text-slate-600 text-xs">Tiende a memorizar los datos (Sobreajuste / Overfitting) si crece mucho.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow hover:shadow-lg transition flex flex-col relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-16 h-16 bg-amber-100 rounded-bl-full z-0"></div>
+                    <div class="relative z-10">
+                        <div class="text-4xl mb-4">🌳🌳</div>
+                        <h3 class="text-xl font-bold text-slate-800 mb-2">Random Forest</h3>
+                        <p class="text-slate-600 text-sm mb-4 h-20">Un <strong>Ensamble</strong>. Crea cientos de árboles distintos y los hace "votar" para tomar la decisión final. (Sabiduría de la multitud).</p>
+                        
+                        <div class="bg-slate-50 p-4 rounded-lg text-sm">
+                            <p class="text-emerald-600 font-bold mb-1">👍 Ventajas:</p>
+                            <p class="text-slate-600 mb-3 text-xs">Extremadamente preciso y evita automáticamente el sobreajuste.</p>
+                            
+                            <p class="text-red-500 font-bold mb-1">👎 Limitaciones:</p>
+                            <p class="text-slate-600 text-xs">Es una "Caja Negra". Difícil de explicar el "por qué" de una decisión.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="tradeoff" class="section-content max-w-5xl mx-auto">
+            <div class="mb-8">
+                <h2 class="text-4xl font-extrabold text-slate-800 mb-4">El Dilema: Interpretabilidad vs. Rendimiento</h2>
+                <p class="text-lg text-slate-600 leading-relaxed bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    En Machine Learning, existe una regla general: <strong>cuanto más complejo es un modelo para capturar patrones invisibles (alto rendimiento), más difícil es entender cómo llegó a su conclusión (baja interpretabilidad)</strong>.
+                </p>
+            </div>
+
+            <div class="bg-white p-8 rounded-2xl border border-slate-200 shadow-md">
+                <h3 class="font-bold text-slate-700 text-center uppercase tracking-widest text-sm mb-6">Mapa Conceptual de Modelos</h3>
+                <div class="chart-container" style="height: 350px;">
+                    <canvas id="tradeoffChart"></canvas>
+                </div>
+                
+                <div class="mt-8 p-4 bg-slate-100 rounded-lg text-sm text-slate-700 flex items-start gap-3">
+                    <span class="text-2xl">💡</span>
+                    <p>
+                        <strong>Reflexión:</strong> Si estás prediciendo si un paciente tiene cáncer para el Ministerio de Salud, necesitas un modelo explicable (Árbol o Logística) para justificar el tratamiento médico, aunque pierdas un poco de precisión. Si estás recomendando películas en Netflix, no importa por qué funciona, solo quieres precisión máxima (Bosque Aleatorio o Redes Neuronales).
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section id="laboratorio" class="section-content max-w-5xl mx-auto">
+            <div class="mb-8">
+                <h2 class="text-4xl font-extrabold text-slate-800 mb-4">Reto Google Colab: Modelando con Datos Reales</h2>
+                <p class="text-lg text-slate-600 leading-relaxed bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    Utilizaremos el clásico dataset <code>breast_cancer</code> de Scikit-Learn. Experimenta visualmente entrenando los modelos aquí, y luego construye la solución real en Python.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-md flex flex-col">
+                    <h3 class="font-bold text-slate-800 text-lg mb-2">1. Simulación de Entrenamiento</h3>
+                    <p class="text-slate-600 text-sm mb-6">Ejecuta los algoritmos en orden para observar cómo varía el <strong>Accuracy</strong> (Precisión) según su complejidad frente a datos médicos.</p>
+                    
+                    <div class="space-y-3 mb-6">
+                        <button onclick="labStep(1)" id="lab-btn-1" class="w-full text-left p-3 bg-white border-2 border-emerald-500 bg-emerald-50 rounded-lg flex items-center justify-between">
+                            <span class="font-bold text-emerald-800">1. Entrenar Regresión Logística</span>
+                            <span>📈</span>
+                        </button>
+                        <button onclick="labStep(2)" id="lab-btn-2" class="w-full text-left p-3 bg-white border-2 border-slate-200 hover:border-emerald-300 rounded-lg transition flex items-center justify-between opacity-60">
+                            <span class="font-bold text-slate-600">2. Entrenar Árbol de Decisión</span>
+                            <span>🌲</span>
+                        </button>
+                        <button onclick="labStep(3)" id="lab-btn-3" class="w-full text-left p-3 bg-white border-2 border-slate-200 hover:border-emerald-300 rounded-lg transition flex items-center justify-between opacity-60">
+                            <span class="font-bold text-slate-600">3. Entrenar Random Forest</span>
+                            <span>🌳</span>
+                        </button>
+                    </div>
+
+                    <div class="flex-1 min-h-[200px] border-t border-slate-100 pt-4">
+                        <div class="chart-container" style="height: 100%;">
+                            <canvas id="labChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-slate-900 p-8 rounded-2xl shadow-xl flex flex-col border border-slate-700">
+                    <div class="flex items-center gap-3 mb-6 pb-4 border-b border-slate-700">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/d/d0/Google_Colaboratory_SVG_Logo.svg" alt="Colab" class="h-8 w-8">
+                        <h3 class="font-bold text-white text-xl">2. Práctica en Python</h3>
+                    </div>
+                    
+                    <ol class="text-slate-300 text-sm space-y-4 mb-6">
+                        <li><strong>Paso 1:</strong> Crea un cuaderno con el botón inferior o desde cero.</li>
+                        <li><strong>Paso 2:</strong> Usa el generador de IA de Colab con este <em>Prompt</em>:</li>
+                    </ol>
+
+                    <div class="bg-slate-800 p-5 rounded-xl border border-emerald-500/30 relative mb-6">
+                        <div class="absolute top-0 right-0 bg-emerald-500/20 text-emerald-300 text-xs px-2 py-1 rounded-bl-lg rounded-tr-xl">Prompt IA</div>
+                        <p class="font-mono text-sm text-emerald-300 italic leading-relaxed">
+                            "Genera un script en Python con scikit-learn usando el dataset 'breast_cancer'. Separa en train y test. Entrena tres modelos: Regresión Logística, Árbol de Decisión y Random Forest. 
+                            <br><br>
+                            Muestra el 'accuracy_score' de los tres para compararlos. Por último, usa la función 'plot_tree' importada de sklearn.tree para graficar visualmente el Árbol de Decisión (limita el max_depth=3 para que sea legible)."
+                        </p>
+                    </div>
+
+                    <div class="mt-auto flex flex-col gap-3">
+                        <a href="https://colab.research.google.com/github/Pastor-E-Perez-Estigarribia/curso-iaa/blob/main/colab_notebook/3-modelos_supervisados.ipynb" target="_blank" rel="noopener noreferrer" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 px-4 rounded-xl shadow-md transition transform hover:-translate-y-1 flex items-center justify-center gap-3">
+                            <span class="text-xl">⚡</span> Abrir Jupyter / Colab
+                        </a>
+                        <a href="https://github.com/Pastor-E-Perez-Estigarribia/curso-iaa/" target="_blank" rel="noopener noreferrer" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-600 font-bold py-2 px-4 rounded-xl transition flex items-center justify-center gap-3 text-sm">
+                            <span class="text-lg">📁</span> Repositorio GitHub
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        // --- Navegación SPA ---
+        const navState = { current: 'intro' };
+        
+        function navigate(sectionId) {
+            document.querySelectorAll('.nav-item').forEach(el => {
+                el.classList.remove('active', 'bg-ecfdf5', 'text-emerald-700', 'border-r-4', 'border-emerald-500', 'font-bold');
+                el.classList.add('text-slate-600');
+                el.style.backgroundColor = 'transparent';
+            });
+            
+            const btn = document.querySelector(`button[onclick="navigate('${sectionId}')"]`);
+            if(btn) {
+                btn.classList.add('active', 'text-emerald-700', 'border-r-4', 'border-emerald-500', 'font-bold');
+                btn.classList.remove('text-slate-600');
+                btn.style.backgroundColor = '#ecfdf5';
+            }
+
+            document.querySelectorAll('.section-content').forEach(el => el.classList.remove('active'));
+            document.getElementById(sectionId).classList.add('active');
+            navState.current = sectionId;
+
+            if(sectionId === 'tradeoff' && !window.tradeoffChartObj) initTradeoffChart();
+            if(sectionId === 'laboratorio' && !window.labChartObj) initLabChart();
+        }
+
+        // --- Gráfico de Trade-off (Burbujas/Scatter) ---
+        let tradeoffChartObj = null;
+
+        function initTradeoffChart() {
+            const ctx = document.getElementById('tradeoffChart').getContext('2d');
+            
+            // X: Interpretabilidad (0-10), Y: Rendimiento/Complejidad (0-10)
+            const data = {
+                datasets: [
+                    {
+                        label: 'Regresión Logística',
+                        data: [{ x: 9.5, y: 5.5, r: 15 }], // Highly interp, moderate perf
+                        backgroundColor: '#3b82f6', // blue-500
+                    },
+                    {
+                        label: 'Árbol de Decisión',
+                        data: [{ x: 8.5, y: 7.0, r: 15 }], // Very interp, good perf (but overfitting risk)
+                        backgroundColor: '#10b981', // emerald-500
+                    },
+                    {
+                        label: 'Random Forest (Ensamble)',
+                        data: [{ x: 3.5, y: 9.0, r: 15 }], // Low interp, high perf
+                        backgroundColor: '#f59e0b', // amber-500
+                    },
+                    {
+                        label: 'Deep Learning (Redes Neuronales)',
+                        data: [{ x: 1.0, y: 9.8, r: 15 }], // Black box, extremely high perf
+                        backgroundColor: '#94a3b8', // slate-400 (contextual comparison)
+                    }
+                ]
+            };
+
+            tradeoffChartObj = new Chart(ctx, {
+                type: 'bubble',
+                data: data,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { 
+                        legend: { position: 'bottom', labels: { usePointStyle: true, boxWidth: 8 } },
+                        tooltip: {
+                            callbacks: {
+                                label: (ctx) => `${ctx.dataset.label}: Int(${ctx.raw.x}) | Rend(${ctx.raw.y})`
+                            }
+                        }
+                    },
+                    scales: {
+                        x: { min: 0, max: 10, title: {display: true, text: '➔ Mayor Interpretabilidad / Explicabilidad ➔', font: {weight: 'bold'}} },
+                        y: { min: 4, max: 10, title: {display: true, text: '➔ Mayor Precisión / Complejidad ➔', font: {weight: 'bold'}} }
+                    },
+                    animation: { duration: 1500, easing: 'easeOutBounce' }
+                }
+            });
+        }
+
+        // --- Gráfico de Laboratorio (Barras de Accuracy) ---
+        let labChartObj = null;
+        let labState = { step: 1 };
+
+        function initLabChart() {
+            const ctx = document.getElementById('labChart').getContext('2d');
+            labChartObj = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Regresión Logística'],
+                    datasets: [{
+                        label: 'Precisión (Accuracy) %',
+                        data: [94.7],
+                        backgroundColor: ['#3b82f6'], // blue-500
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { 
+                        legend: { display: false },
+                        tooltip: { callbacks: { label: (ctx) => `Precisión: ${ctx.raw}%` } }
+                    },
+                    scales: {
+                        y: { min: 80, max: 100, grid: { color: '#f1f5f9' }, title: {display: true, text: 'Precisión del Modelo (%)'} },
+                        x: { grid: { display: false } }
+                    },
+                    animation: { duration: 800 }
+                }
+            });
+            // Habilitar visualmente el botón 2
+            document.getElementById('lab-btn-2').classList.remove('opacity-60');
+        }
+
+        function labStep(step) {
+            if(!labChartObj || step > labState.step + 1) return;
+            
+            labState.step = step;
+            const btn = document.getElementById(`lab-btn-${step}`);
+            
+            // Highlight current button
+            btn.classList.remove('border-slate-200', 'hover:border-emerald-300');
+            btn.classList.add('border-emerald-500', 'bg-emerald-50');
+            btn.querySelector('span').classList.replace('text-slate-600', 'text-emerald-800');
+
+            if(step === 2) {
+                // Agregar Árbol
+                if(labChartObj.data.labels.length === 1) {
+                    labChartObj.data.labels.push('Árbol de Decisión');
+                    labChartObj.data.datasets[0].data.push(92.1); // Tree often overfits train but is slightly lower on test than logreg for simple datasets
+                    labChartObj.data.datasets[0].backgroundColor.push('#10b981'); // emerald-500
+                    labChartObj.update();
+                }
+                document.getElementById('lab-btn-3').classList.remove('opacity-60');
+            } 
+            else if(step === 3) {
+                // Agregar Random Forest
+                if(labChartObj.data.labels.length === 2) {
+                    labChartObj.data.labels.push('Random Forest');
+                    labChartObj.data.datasets[0].data.push(96.5); // Ensembles usually win
+                    labChartObj.data.datasets[0].backgroundColor.push('#f59e0b'); // amber-500
+                    labChartObj.update();
+                }
+            }
+        }
+    </script>
+</body>
+</html>

@@ -29,6 +29,11 @@
             box-shadow: 0 10px 25px -5px rgba(99, 102, 241, 0.2); 
             border-color: #6366f1;
         }
+        .class-card.active-emerald:hover {
+            transform: translateY(-5px); 
+            box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.2); 
+            border-color: #10b981;
+        }
         .class-card.disabled { 
             opacity: 0.65; 
             filter: grayscale(80%);
@@ -53,6 +58,14 @@
             0% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.4); }
             70% { box-shadow: 0 0 0 6px rgba(99, 102, 241, 0); }
             100% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0); }
+        }
+        .badge-emerald {
+            animation: pulse-badge-emerald 2s infinite;
+        }
+        @keyframes pulse-badge-emerald {
+            0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+            70% { box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
         }
     </style>
 </head>
@@ -138,10 +151,10 @@
             
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
                 
-                <!-- CLASE 1 (Activa) -->
+                <!-- CLASE 1 -->
                 <div class="class-card active block bg-white rounded-2xl shadow-sm border-2 border-teal-500 relative overflow-visible h-full flex flex-col hover:z-10 group">
                     <a href="clase_1_spa.html" class="absolute inset-0 z-0 rounded-2xl"></a>
-                    <div class="absolute -top-3 -right-3 bg-teal-500 text-white text-xs font-bold px-4 py-1.5 rounded-full z-10 shadow-md badge tracking-wide pointer-events-none">
+                    <div class="absolute -top-3 -right-3 bg-slate-200 text-slate-600 text-xs font-bold px-4 py-1.5 rounded-full z-10 shadow-sm pointer-events-none">
                         DISPONIBLE
                     </div>
                     <div class="bg-slate-50 p-6 rounded-t-xl border-b border-slate-100 relative z-10 pointer-events-none">
@@ -159,11 +172,11 @@
                     </div>
                 </div>
 
-                <!-- CLASE 2 (Activa) -->
+                <!-- CLASE 2 -->
                 <div class="class-card active-indigo block bg-white rounded-2xl shadow-sm border-2 border-indigo-500 relative overflow-visible h-full flex flex-col hover:z-10 group">
                     <a href="clase_2_spa.html" class="absolute inset-0 z-0 rounded-2xl"></a>
-                    <div class="absolute -top-3 -right-3 bg-indigo-500 text-white text-xs font-bold px-4 py-1.5 rounded-full z-10 shadow-md badge-indigo tracking-wide pointer-events-none">
-                        NUEVO
+                    <div class="absolute -top-3 -right-3 bg-slate-200 text-slate-600 text-xs font-bold px-4 py-1.5 rounded-full z-10 shadow-sm pointer-events-none">
+                        DISPONIBLE
                     </div>
                     <div class="bg-indigo-50 p-6 rounded-t-xl border-b border-indigo-100 relative z-10 pointer-events-none">
                         <span class="text-indigo-600 font-extrabold text-xs tracking-widest uppercase">Clase 2</span>
@@ -180,16 +193,23 @@
                     </div>
                 </div>
 
-                <!-- CLASE 3 (Próximamente) -->
-                <div class="class-card disabled bg-white rounded-2xl shadow-sm border border-slate-200 relative h-full flex flex-col">
-                    <div class="bg-slate-50 p-6 rounded-t-xl border-b border-slate-100">
-                        <span class="text-slate-500 font-extrabold text-xs tracking-widest uppercase">Clase 3</span>
+                <!-- CLASE 3 (ACTIVA - NUEVA) -->
+                <div class="class-card active-emerald block bg-white rounded-2xl shadow-sm border-2 border-emerald-500 relative overflow-visible h-full flex flex-col hover:z-10 group">
+                    <a href="clase_3_spa.html" class="absolute inset-0 z-0 rounded-2xl"></a>
+                    <div class="absolute -top-3 -right-3 bg-emerald-500 text-white text-xs font-bold px-4 py-1.5 rounded-full z-10 shadow-md badge-emerald tracking-wide pointer-events-none">
+                        NUEVO
+                    </div>
+                    <div class="bg-emerald-50 p-6 rounded-t-xl border-b border-emerald-100 relative z-10 pointer-events-none">
+                        <span class="text-emerald-600 font-extrabold text-xs tracking-widest uppercase">Clase 3</span>
                         <h3 class="text-xl font-bold text-slate-800 mt-2 leading-tight">Modelos Supervisados I</h3>
                     </div>
-                    <div class="p-6 flex-1 flex flex-col justify-between">
-                        <p class="text-slate-600 text-sm mb-6 leading-relaxed">Modelos lineales, Árboles de decisión y Ensambles (Bosques aleatorios). Interpretabilidad vs rendimiento.</p>
-                        <div class="flex items-center gap-2 text-xs font-bold text-slate-400 bg-slate-100 w-fit px-3 py-1.5 rounded-md">
-                            <span>🔒 Próximamente</span>
+                    <div class="p-6 flex-1 flex flex-col justify-between relative z-10">
+                        <p class="text-slate-600 text-sm mb-6 leading-relaxed pointer-events-none">Modelos clásicos. Regresión logística, Árboles de decisión y Ensambles (Bosques aleatorios). Interpretabilidad vs rendimiento.</p>
+                        <div class="flex flex-wrap gap-2 relative z-20">
+                            <span class="bg-blue-50 text-blue-700 border border-blue-200 px-2 py-1 rounded text-xs font-semibold">Teoría</span>
+                            <a href="https://colab.research.google.com/github/Pastor-E-Perez-Estigarribia/curso-iaa/blob/main/colab_notebook/3-modelos_supervisados.ipynb" target="_blank" rel="noopener noreferrer" class="bg-emerald-100 text-emerald-800 border border-emerald-300 px-2 py-1 rounded text-xs font-semibold hover:bg-emerald-200 hover:shadow-md transition cursor-pointer flex items-center gap-1" title="Abrir en Google Colab">
+                                <span>Colab ↗</span>
+                            </a>
                         </div>
                     </div>
                 </div>
