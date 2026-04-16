@@ -1,3 +1,4 @@
+
 # **🤖 Módulo: Introducción al Aprendizaje Automático (IAA)**
 
 Bienvenido al repositorio oficial del módulo **Introducción al Aprendizaje Automático**, desarrollado para el programa de Postgrado de la **Facultad Politécnica de la Universidad Nacional de Asunción (FP-UNA)**.
@@ -10,7 +11,7 @@ El material teórico de este módulo está diseñado en formato de **Single Page
 
 Puedes acceder al índice principal y navegar por las clases desde cualquier dispositivo ingresando a nuestro sitio web:
 
-👉 [**Acceder a la Plataforma Web del Módulo**](https://pastor-e-perez-estigarribia.github.io/curso-iaa/)
+👉 [**Acceder a la Plataforma Web del Módulo**](https://www.google.com/search?q=https://pastor-e-perez-estigarribia.github.io/curso-iaa/)
 
 ## **🎯 Objetivos del Módulo**
 
@@ -26,12 +27,12 @@ El módulo está dividido en 7 clases progresivas. Cada clase incluye su teoría
 | Clase | Tema Principal | Cuaderno de Práctica (Colab) |
 | :---- | :---- | :---- |
 | **1** | **Conceptos y Fundamentos del ML** *Paradigma tradicional vs ML, tipos de aprendizaje y flujo de proyecto.* |  |
-| **2** | **Preparación de Datos y Atributos** *Limpieza, normalización, codificación y métodos de selección (filtrado, wrapper, embebidos).* |  |
-| **3** | **Modelos Supervisados I** *Modelos lineales, Regresión Logística, Árboles de Decisión y Bosques Aleatorios.* | 🔒 *Próximamente* |
-| **4** | **Modelos Supervisados II** *Máquinas de Vectores de Soporte (SVM) y fundamentos de Redes Neuronales (MLP).* | 🔒 *Próximamente* |
-| **5** | **Aprendizaje No Supervisado** *Algoritmos de Clustering (K-means, DBSCAN) y Reducción de Dimensionalidad (PCA).* | 🔒 *Próximamente* |
-| **6** | **Evaluación y Selección de Modelos** *Matriz de confusión, curvas ROC, Validación Cruzada (k-fold) y Grid Search.* | 🔒 *Próximamente* |
-| **7** | **Integración, Pipelines y Proyecto Final** *Construcción de pipelines reproducibles en scikit-learn y desarrollo del proyecto de cierre.* | 🔒 *Próximamente* |
+| **2** | **Preparación de Datos y Atributos** *Limpieza, normalización, codificación y métodos de selección.* |  |
+| **3** | **Modelos Supervisados I** *Modelos lineales, Regresión Logística, Árboles de Decisión y Random Forest.* |  |
+| **4** | **Modelos Supervisados II** *Máquinas de Vectores de Soporte (SVM) y Redes Neuronales (MLP).* | 🔒 *Próximamente* |
+| **5** | **Aprendizaje No Supervisado** *Algoritmos de Clustering (K-means, DBSCAN) y PCA.* | 🔒 *Próximamente* |
+| **6** | **Evaluación y Selección de Modelos** *Matriz de confusión, curvas ROC, Validación Cruzada (k-fold).* | 🔒 *Próximamente* |
+| **7** | **Integración, Pipelines y Proyecto Final** *Construcción de pipelines reproducibles en scikit-learn.* | 🔒 *Próximamente* |
 
 ## **🛠️ Herramientas y Recursos**
 
@@ -47,4 +48,3 @@ El módulo está dividido en 7 clases progresivas. Cada clase incluye su teoría
 3. **scikit-learn developers.** *Official User Guide & API Documentation.*
 
 *Módulo desarrollado para la especialización en la Facultad Politécnica \- Universidad Nacional de Asunción (FP-UNA).*
-
