@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clase 4: Modelos Supervisados II - Módulo IAA</title>
+    
+    <!-- Chosen Palette: Slate & Fuchsia (Slate-50 bg, Slate-800 text, Fuchsia-600 primary action) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        body { font-family: 'Segoe UI', system-ui, sans-serif; background-color: #f8fafc; color: #1e293b; }
+        .chart-container { position: relative; width: 100%; max-width: 700px; margin: 0 auto; height: 350px; }
+        .nav-item { transition: all 0.2s ease; }
+        .nav-item.active { background-color: #fdf4ff; color: #c026d3; border-right: 4px solid #c026d3; font-weight: 600; }
+        .section-content { display: none; animation: fadeIn 0.4s ease-in-out; }
+        .section-content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .neuron { width: 40px; height: 40px; border-radius: 50%; background: #e879f9; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 12px; border: 3px solid #d946ef; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+        .line-connector { position: absolute; background: #f0abfc; z-index: -1; }
+    </style>
+</head>
+<body class="flex flex-col md:flex-row h-screen overflow-hidden">
+
+    <!-- Navegación Lateral -->
+    <nav class="w-full md:w-72 bg-white shadow-xl h-auto md:h-full flex flex-col z-20 shrink-0">
+        <div class="p-6 bg-slate-900 text-white border-b-4 border-fuchsia-500">
+            <h1 class="text-2xl font-bold tracking-tight">Módulo IAA</h1>
+            <p class="text-sm text-fuchsia-300 mt-1">Clase 4: Supervisados II</p>
+        </div>
+        <div class="flex-1 overflow-y-auto py-4 flex flex-row md:flex-col overflow-x-auto hide-scrollbar" id="nav-menu">
+            <button onclick="navigate('intro')" class="nav-item active text-left px-6 py-4 hover:bg-slate-50 whitespace-nowrap md:whitespace-normal flex items-center gap-3 text-fuchsia-700">
+                <span class="text-xl">🎯</span> Más allá de lo Lineal
+            </button>
+            <button onclick="navigate('svm')" class="nav-item text-left px-6 py-4 hover:bg-slate-50 whitespace-nowrap md:whitespace-normal flex items-center gap-3 text-slate-600">
+                <span class="text-xl">📏</span> Support Vector Machines
+            </button>
+            <button onclick="navigate('mlp')" class="nav-item text-left px-6 py-4 hover:bg-slate-50 whitespace-nowrap md:whitespace-normal flex items-center gap-3 text-slate-600">
+                <span class="text-xl">🧠</span> Redes Neuronales (MLP)
+            </button>
+            <button onclick="navigate('fronteras')" class="nav-item text-left px-6 py-4 hover:bg-slate-50 whitespace-nowrap md:whitespace-normal flex items-center gap-3 text-slate-600">
+                <span class="text-xl">🗺️</span> Simulador: El Margen
+            </button>
+            <button onclick="navigate('laboratorio')" class="nav-item text-left px-6 py-4 hover:bg-slate-50 whitespace-nowrap md:whitespace-normal flex items-center gap-3 text-slate-600">
+                <span class="text-xl">🚀</span> Reto Colab
+            </button>
+            
+            <a href="https://notebooklm.google.com/notebook/e564a7c8-11a3-43bb-bd67-7793d7f3e6e6" target="_blank" rel="noopener noreferrer" class="md:mt-auto text-left px-6 py-4 bg-amber-50 hover:bg-amber-100 text-amber-800 font-bold flex items-center gap-3 whitespace-nowrap md:whitespace-normal transition-colors border-t border-amber-200 shadow-inner">
+                <span class="text-xl">🤖</span> Asistente NotebookLM
+            </a>
+        </div>
+    </nav>
+
+    <!-- Contenido Principal -->
+    <main class="flex-1 overflow-y-auto p-6 md:p-12 bg-slate-50">
+
+        <!-- Sección 1: Introducción -->
+        <section id="intro" class="section-content active max-w-5xl mx-auto">
+            <div class="mb-10">
+                <h2 class="text-4xl font-extrabold text-slate-800 mb-4">El límite de la linealidad</h2>
+                <p class="text-lg text-slate-600 leading-relaxed bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    En la clase anterior vimos modelos simples. Sin embargo, en el mundo real, los datos rara vez se pueden separar trazando una simple "línea recta" (como hace la Regresión Logística). Cuando los datos tienen relaciones complejas y no lineales, necesitamos modelos con mayor "fuerza bruta" matemática.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="bg-white p-8 rounded-2xl shadow-sm border-t-4 border-slate-400 transform transition hover:-translate-y-1">
+                    <h3 class="text-xl font-bold text-slate-800 mb-4">La limitación Clásica</h3>
+                    <p class="text-slate-600 mb-4">Imagina un anillo de puntos azules rodeado por un anillo de puntos rojos. Ninguna línea recta trazada de lado a lado podrá separarlos correctamente.</p>
+                    <div class="bg-slate-100 p-4 rounded text-center text-sm font-mono text-slate-500">Regresión Logística -> ❌ Falla</div>
+                </div>
+                
+                <div class="bg-fuchsia-900 p-8 rounded-2xl shadow-sm border-t-4 border-fuchsia-400 text-white transform transition hover:-translate-y-1">
+                    <h3 class="text-xl font-bold text-white mb-4">La Solución Avanzada</h3>
+                    <p class="text-fuchsia-100 mb-4">Modelos como SVM utilizan el "Truco del Kernel" para doblar el espacio, y las Redes Neuronales utilizan múltiples capas para "aprender" curvas y fronteras irregulares.</p>
+                    <div class="bg-fuchsia-800 p-4 rounded text-center text-sm font-mono text-fuchsia-200 border border-fuchsia-600">SVM / Redes Neuronales -> ✅ Éxito</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección 2: SVM -->
+        <section id="svm" class="section-content max-w-5xl mx-auto">
+            <div class="mb-8">
+                <h2 class="text-4xl font-extrabold text-slate-800 mb-4">Máquinas de Vectores de Soporte (SVM)</h2>
+                <p class="text-lg text-slate-600 leading-relaxed bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    A diferencia de otros modelos que solo buscan separar las clases, SVM busca la <strong>"calle más ancha"</strong> (el hiperplano con el mayor margen) entre las dos clases. Los puntos de datos que tocan los bordes de esta "calle" se llaman <em>Vectores de Soporte</em>.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="col-span-2 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                    <h3 class="text-xl font-bold text-fuchsia-700 mb-4">El "Truco del Kernel" (Kernel Trick)</h3>
+                    <p class="text-slate-600 text-sm mb-4">Si los datos no son separables con una línea en 2D, SVM utiliza funciones matemáticas (Kernels) para proyectar los datos a una tercera dimensión temporalmente, donde sí se pueden separar con un plano plano, y luego los devuelve al 2D revelando una curva.</p>
+                    <ul class="space-y-2 text-sm font-medium text-slate-700">
+                        <li class="bg-slate-50 p-2 rounded border border-slate-100">🔵 <strong>Linear:</strong> Para datos simples (línea recta).</li>
+                        <li class="bg-slate-50 p-2 rounded border border-slate-100">🟢 <strong>Poly:</strong> Fronteras curvas polinómicas.</li>
+                        <li class="bg-slate-50 p-2 rounded border border-slate-100">🔴 <strong>RBF (Radial Basis Function):</strong> Fronteras circulares o islas aisladas (el más usado).</li>
+                    </ul>
+                </div>
+                <div class="bg-slate-800 p-6 rounded-2xl text-white shadow-sm flex flex-col justify-center text-center">
+                    <div class="text-6xl mb-4">🛣️</div>
+                    <h3 class="font-bold text-lg mb-2">Robustez</h3>
+                    <p class="text-slate-400 text-sm">Al basarse solo en los vectores de soporte (los puntos límite), SVM es muy resistente a valores atípicos lejanos.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección 3: MLP (Redes Neuronales) -->
+        <section id="mlp" class="section-content max-w-5xl mx-auto">
+            <div class="mb-8">
+                <h2 class="text-4xl font-extrabold text-slate-800 mb-4">Perceptrón Multicapa (MLP)</h2>
+                <p class="text-lg text-slate-600 leading-relaxed bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    Es la arquitectura fundamental de las <strong>Redes Neuronales Artificiales</strong>. Inspirado en el cerebro humano, utiliza capas de "neuronas" interconectadas. Cada neurona recibe señales, aplica una función de activación matemática, y pasa el resultado a la siguiente capa.
+                </p>
+            </div>
+
+            <div class="bg-white p-8 rounded-2xl border border-slate-200 shadow-md">
+                <div class="flex flex-col md:flex-row justify-around items-center gap-8 py-8 relative">
+                    <!-- Concepto Visual Simple -->
+                    <div class="flex flex-col gap-4 relative z-10">
+                        <div class="text-center font-bold text-slate-500 mb-2">Capa Entrada</div>
+                        <div class="neuron">X1</div>
+                        <div class="neuron">X2</div>
+                    </div>
+                    <div class="text-2xl text-slate-300 font-bold">➔</div>
+                    <div class="flex flex-col gap-2 relative z-10">
+                        <div class="text-center font-bold text-fuchsia-600 mb-2">Capa Oculta</div>
+                        <div class="neuron" style="background:#c026d3;">H1</div>
+                        <div class="neuron" style="background:#c026d3;">H2</div>
+                        <div class="neuron" style="background:#c026d3;">H3</div>
+                    </div>
+                    <div class="text-2xl text-slate-300 font-bold">➔</div>
+                    <div class="flex flex-col gap-4 relative z-10">
+                        <div class="text-center font-bold text-slate-500 mb-2">Salida</div>
+                        <div class="neuron" style="background:#86198f;">Y</div>
+                    </div>
+                </div>
+
+                <div class="mt-4 bg-slate-50 p-4 rounded-lg border border-slate-100 text-sm text-slate-600">
+                    <p>En Scikit-Learn lo implementamos con <code>MLPClassifier</code>. A diferencia del Deep Learning moderno (TensorFlow/PyTorch), MLPClassifier es ideal para conjuntos de datos pequeños o medianos en formato de tabla (tabular), pero no para procesar imágenes masivas o texto profundo.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección 4: Fronteras (Simulador) -->
+        <section id="fronteras" class="section-content max-w-5xl mx-auto">
+            <div class="mb-8">
+                <h2 class="text-4xl font-extrabold text-slate-800 mb-4">Simulador: El Margen de Decisión</h2>
+                <p class="text-lg text-slate-600 leading-relaxed bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    Presiona el botón para observar cómo un algoritmo (como SVM) no solo separa los puntos Rojos de los Azules, sino que busca la línea óptima con el mayor "margen" de seguridad posible.
+                </p>
+            </div>
+
+            <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-md">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-4">
+                    <h3 class="font-bold text-slate-700">Visualización de Hiperplano (SVM)</h3>
+                    <div class="flex gap-2 w-full md:w-auto">
+                        <button onclick="generateNewData()" class="flex-1 md:flex-none px-4 py-2 bg-slate-200 text-slate-700 rounded font-bold hover:bg-slate-300 transition text-sm">↻ Nuevos Datos</button>
+                        <button onclick="toggleMargin()" id="btn-margin" class="flex-1 md:flex-none px-4 py-2 bg-fuchsia-600 text-white rounded font-bold hover:bg-fuchsia-700 transition text-sm">Entrenar SVM (Margen)</button>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="marginChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección 5: Laboratorio Colab -->
+        <section id="laboratorio" class="section-content max-w-5xl mx-auto">
+            <div class="mb-8">
+                <h2 class="text-4xl font-extrabold text-slate-800 mb-4">Reto Colab: Generando Fronteras</h2>
+                <p class="text-lg text-slate-600 leading-relaxed bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    Construiremos un script que entrene un <strong>SVM</strong> y un <strong>MLP</strong>, y además, genere gráficos que muestren visualmente cómo el modelo dibuja las zonas de color en el plano 2D.
+                </p>
+            </div>
+
+            <div class="bg-slate-900 p-8 rounded-2xl shadow-xl flex flex-col border border-slate-700">
+                <div class="flex items-center gap-3 mb-6 pb-4 border-b border-slate-700">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/d/d0/Google_Colaboratory_SVG_Logo.svg" alt="Colab" class="h-8 w-8">
+                    <h3 class="font-bold text-white text-xl">Práctica Oficial: Generar con IA</h3>
+                </div>
+                
+                <p class="text-slate-300 mb-4">Ingresa a Google Colab, crea un cuaderno y utiliza este Prompt exacto para visualizar el poder del Kernel RBF:</p>
+
+                <div class="bg-slate-800 p-5 rounded-xl border border-fuchsia-500/30 relative mb-8 shadow-inner">
+                    <div class="absolute top-0 right-0 bg-fuchsia-500/20 text-fuchsia-300 text-xs px-2 py-1 rounded-bl-lg rounded-tr-xl">Prompt IA</div>
+                    <p class="font-mono text-sm text-fuchsia-300 italic leading-relaxed">
+                        "Genera un script en Python con scikit-learn. Primero, genera un dataset no lineal sintético usando 'make_moons' con noise=0.3. <br><br>
+                        Entrena dos modelos: un SVC (con kernel='rbf') y un MLPClassifier (con max_iter=1000). <br><br>
+                        Finalmente, utiliza 'DecisionBoundaryDisplay.from_estimator' para graficar, uno al lado del otro en subplot, las fronteras de decisión de ambos modelos superpuestas con los puntos de datos."
+                    </p>
+                </div>
+
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <a href="https://colab.research.google.com/github/Pastor-E-Perez-Estigarribia/curso-iaa/blob/main/colab_notebook/4-modelos_supervisados_2.ipynb" target="_blank" rel="noopener noreferrer" class="flex-1 bg-fuchsia-600 hover:bg-fuchsia-500 text-white font-bold py-4 px-6 rounded-xl shadow-md transition transform hover:-translate-y-1 flex items-center justify-center gap-3">
+                        <span class="text-2xl">⚡</span> Ejecutar en Google Colab
+                    </a>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        const navState = { current: 'intro' };
+        
+        function navigate(sectionId) {
+            document.querySelectorAll('.nav-item').forEach(el => {
+                el.classList.remove('active', 'bg-fdf4ff', 'text-fuchsia-700', 'border-r-4', 'border-fuchsia-500', 'font-bold');
+                el.classList.add('text-slate-600');
+                el.style.backgroundColor = 'transparent';
+            });
+            
+            const btn = document.querySelector(`button[onclick="navigate('${sectionId}')"]`);
+            if(btn) {
+                btn.classList.add('active', 'text-fuchsia-700', 'border-r-4', 'border-fuchsia-500', 'font-bold');
+                btn.classList.remove('text-slate-600');
+                btn.style.backgroundColor = '#fdf4ff';
+            }
+
+            document.querySelectorAll('.section-content').forEach(el => el.classList.remove('active'));
+            document.getElementById(sectionId).classList.add('active');
+            navState.current = sectionId;
+
+            if(sectionId === 'fronteras' && !window.marginChartObj) initMarginChart();
+        }
+
+        // --- Gráfico de Margen SVM ---
+        let marginChartObj = null;
+        let isMarginVisible = false;
+
+        const classA = [];
+        const classB = [];
+        const svA = [];
+        const svB = [];
+
+        function generateNewData() {
+            classA.length = 0;
+            classB.length = 0;
+            svA.length = 0;
+            svB.length = 0;
+
+            // Generamos puntos simulados claramente separables (Clasificación)
+            for(let i=0; i<15; i++) {
+                // Clase A (Azul - Arriba Derecha)
+                let xA = 2 + Math.random() * 8;
+                let yA = (-xA + 12) + Math.random() * 4; 
+                if(yA <= 10 && xA <= 10) classA.push({x: xA, y: yA});
+                
+                // Clase B (Rojo - Abajo Izquierda)
+                let xB = Math.random() * 8;
+                let yB = (-xB + 8) - Math.random() * 4;
+                if(yB >= 0 && xB >= 0) classB.push({x: xB, y: yB});
+            }
+
+            // Vectores de soporte estáticos para la visualización del margen
+            let svX_A = 3.5 + Math.random() * 3;
+            svA.push({x: svX_A, y: -svX_A + 11.5}); // En el margen superior
+            
+            let svX_B = 3.5 + Math.random() * 3;
+            svB.push({x: svX_B, y: -svX_B + 8.5});  // En el margen inferior
+
+            if(marginChartObj) {
+                marginChartObj.data.datasets[0].data = [...classA, ...svA];
+                marginChartObj.data.datasets[1].data = [...classB, ...svB];
+                
+                if(isMarginVisible) {
+                    const svIdxA = classA.length;
+                    const svIdxB = classB.length;
+                    marginChartObj.data.datasets[0].pointBorderColor = (ctx) => ctx.dataIndex >= svIdxA ? '#000' : 'transparent';
+                    marginChartObj.data.datasets[0].pointBorderWidth = (ctx) => ctx.dataIndex >= svIdxA ? 3 : 0;
+                    marginChartObj.data.datasets[1].pointBorderColor = (ctx) => ctx.dataIndex >= svIdxB ? '#000' : 'transparent';
+                    marginChartObj.data.datasets[1].pointBorderWidth = (ctx) => ctx.dataIndex >= svIdxB ? 3 : 0;
+                }
+                marginChartObj.update();
+            }
+        }
+
+        function initMarginChart() {
+            generateNewData(); // Cargar datos iniciales
+            const ctx = document.getElementById('marginChart').getContext('2d');
+            marginChartObj = new Chart(ctx, {
+                type: 'scatter',
+                data: {
+                    datasets: [
+                        { label: 'Clase A', data: [...classA, ...svA], backgroundColor: '#3b82f6', pointRadius: 7 }, // Blue
+                        { label: 'Clase B', data: [...classB, ...svB], backgroundColor: '#ef4444', pointRadius: 7 }  // Red
+                    ]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { position: 'bottom' } },
+                    scales: {
+                        x: { min: 0, max: 10 },
+                        y: { min: 0, max: 10 }
+                    },
+                    animation: { duration: 800 }
+                }
+            });
+        }
+
+        function toggleMargin() {
+            const btn = document.getElementById('btn-margin');
+            isMarginVisible = !isMarginVisible;
+
+            if (isMarginVisible) {
+                btn.innerText = "Ocultar Margen";
+                btn.classList.replace('bg-fuchsia-600', 'bg-slate-600');
+                btn.classList.replace('hover:bg-fuchsia-700', 'hover:bg-slate-700');
+
+                // Dibuja Líneas simuladas 
+                marginChartObj.data.datasets.push({
+                    type: 'line', label: 'Hiperplano (Decisión)', data: [{x: 0, y: 10}, {x: 10, y: 0}],
+                    borderColor: '#1e293b', borderWidth: 3, borderDash: [], fill: false, pointRadius: 0
+                });
+                marginChartObj.data.datasets.push({
+                    type: 'line', label: 'Margen +1', data: [{x: 1.5, y: 10}, {x: 10, y: 1.5}],
+                    borderColor: '#94a3b8', borderWidth: 2, borderDash: [5, 5], fill: false, pointRadius: 0
+                });
+                marginChartObj.data.datasets.push({
+                    type: 'line', label: 'Margen -1', data: [{x: 0, y: 8.5}, {x: 8.5, y: 0}],
+                    borderColor: '#94a3b8', borderWidth: 2, borderDash: [5, 5], fill: false, pointRadius: 0
+                });
+
+                // Resalta Vectores de Soporte 
+                const svIdxA = classA.length;
+                const svIdxB = classB.length;
+                marginChartObj.data.datasets[0].pointBorderColor = (ctx) => ctx.dataIndex >= svIdxA ? '#000' : 'transparent';
+                marginChartObj.data.datasets[0].pointBorderWidth = (ctx) => ctx.dataIndex >= svIdxA ? 3 : 0;
+                marginChartObj.data.datasets[1].pointBorderColor = (ctx) => ctx.dataIndex >= svIdxB ? '#000' : 'transparent';
+                marginChartObj.data.datasets[1].pointBorderWidth = (ctx) => ctx.dataIndex >= svIdxB ? 3 : 0;
+
+            } else {
+                btn.innerText = "Entrenar SVM (Ver Margen)";
+                btn.classList.replace('bg-slate-600', 'bg-fuchsia-600');
+                btn.classList.replace('hover:bg-slate-700', 'hover:bg-fuchsia-700');
+
+                // Remueve las 3 líneas
+                marginChartObj.data.datasets.splice(2, 3);
+                
+                // Remueve resaltado
+                marginChartObj.data.datasets[0].pointBorderWidth = 0;
+                marginChartObj.data.datasets[1].pointBorderWidth = 0;
+            }
+            marginChartObj.update();
+        }
+    </script>
+</body>
+</html>
