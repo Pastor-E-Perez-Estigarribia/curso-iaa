@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clase 5: Aprendizaje No Supervisado - Módulo IAA</title>
+    
+    <!-- Chosen Palette: Slate & Cyan (Slate-50 bg, Slate-800 text, Cyan-600 primary action) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        body { font-family: 'Segoe UI', system-ui, sans-serif; background-color: #f8fafc; color: #1e293b; }
+        .chart-container { position: relative; width: 100%; max-width: 700px; margin: 0 auto; height: 350px; }
+        .nav-item { transition: all 0.2s ease; }
+        .nav-item.active { background-color: #ecfeff; color: #0891b2; border-right: 4px solid #0891b2; font-weight: 600; }
+        .section-content { display: none; animation: fadeIn 0.4s ease-in-out; }
+        .section-content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="flex flex-col md:flex-row h-screen overflow-hidden">
+
+    <!-- Navegación Lateral -->
+    <nav class="w-full md:w-72 bg-white shadow-xl h-auto md:h-full flex flex-col z-20 shrink-0">
+        <div class="p-6 bg-slate-900 text-white border-b-4 border-cyan-500">
+            <h1 class="text-2xl font-bold tracking-tight">Módulo IAA</h1>
+            <p class="text-sm text-cyan-300 mt-1">Clase 5: No Supervisado</p>
+        </div>
+        <div class="flex-1 overflow-y-auto py-4 flex flex-row md:flex-col overflow-x-auto hide-scrollbar" id="nav-menu">
+            <button onclick="navigate('intro')" class="nav-item active text-left px-6 py-4 hover:bg-slate-50 whitespace-nowrap md:whitespace-normal flex items-center gap-3 text-cyan-700">
+                <span class="text-xl">🕵️</span> Explorando sin Etiquetas
+            </button>
+            <button onclick="navigate('clustering')" class="nav-item text-left px-6 py-4 hover:bg-slate-50 whitespace-nowrap md:whitespace-normal flex items-center gap-3 text-slate-600">
+                <span class="text-xl">🗂️</span> Métodos de Clustering
+            </button>
+            <button onclick="navigate('pca')" class="nav-item text-left px-6 py-4 hover:bg-slate-50 whitespace-nowrap md:whitespace-normal flex items-center gap-3 text-slate-600">
+                <span class="text-xl">📉</span> PCA (Reducción)
+            </button>
+            <button onclick="navigate('anomalias')" class="nav-item text-left px-6 py-4 hover:bg-slate-50 whitespace-nowrap md:whitespace-normal flex items-center gap-3 text-slate-600">
+                <span class="text-xl">🚨</span> Detección de Anomalías
+            </button>
+            <button onclick="navigate('laboratorio')" class="nav-item text-left px-6 py-4 hover:bg-slate-50 whitespace-nowrap md:whitespace-normal flex items-center gap-3 text-slate-600">
+                <span class="text-xl">🚀</span> Reto Colab
+            </button>
+            
+            <a href="https://notebooklm.google.com/notebook/e564a7c8-11a3-43bb-bd67-7793d7f3e6e6" target="_blank" rel="noopener noreferrer" class="md:mt-auto text-left px-6 py-4 bg-amber-50 hover:bg-amber-100 text-amber-800 font-bold flex items-center gap-3 whitespace-nowrap md:whitespace-normal transition-colors border-t border-amber-200 shadow-inner">
+                <span class="text-xl">🤖</span> Asistente NotebookLM
+            </a>
+        </div>
+    </nav>
+
+    <!-- Contenido Principal -->
+    <main class="flex-1 overflow-y-auto p-6 md:p-12 bg-slate-50">
+
+        <!-- Sección 1: Introducción -->
+        <section id="intro" class="section-content active max-w-5xl mx-auto">
+            <div class="mb-10">
+                <h2 class="text-4xl font-extrabold text-slate-800 mb-4">Aprendizaje No Supervisado</h2>
+                <p class="text-lg text-slate-600 leading-relaxed bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    A diferencia de las clases anteriores, aquí <strong>no tenemos un objetivo (variable Y) que predecir</strong>. Solo tenemos características (X). El propósito del algoritmo es descubrir la estructura subyacente, patrones ocultos o agrupaciones naturales en los datos por sí mismo.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="bg-slate-800 p-8 rounded-2xl shadow-sm border-t-4 border-slate-500 text-white transform transition hover:-translate-y-1">
+                    <h3 class="text-xl font-bold mb-4">Supervisado (Repaso)</h3>
+                    <p class="text-slate-300 mb-4 text-sm">El profesor da ejemplos y respuestas. El alumno aprende a imitar.</p>
+                    <div class="bg-slate-700 p-3 rounded font-mono text-sm text-slate-200">X = [Edad, Salario] ➔ Y = [Compra: SÍ/NO]</div>
+                </div>
+                
+                <div class="bg-white p-8 rounded-2xl shadow-sm border-t-4 border-cyan-500 transform transition hover:-translate-y-1">
+                    <h3 class="text-xl font-bold text-slate-800 mb-4">No Supervisado (Hoy)</h3>
+                    <p class="text-slate-600 mb-4 text-sm">Se entregan los datos crudos. El algoritmo debe encontrar similitudes sin ayuda.</p>
+                    <div class="bg-cyan-50 p-3 rounded font-mono text-sm text-cyan-800 border border-cyan-100">X = [Edad, Salario] ➔ [Grupo 1, Grupo 2, Grupo 3]</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección 2: Clustering -->
+        <section id="clustering" class="section-content max-w-5xl mx-auto">
+            <div class="mb-8">
+                <h2 class="text-4xl font-extrabold text-slate-800 mb-4">Clustering (Agrupamiento)</h2>
+                <p class="text-lg text-slate-600 leading-relaxed bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    El objetivo es agrupar elementos similares. La similitud se suele medir como <strong>"distancia matemática"</strong> entre los puntos. Es vital escalar los datos (Clase 2) antes de aplicar estos algoritmos.
+                </p>
+            </div>
+
+            <!-- Simulador Interactivo -->
+            <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-md mb-8">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="font-bold text-slate-700 flex items-center gap-2"><span class="text-xl">🎯</span> Simulador K-Means</h3>
+                    <button onclick="runKMeans()" id="btn-kmeans" class="px-4 py-2 bg-cyan-600 text-white rounded font-bold hover:bg-cyan-700 transition">Ejecutar Clustering</button>
+                </div>
+                <div class="chart-container"><canvas id="clusterChart"></canvas></div>
+                <p class="mt-4 text-sm text-slate-500 text-center" id="cluster-caption">Datos crudos sin etiquetas. ¿Puedes ver los grupos naturales?</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- K-Means -->
+                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                    <h4 class="font-bold text-cyan-700 mb-2">1. K-Means (No Jerárquico)</h4>
+                    <p class="text-sm text-slate-600 mb-2">Busca agrupar datos alrededor de 'K' centroides. Requiere definir 'K' de antemano.</p>
+                    <ul class="text-xs text-slate-500 space-y-1">
+                        <li>✔️ Muy rápido, escalable.</li>
+                        <li>❌ Asume clusters esféricos. Sensible a outliers.</li>
+                    </ul>
+                </div>
+                <!-- Jerárquico -->
+                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                    <h4 class="font-bold text-cyan-700 mb-2">2. Jerárquico</h4>
+                    <p class="text-sm text-slate-600 mb-2">Crea un árbol de clusters (Dendrograma). Útil si no sabes cuántos grupos existen.</p>
+                    <ul class="text-xs text-slate-500 space-y-1">
+                        <li>✔️ No requiere 'K' inicial. Muy explicable.</li>
+                        <li>❌ Computacionalmente pesado. Lento.</li>
+                    </ul>
+                </div>
+                <!-- DBSCAN -->
+                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                    <h4 class="font-bold text-cyan-700 mb-2">3. DBSCAN</h4>
+                    <p class="text-sm text-slate-600 mb-2">Basado en densidad. Agrupa zonas con muchos puntos juntos y aísla los solitarios.</p>
+                    <ul class="text-xs text-slate-500 space-y-1">
+                        <li>✔️ Descubre formas extrañas. Detecta ruido/outliers.</li>
+                        <li>❌ Falla si los clusters tienen densidades muy distintas.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección 3: PCA -->
+        <section id="pca" class="section-content max-w-5xl mx-auto">
+            <div class="mb-8">
+                <h2 class="text-4xl font-extrabold text-slate-800 mb-4">PCA (Análisis de Componentes Principales)</h2>
+                <p class="text-lg text-slate-600 leading-relaxed bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    Es la técnica de <strong>Reducción de Dimensionalidad</strong> por excelencia. Si un dataset tiene 50 variables (columnas), es imposible graficarlo. PCA comprime esa información en 2 o 3 "Componentes" principales reteniendo la mayor cantidad de información (varianza) posible.
+                </p>
+            </div>
+
+            <div class="bg-slate-900 p-8 rounded-2xl text-white flex flex-col md:flex-row items-center gap-8">
+                <div class="flex-1 space-y-4">
+                    <h3 class="text-xl font-bold text-cyan-400">¿Para qué sirve PCA?</h3>
+                    <ul class="space-y-3 text-slate-300">
+                        <li class="flex items-start gap-2"><span class="text-cyan-400">👀</span> <strong>Visualización:</strong> Bajar de N dimensiones a 2D para ver los clusters en un gráfico.</li>
+                        <li class="flex items-start gap-2"><span class="text-cyan-400">⚡</span> <strong>Acelerar Modelos:</strong> Entrenar modelos sobre 5 componentes comprimidos en vez de 100 variables originales.</li>
+                        <li class="flex items-start gap-2"><span class="text-cyan-400">🧹</span> <strong>Eliminar Ruido:</strong> Ignorar variables altamente correlacionadas o irrelevantes.</li>
+                    </ul>
+                </div>
+                <div class="w-full md:w-1/3 bg-slate-800 p-6 rounded-xl border border-slate-700 text-center">
+                    <div class="text-3xl font-bold text-cyan-300 mb-2">X₁, X₂, ..., X₅₀</div>
+                    <div class="text-slate-400 mb-2">↓ PCA ↓</div>
+                    <div class="text-2xl font-bold text-white">PC1, PC2</div>
+                    <p class="text-xs text-slate-500 mt-2">Pérdida de interpretabilidad a cambio de compresión.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección 4: Anomalías -->
+        <section id="anomalias" class="section-content max-w-5xl mx-auto">
+            <div class="mb-8">
+                <h2 class="text-4xl font-extrabold text-slate-800 mb-4">Detección de Anomalías</h2>
+                <p class="text-lg text-slate-600 leading-relaxed bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    Otra gran aplicación del No Supervisado. Consiste en identificar instancias que se desvían significativamente del comportamiento normal ("outliers").
+                </p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex gap-4 items-start">
+                    <div class="text-3xl">💳</div>
+                    <div>
+                        <h4 class="font-bold text-slate-800">Fraude Bancario</h4>
+                        <p class="text-sm text-slate-600 mt-1">Identificar transacciones de tarjetas de crédito que no encajan en el patrón habitual del cliente.</p>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex gap-4 items-start">
+                    <div class="text-3xl">⚙️</div>
+                    <div>
+                        <h4 class="font-bold text-slate-800">Mantenimiento Predictivo</h4>
+                        <p class="text-sm text-slate-600 mt-1">Detectar vibraciones o temperaturas anómalas en maquinaria industrial antes de que falle.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección 5: Laboratorio Colab -->
+        <section id="laboratorio" class="section-content max-w-5xl mx-auto">
+            <div class="mb-8">
+                <h2 class="text-4xl font-extrabold text-slate-800 mb-4">Reto Colab: PCA + K-Means</h2>
+                <p class="text-lg text-slate-600 leading-relaxed bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    Integraremos dos conceptos. Usaremos un dataset real multidimensional, reduciremos sus dimensiones a 2 con PCA para poder graficarlo, y luego le aplicaremos K-Means para ver cómo agrupa la información.
+                </p>
+            </div>
+
+            <div class="bg-slate-900 p-8 rounded-2xl shadow-xl flex flex-col border border-slate-700">
+                <div class="flex items-center gap-3 mb-6 pb-4 border-b border-slate-700">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/d/d0/Google_Colaboratory_SVG_Logo.svg" alt="Colab" class="h-8 w-8">
+                    <h3 class="font-bold text-white text-xl">Práctica Oficial: Generar con IA</h3>
+                </div>
+                
+                <div class="bg-slate-800 p-5 rounded-xl border border-cyan-500/30 relative mb-8 shadow-inner">
+                    <div class="absolute top-0 right-0 bg-cyan-500/20 text-cyan-300 text-xs px-2 py-1 rounded-bl-lg rounded-tr-xl">Prompt IA</div>
+                    <p class="font-mono text-sm text-cyan-300 italic leading-relaxed">
+                        "En Python con scikit-learn, carga el dataset 'load_wine' (13 dimensiones).<br><br>
+                        1. Escala los datos con StandardScaler.<br>
+                        2. Usa PCA para reducir los datos a 2 componentes principales (PCA(n_components=2)).<br>
+                        3. Aplica KMeans(n_clusters=3) a los datos reducidos por PCA.<br>
+                        4. Genera un gráfico de dispersión (scatter plot) donde el eje X sea el PC1, el eje Y sea el PC2, y el color de los puntos represente las etiquetas predichas por K-Means."
+                    </p>
+                </div>
+
+                <a href="https://colab.research.google.com/github/Pastor-E-Perez-Estigarribia/curso-iaa/blob/main/colab_notebook/5-no_supervisado.ipynb" target="_blank" rel="noopener noreferrer" class="w-full md:w-auto self-start bg-cyan-600 hover:bg-cyan-500 text-white font-bold py-4 px-8 rounded-xl shadow-md transition transform hover:-translate-y-1 flex items-center justify-center gap-3">
+                    <span class="text-2xl">⚡</span> Ejecutar en Google Colab
+                </a>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        const navState = { current: 'intro' };
+        
+        function navigate(sectionId) {
+            document.querySelectorAll('.nav-item').forEach(el => {
+                el.classList.remove('active', 'bg-ecfeff', 'text-cyan-700', 'border-r-4', 'border-cyan-500', 'font-bold');
+                el.classList.add('text-slate-600');
+                el.style.backgroundColor = 'transparent';
+            });
+            
+            const btn = document.querySelector(`button[onclick="navigate('${sectionId}')"]`);
+            if(btn) {
+                btn.classList.add('active', 'text-cyan-700', 'border-r-4', 'border-cyan-500', 'font-bold');
+                btn.classList.remove('text-slate-600');
+                btn.style.backgroundColor = '#ecfeff';
+            }
+
+            document.querySelectorAll('.section-content').forEach(el => el.classList.remove('active'));
+            document.getElementById(sectionId).classList.add('active');
+            navState.current = sectionId;
+
+            if(sectionId === 'clustering' && !window.clusterChartObj) initClusterChart();
+        }
+
+        // --- Simulador K-Means ---
+        let clusterChartObj = null;
+        let isClustered = false;
+
+        // Generar 3 grupos distintos
+        const cluster1 = Array.from({length: 20}, () => ({x: 2 + Math.random()*3, y: 2 + Math.random()*3, cluster: 0}));
+        const cluster2 = Array.from({length: 20}, () => ({x: 7 + Math.random()*3, y: 3 + Math.random()*3, cluster: 1}));
+        const cluster3 = Array.from({length: 20}, () => ({x: 4 + Math.random()*3, y: 7 + Math.random()*3, cluster: 2}));
+        const allData = [...cluster1, ...cluster2, ...cluster3];
+
+        function initClusterChart() {
+            const ctx = document.getElementById('clusterChart').getContext('2d');
+            clusterChartObj = new Chart(ctx, {
+                type: 'scatter',
+                data: {
+                    datasets: [{
+                        label: 'Datos (Sin Etiquetas)',
+                        data: allData,
+                        backgroundColor: '#cbd5e1', // Gris inicial
+                        pointRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: { x: { min: 0, max: 12 }, y: { min: 0, max: 12 } },
+                    animation: { duration: 1000 }
+                }
+            });
+        }
+
+        function runKMeans() {
+            if(!clusterChartObj) return;
+            const btn = document.getElementById('btn-kmeans');
+            const caption = document.getElementById('cluster-caption');
+
+            isClustered = !isClustered;
+
+            if(isClustered) {
+                btn.innerText = "Reiniciar (Quitar Color)";
+                btn.classList.replace('bg-cyan-600', 'bg-slate-600');
+                btn.classList.replace('hover:bg-cyan-700', 'hover:bg-slate-700');
+                caption.innerHTML = "<strong>K-Means (k=3) aplicado:</strong> El algoritmo ha descubierto 3 perfiles distintos basándose únicamente en distancias espaciales.";
+                
+                // Aplicar colores según el cluster original simulado
+                const colors = ['#0ea5e9', '#f59e0b', '#10b981']; // Cyan, Amber, Emerald
+                clusterChartObj.data.datasets[0].backgroundColor = (context) => {
+                    const dataObj = context.raw;
+                    return dataObj ? colors[dataObj.cluster] : '#cbd5e1';
+                };
+            } else {
+                btn.innerText = "Ejecutar Clustering";
+                btn.classList.replace('bg-slate-600', 'bg-cyan-600');
+                btn.classList.replace('hover:bg-slate-700', 'hover:bg-cyan-700');
+                caption.innerText = "Datos crudos sin etiquetas. ¿Puedes ver los grupos naturales?";
+                clusterChartObj.data.datasets[0].backgroundColor = '#cbd5e1'; // Volver a gris
+            }
+            clusterChartObj.update();
+        }
+    </script>
+</body>
+</html>
