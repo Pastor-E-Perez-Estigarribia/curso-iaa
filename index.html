@@ -15,10 +15,13 @@
         .class-card.active-emerald:hover { transform: translateY(-5px); box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.2); border-color: #10b981; }
         .class-card.active-fuchsia:hover { transform: translateY(-5px); box-shadow: 0 10px 25px -5px rgba(192, 38, 211, 0.2); border-color: #d946ef; }
         .class-card.active-cyan:hover { transform: translateY(-5px); box-shadow: 0 10px 25px -5px rgba(6, 182, 212, 0.2); border-color: #06b6d4; }
+        .class-card.active-violet:hover { transform: translateY(-5px); box-shadow: 0 10px 25px -5px rgba(139, 92, 246, 0.2); border-color: #8b5cf6; }
         .class-card.disabled { opacity: 0.65; filter: grayscale(80%); cursor: not-allowed; }
         .class-card.disabled:hover { opacity: 0.8; filter: grayscale(40%); }
         .badge-pulse { animation: pulse-badge 2s infinite; }
         @keyframes pulse-badge { 0% { box-shadow: 0 0 0 0 rgba(6, 182, 212, 0.4); } 70% { box-shadow: 0 0 0 6px rgba(6, 182, 212, 0); } 100% { box-shadow: 0 0 0 0 rgba(6, 182, 212, 0); } }
+        .badge-pulse-violet { animation: pulse-badge-violet 2s infinite; }
+        @keyframes pulse-badge-violet { 0% { box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.4); } 70% { box-shadow: 0 0 0 6px rgba(139, 92, 246, 0); } 100% { box-shadow: 0 0 0 0 rgba(139, 92, 246, 0); } }
     </style>
 </head>
 <body class="text-slate-800 antialiased selection:bg-teal-200 selection:text-teal-900">
@@ -139,7 +142,7 @@
 
                 <div class="class-card active-cyan block bg-white rounded-2xl shadow-sm border-2 border-cyan-500 relative overflow-visible h-full flex flex-col hover:z-10 group">
                     <a href="clase_5_spa.html" class="absolute inset-0 z-0 rounded-2xl"></a>
-                    <div class="absolute -top-3 -right-3 bg-cyan-500 text-white text-xs font-bold px-4 py-1.5 rounded-full z-10 shadow-md badge-pulse pointer-events-none">NUEVO</div>
+                    <div class="absolute -top-3 -right-3 bg-slate-200 text-slate-600 text-xs font-bold px-4 py-1.5 rounded-full z-10 shadow-sm pointer-events-none">DISPONIBLE</div>
                     <div class="bg-cyan-50 p-6 rounded-t-xl border-b border-cyan-100 relative z-10 pointer-events-none">
                         <span class="text-cyan-600 font-extrabold text-xs tracking-widest uppercase">Clase 5</span>
                         <h3 class="text-xl font-bold text-slate-800 mt-2 leading-tight">Aprendizaje No Supervisado</h3>
@@ -153,18 +156,25 @@
                     </div>
                 </div>
 
-                 <div class="class-card disabled bg-white rounded-2xl shadow-sm border border-slate-200 relative h-full flex flex-col">
-                    <div class="bg-slate-50 p-6 rounded-t-xl border-b border-slate-100">
-                        <span class="text-slate-500 font-extrabold text-xs tracking-widest uppercase">Clase 6</span>
+                <!-- CLASE 6 (NUEVA ACTIVA) -->
+                <div class="class-card active-violet block bg-white rounded-2xl shadow-sm border-2 border-violet-500 relative overflow-visible h-full flex flex-col hover:z-10 group">
+                    <a href="clase_6_spa.html" class="absolute inset-0 z-0 rounded-2xl"></a>
+                    <div class="absolute -top-3 -right-3 bg-violet-500 text-white text-xs font-bold px-4 py-1.5 rounded-full z-10 shadow-md badge-pulse-violet pointer-events-none">NUEVO</div>
+                    <div class="bg-violet-50 p-6 rounded-t-xl border-b border-violet-100 relative z-10 pointer-events-none">
+                        <span class="text-violet-600 font-extrabold text-xs tracking-widest uppercase">Clase 6</span>
                         <h3 class="text-xl font-bold text-slate-800 mt-2 leading-tight">Evaluación y Selección de Modelos</h3>
                     </div>
-                    <div class="p-6 flex-1 flex flex-col justify-between">
-                        <p class="text-slate-600 text-sm mb-6 leading-relaxed">Matriz de confusión, curvas ROC, Validación Cruzada (k-fold) y afinamiento mediante Grid Search.</p>
-                        <div class="flex items-center gap-2 text-xs font-bold text-slate-400 bg-slate-100 w-fit px-3 py-1.5 rounded-md"><span>🔒 Próximamente</span></div>
+                    <div class="p-6 flex-1 flex flex-col justify-between relative z-10">
+                        <p class="text-slate-600 text-sm mb-6 leading-relaxed pointer-events-none">Métricas de rendimiento (Accuracy, Precision, F1), Matriz de confusión, Validación Cruzada y Grid Search.</p>
+                        <div class="flex flex-wrap gap-2 relative z-20">
+                            <span class="bg-blue-50 text-blue-700 border border-blue-200 px-2 py-1 rounded text-xs font-semibold">Teoría</span>
+                            <a href="https://colab.research.google.com/github/Pastor-E-Perez-Estigarribia/curso-iaa/blob/main/colab_notebook/6-evaluacion_modelos.ipynb" target="_blank" rel="noopener noreferrer" class="bg-violet-100 text-violet-800 border border-violet-300 px-2 py-1 rounded text-xs font-semibold hover:bg-violet-200 transition cursor-pointer flex items-center gap-1">Colab ↗</a>
+                        </div>
                     </div>
                 </div>
 
-                <div class="class-card disabled bg-white rounded-2xl shadow-sm border border-slate-200 relative h-full flex flex-col lg:col-span-2 xl:col-span-2 bg-gradient-to-br from-slate-50 to-slate-100">
+                <!-- CLASE 7 (Próximamente) -->
+                <div class="class-card disabled bg-white rounded-2xl shadow-sm border border-slate-200 relative h-full flex flex-col lg:col-span-2 bg-gradient-to-br from-slate-50 to-slate-100">
                     <div class="bg-slate-100/50 p-6 rounded-t-xl border-b border-slate-200">
                         <span class="text-slate-500 font-extrabold text-xs tracking-widest uppercase">Clase 7 (Final)</span>
                         <h3 class="text-xl font-bold text-slate-800 mt-2 leading-tight">Integración y Pipelines</h3>

@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clase 6: Evaluación y Selección - Módulo IAA</title>
+    
+    <!-- Chosen Palette: Slate & Violet (Slate-50 bg, Slate-800 text, Violet-600 primary action) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <style>
+        body { font-family: 'Segoe UI', system-ui, sans-serif; background-color: #f8fafc; color: #1e293b; }
+        .nav-item { transition: all 0.2s ease; }
+        .nav-item.active { background-color: #f5f3ff; color: #7c3aed; border-right: 4px solid #7c3aed; font-weight: 600; }
+        .section-content { display: none; animation: fadeIn 0.4s ease-in-out; }
+        .section-content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        /* Grid Matriz de Confusión */
+        .cm-grid { display: grid; grid-template-columns: auto 1fr 1fr; grid-template-rows: auto 1fr 1fr; gap: 4px; max-width: 400px; margin: 0 auto; }
+        .cm-header { font-weight: bold; text-align: center; display: flex; align-items: center; justify-content: center; font-size: 0.875rem; color: #475569; }
+        .cm-cell { background: #f8fafc; border: 2px solid #e2e8f0; border-radius: 8px; padding: 16px; text-align: center; }
+        .cm-input { width: 100%; text-align: center; font-size: 1.5rem; font-weight: bold; background: transparent; border: none; border-bottom: 2px dashed #cbd5e1; outline: none; color: #1e293b; }
+        .cm-input:focus { border-bottom-color: #8b5cf6; }
+    </style>
+</head>
+<body class="flex flex-col md:flex-row h-screen overflow-hidden">
+
+    <!-- Navegación Lateral -->
+    <nav class="w-full md:w-72 bg-white shadow-xl h-auto md:h-full flex flex-col z-20 shrink-0">
+        <div class="p-6 bg-slate-900 text-white border-b-4 border-violet-500">
+            <h1 class="text-2xl font-bold tracking-tight">Módulo IAA</h1>
+            <p class="text-sm text-violet-300 mt-1">Clase 6: Evaluación</p>
+        </div>
+        <div class="flex-1 overflow-y-auto py-4 flex flex-row md:flex-col overflow-x-auto hide-scrollbar" id="nav-menu">
+            <button onclick="navigate('intro')" class="nav-item active text-left px-6 py-4 hover:bg-slate-50 whitespace-nowrap md:whitespace-normal flex items-center gap-3 text-violet-700">
+                <span class="text-xl">🎯</span> La Trampa del Accuracy
+            </button>
+            <button onclick="navigate('metricas')" class="nav-item text-left px-6 py-4 hover:bg-slate-50 whitespace-nowrap md:whitespace-normal flex items-center gap-3 text-slate-600">
+                <span class="text-xl">🧮</span> Matriz de Confusión
+            </button>
+            <button onclick="navigate('roc')" class="nav-item text-left px-6 py-4 hover:bg-slate-50 whitespace-nowrap md:whitespace-normal flex items-center gap-3 text-slate-600">
+                <span class="text-xl">📈</span> Curvas ROC
+            </button>
+            <button onclick="navigate('cv')" class="nav-item text-left px-6 py-4 hover:bg-slate-50 whitespace-nowrap md:whitespace-normal flex items-center gap-3 text-slate-600">
+                <span class="text-xl">🔄</span> Validación Cruzada
+            </button>
+            <button onclick="navigate('laboratorio')" class="nav-item text-left px-6 py-4 hover:bg-slate-50 whitespace-nowrap md:whitespace-normal flex items-center gap-3 text-slate-600">
+                <span class="text-xl">🚀</span> Reto Colab
+            </button>
+            
+            <a href="https://notebooklm.google.com/notebook/e564a7c8-11a3-43bb-bd67-7793d7f3e6e6" target="_blank" rel="noopener noreferrer" class="md:mt-auto text-left px-6 py-4 bg-amber-50 hover:bg-amber-100 text-amber-800 font-bold flex items-center gap-3 whitespace-nowrap md:whitespace-normal transition-colors border-t border-amber-200 shadow-inner">
+                <span class="text-xl">🤖</span> Asistente NotebookLM
+            </a>
+        </div>
+    </nav>
+
+    <!-- Contenido Principal -->
+    <main class="flex-1 overflow-y-auto p-6 md:p-12 bg-slate-50">
+
+        <!-- Sección 1: Intro -->
+        <section id="intro" class="section-content active max-w-5xl mx-auto">
+            <div class="mb-10">
+                <h2 class="text-4xl font-extrabold text-slate-800 mb-4">La Trampa del Accuracy</h2>
+                <p class="text-lg text-slate-600 leading-relaxed bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    Hasta ahora, hemos evaluado los modelos respondiendo: <em>"¿Qué porcentaje de aciertos tuvo?"</em>. Esto se conoce como <strong>Accuracy (Exactitud)</strong>. Sin embargo, en la vida real, el Accuracy puede mentirnos severamente cuando los datos están <strong>desbalanceados</strong>.
+                </p>
+            </div>
+
+            <div class="bg-violet-900 p-8 rounded-2xl shadow-sm text-white flex flex-col md:flex-row gap-8 items-center">
+                <div class="flex-1">
+                    <h3 class="text-2xl font-bold text-violet-300 mb-4 flex items-center gap-2"><span>🚨</span> El Problema Médico</h3>
+                    <p class="text-slate-300 mb-4">
+                        Imagina una enfermedad muy rara que afecta a 1 de cada 100 pacientes. Entrenas un modelo de IA que es "vago" y simplemente predice "SANOS" para todos.
+                    </p>
+                    <ul class="space-y-2 text-sm bg-slate-800 p-4 rounded-lg border border-slate-700">
+                        <li>Pacientes Totales: 100</li>
+                        <li>Sanos: 99 | Enfermos: 1</li>
+                        <li><strong>Aciertos del modelo: 99/100</strong></li>
+                        <li class="text-emerald-400 font-bold text-lg mt-2">➔ Accuracy = 99% 🌟</li>
+                    </ul>
+                </div>
+                <div class="flex-1 bg-white p-6 rounded-xl text-slate-800 border-l-8 border-red-500">
+                    <h4 class="font-bold text-lg text-red-600 mb-2">¿Es un buen modelo?</h4>
+                    <p class="text-sm text-slate-600">
+                        <strong>¡NO!</strong> Es un modelo inútil. Falló miserablemente en su único propósito: encontrar al paciente enfermo (el que realmente importa). <br><br>
+                        Por eso, necesitamos evaluar <strong>dónde</strong> se equivoca el modelo, no solo <em>cuánto</em> acierta.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección 2: Matriz de Confusión -->
+        <section id="metricas" class="section-content max-w-5xl mx-auto">
+            <div class="mb-8">
+                <h2 class="text-4xl font-extrabold text-slate-800 mb-4">La Matriz de Confusión</h2>
+                <p class="text-lg text-slate-600 leading-relaxed bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    Para entender los errores, desglosamos las predicciones en 4 categorías. Edita los números en la matriz inferior y observa cómo cambian las métricas en tiempo real.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Simulador -->
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-md">
+                    <h3 class="font-bold text-slate-700 text-center mb-6">Simulador Interactivo</h3>
+                    
+                    <div class="cm-grid">
+                        <div></div>
+                        <div class="cm-header bg-slate-100 rounded-t-lg">Predice POSITIVO</div>
+                        <div class="cm-header bg-slate-100 rounded-t-lg">Predice NEGATIVO</div>
+                        
+                        <div class="cm-header bg-slate-100 rounded-l-lg" style="writing-mode: vertical-rl; transform: rotate(180deg);">Real POSITIVO</div>
+                        <div class="cm-cell bg-emerald-50 border-emerald-200">
+                            <span class="text-xs text-emerald-700 font-bold block mb-1">Verdadero Positivo (TP)</span>
+                            <input type="number" id="sim-tp" class="cm-input" value="80" oninput="calculateMetrics()">
+                        </div>
+                        <div class="cm-cell bg-red-50 border-red-200">
+                            <span class="text-xs text-red-700 font-bold block mb-1">Falso Negativo (FN)</span>
+                            <input type="number" id="sim-fn" class="cm-input" value="20" oninput="calculateMetrics()">
+                        </div>
+
+                        <div class="cm-header bg-slate-100 rounded-l-lg" style="writing-mode: vertical-rl; transform: rotate(180deg);">Real NEGATIVO</div>
+                        <div class="cm-cell bg-red-50 border-red-200">
+                            <span class="text-xs text-red-700 font-bold block mb-1">Falso Positivo (FP)</span>
+                            <input type="number" id="sim-fp" class="cm-input" value="10" oninput="calculateMetrics()">
+                        </div>
+                        <div class="cm-cell bg-emerald-50 border-emerald-200">
+                            <span class="text-xs text-emerald-700 font-bold block mb-1">Verdadero Neg. (TN)</span>
+                            <input type="number" id="sim-tn" class="cm-input" value="890" oninput="calculateMetrics()">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Resultados Métricas -->
+                <div class="bg-slate-900 p-6 rounded-2xl shadow-md text-white flex flex-col justify-center">
+                    <h3 class="font-bold text-violet-300 text-lg mb-6 border-b border-slate-700 pb-2">Resultados Calculados</h3>
+                    
+                    <div class="space-y-5">
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="font-bold">Accuracy (Exactitud)</span>
+                                <span id="res-acc" class="text-violet-400 font-mono">0.00%</span>
+                            </div>
+                            <div class="w-full bg-slate-700 rounded-full h-2"><div id="bar-acc" class="bg-violet-500 h-2 rounded-full" style="width: 0%"></div></div>
+                            <p class="text-xs text-slate-400 mt-1">Totales correctos / Total datos</p>
+                        </div>
+                        
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="font-bold text-blue-300">Precision</span>
+                                <span id="res-pre" class="text-blue-400 font-mono">0.00%</span>
+                            </div>
+                            <div class="w-full bg-slate-700 rounded-full h-2"><div id="bar-pre" class="bg-blue-500 h-2 rounded-full" style="width: 0%"></div></div>
+                            <p class="text-xs text-slate-400 mt-1">De los que predijimos como (+) ¿Cuántos lo eran realmente? (Evita falsas alarmas FP).</p>
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="font-bold text-amber-300">Recall (Sensibilidad)</span>
+                                <span id="res-rec" class="text-amber-400 font-mono">0.00%</span>
+                            </div>
+                            <div class="w-full bg-slate-700 rounded-full h-2"><div id="bar-rec" class="bg-amber-500 h-2 rounded-full" style="width: 0%"></div></div>
+                            <p class="text-xs text-slate-400 mt-1">De todos los (+) reales ¿Cuántos logramos detectar? (Evita que se escapen FN).</p>
+                        </div>
+
+                        <div class="pt-2 border-t border-slate-700">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <span class="font-bold text-emerald-400 text-lg">F1-Score</span>
+                                    <p class="text-xs text-slate-400">Media armónica de Precision y Recall</p>
+                                </div>
+                                <span id="res-f1" class="text-emerald-400 font-mono text-2xl">0.00%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección 3: ROC -->
+        <section id="roc" class="section-content max-w-5xl mx-auto">
+            <div class="mb-8">
+                <h2 class="text-4xl font-extrabold text-slate-800 mb-4">Curvas ROC y AUC</h2>
+                <p class="text-lg text-slate-600 leading-relaxed bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    La curva ROC (Receiver Operating Characteristic) grafica la relación entre la <strong>Tasa de Verdaderos Positivos</strong> y la <strong>Tasa de Falsos Positivos</strong> a través de distintos umbrales de decisión. 
+                </p>
+            </div>
+            
+            <div class="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm flex flex-col md:flex-row items-center gap-8">
+                <div class="flex-1 space-y-4 text-slate-600">
+                    <p>El área bajo la curva se conoce como <strong>AUC</strong>.</p>
+                    <ul class="space-y-3">
+                        <li class="bg-red-50 p-3 rounded text-red-800 text-sm"><strong>AUC = 0.5:</strong> El modelo es como tirar una moneda al aire (línea diagonal).</li>
+                        <li class="bg-blue-50 p-3 rounded text-blue-800 text-sm"><strong>AUC = 0.7 - 0.8:</strong> Modelo aceptable a bueno.</li>
+                        <li class="bg-emerald-50 p-3 rounded text-emerald-800 text-sm"><strong>AUC = 1.0:</strong> Modelo perfecto (Pasa por la esquina superior izquierda).</li>
+                    </ul>
+                </div>
+                <div class="w-full md:w-1/3 flex justify-center">
+                    <div class="relative w-48 h-48 border-l-2 border-b-2 border-slate-800">
+                        <!-- Diagonal -->
+                        <div class="absolute inset-0 border-t-2 border-dashed border-slate-400" style="transform: skewY(-45deg); transform-origin: bottom left;"></div>
+                        <!-- ROC Curve -->
+                        <svg class="absolute inset-0 w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+                            <path d="M 0,100 Q 10,20 100,0" fill="none" stroke="#8b5cf6" stroke-width="3"/>
+                        </svg>
+                        <span class="absolute -bottom-6 left-1/2 -translate-x-1/2 text-xs font-bold whitespace-nowrap">Falsos Positivos</span>
+                        <span class="absolute -left-6 top-1/2 -translate-y-1/2 text-xs font-bold -rotate-90 whitespace-nowrap">Verdaderos Positivos</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección 4: Validación Cruzada -->
+        <section id="cv" class="section-content max-w-5xl mx-auto">
+            <div class="mb-8">
+                <h2 class="text-4xl font-extrabold text-slate-800 mb-4">Validación Cruzada (K-Fold) y Tuning</h2>
+                <p class="text-lg text-slate-600 leading-relaxed bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    Separar los datos en "Entrenamiento" y "Prueba" una sola vez puede ser un golpe de suerte. Para asegurar que el modelo es robusto, usamos <strong>K-Fold Cross-Validation</strong>, iterando y rotando el bloque de prueba varias veces.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- K-Fold -->
+                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                    <h3 class="font-bold text-violet-700 text-lg mb-4 flex items-center gap-2"><span class="text-xl">🔄</span> 1. K-Fold CV</h3>
+                    <div class="flex flex-col gap-2 mb-4">
+                        <div class="flex h-6 rounded overflow-hidden">
+                            <div class="w-4/5 bg-slate-200 flex items-center justify-center text-xs">Entrenamiento</div>
+                            <div class="w-1/5 bg-violet-400 text-white flex items-center justify-center text-xs font-bold">Prueba (Iter 1)</div>
+                        </div>
+                        <div class="flex h-6 rounded overflow-hidden">
+                            <div class="w-3/5 bg-slate-200"></div>
+                            <div class="w-1/5 bg-violet-400 text-white flex items-center justify-center text-xs font-bold">Prueba (Iter 2)</div>
+                            <div class="w-1/5 bg-slate-200"></div>
+                        </div>
+                        <div class="text-center text-xs text-slate-400">... repite K veces ...</div>
+                    </div>
+                    <p class="text-sm text-slate-600">Calculamos la métrica final como el <strong>promedio</strong> de todas las iteraciones. Así garantizamos que el modelo generaliza bien.</p>
+                </div>
+
+                <!-- Grid Search -->
+                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                    <h3 class="font-bold text-violet-700 text-lg mb-4 flex items-center gap-2"><span class="text-xl">🎛️</span> 2. Grid Search CV</h3>
+                    <p class="text-sm text-slate-600 mb-4">Los modelos tienen configuraciones "manuales" llamadas <strong>Hiperparámetros</strong> (ej: la profundidad de un árbol). Grid Search es una fuerza bruta automatizada:</p>
+                    <div class="bg-slate-800 text-emerald-400 p-3 rounded font-mono text-xs mb-3">
+                        <span class="text-pink-400">params</span> = {<br>
+                        &nbsp;&nbsp;'max_depth': [3, 5, 10],<br>
+                        &nbsp;&nbsp;'criterion': ['gini', 'entropy']<br>
+                        }
+                    </div>
+                    <p class="text-sm text-slate-600">Scikit-Learn probará las 6 combinaciones (3x2) usando Validación Cruzada y te devolverá el mejor modelo posible.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección 5: Laboratorio Colab -->
+        <section id="laboratorio" class="section-content max-w-5xl mx-auto">
+            <div class="mb-8">
+                <h2 class="text-4xl font-extrabold text-slate-800 mb-4">Reto Colab: Evaluación Robusta</h2>
+            </div>
+
+            <div class="bg-slate-900 p-8 rounded-2xl shadow-xl flex flex-col border border-slate-700">
+                <div class="flex items-center gap-3 mb-6 pb-4 border-b border-slate-700">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/d/d0/Google_Colaboratory_SVG_Logo.svg" alt="Colab" class="h-8 w-8">
+                    <h3 class="font-bold text-white text-xl">Práctica Oficial: Generar con IA</h3>
+                </div>
+                
+                <p class="text-slate-300 mb-4">
+                    Para consolidar tu aprendizaje, generaremos un pipeline robusto que no se conforma con el Accuracy:
+                </p>
+
+                <div class="bg-slate-800 p-5 rounded-xl border border-violet-500/30 relative mb-8 shadow-inner">
+                    <div class="absolute top-0 right-0 bg-violet-500/20 text-violet-300 text-xs px-2 py-1 rounded-bl-lg rounded-tr-xl">Prompt IA</div>
+                    <p class="font-mono text-sm text-violet-300 italic leading-relaxed">
+                        "En Python con scikit-learn, utiliza el dataset 'load_breast_cancer'.<br><br>
+                        1. Configura un RandomForestClassifier.<br>
+                        2. Usa GridSearchCV para encontrar los mejores hiperparámetros probando 'n_estimators': [50, 100] y 'max_depth': [None, 5]. Usa cv=5.<br>
+                        3. Imprime los mejores parámetros encontrados.<br>
+                        4. Evalúa el mejor modelo sobre un Test Set e imprime el 'classification_report' (que muestra precision, recall y f1) y genera la Matriz de Confusión visual usando ConfusionMatrixDisplay."
+                    </p>
+                </div>
+
+                <div class="mt-4 p-4 bg-violet-900/40 border border-violet-500/30 rounded-lg mb-6">
+                    <h4 class="text-violet-300 font-bold text-sm mb-1">💡 Alternativa para LLM Avanzado:</h4>
+                    <p class="text-xs text-slate-400">Si utilizas Gemini Advanced (o Claude/GPT-4), puedes pedirle que además te grafique la <strong>Curva ROC</strong> en el mismo código usando <code>RocCurveDisplay</code> de Scikit-Learn.</p>
+                </div>
+
+                <a href="https://colab.research.google.com/github/Pastor-E-Perez-Estigarribia/curso-iaa/blob/main/colab_notebook/6-evaluacion_modelos.ipynb" target="_blank" rel="noopener noreferrer" class="w-full md:w-auto self-start bg-violet-600 hover:bg-violet-500 text-white font-bold py-4 px-8 rounded-xl shadow-md transition transform hover:-translate-y-1 flex items-center justify-center gap-3">
+                    <span class="text-2xl">⚡</span> Ejecutar en Google Colab
+                </a>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        const navState = { current: 'intro' };
+        
+        function navigate(sectionId) {
+            document.querySelectorAll('.nav-item').forEach(el => {
+                el.classList.remove('active', 'bg-f5f3ff', 'text-violet-700', 'border-r-4', 'border-violet-500', 'font-bold');
+                el.classList.add('text-slate-600');
+                el.style.backgroundColor = 'transparent';
+            });
+            
+            const btn = document.querySelector(`button[onclick="navigate('${sectionId}')"]`);
+            if(btn) {
+                btn.classList.add('active', 'text-violet-700', 'border-r-4', 'border-violet-500', 'font-bold');
+                btn.classList.remove('text-slate-600');
+                btn.style.backgroundColor = '#f5f3ff';
+            }
+
+            document.querySelectorAll('.section-content').forEach(el => el.classList.remove('active'));
+            document.getElementById(sectionId).classList.add('active');
+            navState.current = sectionId;
+
+            if(sectionId === 'metricas') calculateMetrics();
+        }
+
+        // --- Simulador Matriz de Confusión ---
+        function calculateMetrics() {
+            // Inputs
+            const tp = parseFloat(document.getElementById('sim-tp').value) || 0;
+            const fn = parseFloat(document.getElementById('sim-fn').value) || 0;
+            const fp = parseFloat(document.getElementById('sim-fp').value) || 0;
+            const tn = parseFloat(document.getElementById('sim-tn').value) || 0;
+
+            const total = tp + fn + fp + tn;
+            if (total === 0) return;
+
+            // Calculations
+            const acc = (tp + tn) / total;
+            const pre = (tp + fp) > 0 ? tp / (tp + fp) : 0;
+            const rec = (tp + fn) > 0 ? tp / (tp + fn) : 0;
+            const f1 = (pre + rec) > 0 ? 2 * (pre * rec) / (pre + rec) : 0;
+
+            // Update DOM Strings
+            document.getElementById('res-acc').innerText = (acc * 100).toFixed(1) + '%';
+            document.getElementById('res-pre').innerText = (pre * 100).toFixed(1) + '%';
+            document.getElementById('res-rec').innerText = (rec * 100).toFixed(1) + '%';
+            document.getElementById('res-f1').innerText = (f1 * 100).toFixed(1) + '%';
+
+            // Update Bars
+            document.getElementById('bar-acc').style.width = (acc * 100) + '%';
+            document.getElementById('bar-pre').style.width = (pre * 100) + '%';
+            document.getElementById('bar-rec').style.width = (rec * 100) + '%';
+        }
+
+        // Init calculations on load
+        window.onload = calculateMetrics;
+    </script>
+</body>
+</html> 
