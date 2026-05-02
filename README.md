@@ -38,8 +38,8 @@ El módulo está dividido en 7 clases progresivas. Cada clase incluye su teoría
 | **2** | **Preparación de Datos y Atributos** <br> *Limpieza, normalización, codificación y métodos de selección.* | [![Abrir en Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Pastor-E-Perez-Estigarribia/curso-iaa/blob/main/colab_notebook/2-preprocesamiento_aa.ipynb) |
 | **3** | **Modelos Supervisados I** <br> *Modelos lineales, Regresión Logística, Árboles de Decisión y Random Forest.* | [![Abrir en Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Pastor-E-Perez-Estigarribia/curso-iaa/blob/main/colab_notebook/3-modelos_supervisados.ipynb) |
 | **4** | **Modelos Supervisados II** <br> *Máquinas de Vectores de Soporte (SVM) y Redes Neuronales (MLP).* | [![Abrir en Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Pastor-E-Perez-Estigarribia/curso-iaa/blob/main/colab_notebook/4-modelos_supervisados_2.ipynb) |
-| **5** | **Aprendizaje No Supervisado** <br> *Algoritmos de Clustering (K-means, DBSCAN) y PCA.* | 🔒 *Próximamente* |
-| **6** | **Evaluación y Selección de Modelos** <br> *Matriz de confusión, curvas ROC, Validación Cruzada (k-fold).* | 🔒 *Próximamente* |
+| **5** | **Aprendizaje No Supervisado** <br> *Algoritmos de Clustering (K-means, DBSCAN) y PCA.* | [![Abrir en Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Pastor-E-Perez-Estigarribia/curso-iaa/blob/main/colab_notebook/5-no_supervisado.ipynb) |
+| **6** | **Evaluación y Selección de Modelos** <br> *Matriz de confusión, curvas ROC, Validación Cruzada (k-fold).* | [![Abrir en Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Pastor-E-Perez-Estigarribia/curso-iaa/blob/main/colab_notebook/6-evaluacion_modelos.ipynb) |
 | **7** | **Integración, Pipelines y Proyecto Final** <br> *Construcción de pipelines reproducibles en scikit-learn.* | 🔒 *Próximamente* |
 
 ---
