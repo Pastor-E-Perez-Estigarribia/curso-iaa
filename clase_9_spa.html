@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clase 7: Integración y Proyecto Final - Módulo IAA</title>
+    
+    <!-- Chosen Palette: Slate & Amber (Slate-50 bg, Slate-800 text, Amber-500 primary action) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <style>
+        body { font-family: 'Segoe UI', system-ui, sans-serif; background-color: #f8fafc; color: #1e293b; }
+        .nav-item { transition: all 0.2s ease; }
+        .nav-item.active { background-color: #fffbeb; color: #d97706; border-right: 4px solid #f59e0b; font-weight: 600; }
+        .section-content { display: none; animation: fadeIn 0.4s ease-in-out; }
+        .section-content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        /* Pipeline Flow Design */
+        .pipe-block { @apply bg-white border-2 border-slate-200 rounded-lg p-4 text-center shadow-sm relative z-10 flex-1 min-w-[120px]; }
+        .pipe-arrow { @apply hidden md:flex items-center text-amber-500 font-bold text-2xl px-2; }
+        .pipe-arrow-down { @apply flex md:hidden justify-center text-amber-500 font-bold text-2xl py-2; }
+    </style>
+</head>
+<body class="flex flex-col md:flex-row h-screen overflow-hidden">
+
+    <!-- Navegación Lateral -->
+    <nav class="w-full md:w-72 bg-white shadow-xl h-auto md:h-full flex flex-col z-20 shrink-0">
+        <div class="p-6 bg-slate-900 text-white border-b-4 border-amber-500">
+            <h1 class="text-2xl font-bold tracking-tight">Módulo IAA</h1>
+            <p class="text-sm text-amber-400 mt-1">Clase 7: Proyecto Final</p>
+        </div>
+        <div class="flex-1 overflow-y-auto py-4 flex flex-row md:flex-col overflow-x-auto hide-scrollbar" id="nav-menu">
+            <button onclick="navigate('intro')" class="nav-item active text-left px-6 py-4 hover:bg-slate-50 whitespace-nowrap md:whitespace-normal flex items-center gap-3 text-amber-700">
+                <span class="text-xl">🏆</span> La Meta Final
+            </button>
+            <button onclick="navigate('pipelines')" class="nav-item text-left px-6 py-4 hover:bg-slate-50 whitespace-nowrap md:whitespace-normal flex items-center gap-3 text-slate-600">
+                <span class="text-xl">🏭</span> Pipelines en scikit-learn
+            </button>
+            <button onclick="navigate('proyecto')" class="nav-item text-left px-6 py-4 hover:bg-slate-50 whitespace-nowrap md:whitespace-normal flex items-center gap-3 text-slate-600">
+                <span class="text-xl">📋</span> Guía del Mini-Proyecto
+            </button>
+            <button onclick="navigate('laboratorio')" class="nav-item text-left px-6 py-4 hover:bg-slate-50 whitespace-nowrap md:whitespace-normal flex items-center gap-3 text-slate-600">
+                <span class="text-xl">🚀</span> Reto Colab
+            </button>
+            
+            <a href="https://notebooklm.google.com/notebook/e564a7c8-11a3-43bb-bd67-7793d7f3e6e6" target="_blank" rel="noopener noreferrer" class="md:mt-auto text-left px-6 py-4 bg-slate-50 hover:bg-amber-100 text-slate-700 hover:text-amber-800 font-bold flex items-center gap-3 whitespace-nowrap md:whitespace-normal transition-colors border-t border-slate-200 shadow-inner">
+                <span class="text-xl">🤖</span> Consultar Bibliografía
+            </a>
+        </div>
+    </nav>
+
+    <!-- Contenido Principal -->
+    <main class="flex-1 overflow-y-auto p-6 md:p-12 bg-slate-50">
+
+        <!-- Sección 1: Intro -->
+        <section id="intro" class="section-content active max-w-5xl mx-auto">
+            <div class="mb-10 text-center">
+                <div class="text-6xl mb-4">🎉</div>
+                <h2 class="text-4xl font-extrabold text-slate-800 mb-4">¡Has llegado a la recta final!</h2>
+                <p class="text-lg text-slate-600 leading-relaxed bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    A lo largo del módulo hemos aprendido sobre datos, algoritmos, y evaluación. Sin embargo, en el mundo real no ejecutamos estas tareas aisladas en celdas separadas. Hoy aprenderemos a empaquetar todo el conocimiento en un <strong>flujo de trabajo (Pipeline) profesional y reproducible.</strong>
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="bg-red-50 p-8 rounded-2xl shadow-sm border border-red-200">
+                    <h3 class="text-xl font-bold text-red-800 mb-4 flex items-center gap-2"><span>🍝</span> El Código "Espagueti"</h3>
+                    <p class="text-sm text-red-900/80 mb-4">Lo que hacíamos antes (para aprender):</p>
+                    <ul class="space-y-2 text-sm font-mono text-slate-600 bg-white p-4 rounded border border-red-100">
+                        <li>1. Escalar X_train</li>
+                        <li>2. Seleccionar atributos de X_train</li>
+                        <li>3. Entrenar Modelo</li>
+                        <li>4. ¡Ups! Olvidé escalar X_test</li>
+                        <li class="text-red-500 font-bold">➔ Error o Fuga de Datos (Data Leakage)</li>
+                    </ul>
+                </div>
+                
+                <div class="bg-amber-50 p-8 rounded-2xl shadow-sm border border-amber-200">
+                    <h3 class="text-xl font-bold text-amber-800 mb-4 flex items-center gap-2"><span>🏭</span> El Código Profesional</h3>
+                    <p class="text-sm text-amber-900/80 mb-4">Lo que haremos hoy (Pipelines):</p>
+                    <ul class="space-y-2 text-sm font-mono text-slate-600 bg-white p-4 rounded border border-amber-100">
+                        <li>1. Definir los pasos (Escalador -> Selector -> Modelo)</li>
+                        <li>2. <span class="text-blue-500">pipeline.fit(X_train, y_train)</span></li>
+                        <li>3. <span class="text-blue-500">pipeline.predict(X_test)</span></li>
+                        <li class="text-emerald-500 font-bold">➔ Cero errores, totalmente automatizado.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección 2: Pipelines -->
+        <section id="pipelines" class="section-content max-w-5xl mx-auto">
+            <div class="mb-8">
+                <h2 class="text-4xl font-extrabold text-slate-800 mb-4">Pipelines en scikit-learn</h2>
+                <p class="text-lg text-slate-600 leading-relaxed bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    Un <code>Pipeline</code> es una herramienta que encadena múltiples pasos de procesamiento de datos junto con un estimador final. Asegura que los mismos pasos se apliquen de forma idéntica a los datos de entrenamiento y a los nuevos datos futuros.
+                </p>
+            </div>
+
+            <div class="bg-white p-8 rounded-2xl border border-slate-200 shadow-md">
+                <h3 class="font-bold text-slate-700 text-center mb-8">Arquitectura de un Pipeline <code>make_pipeline()</code></h3>
+                
+                <div class="flex flex-col md:flex-row justify-center items-stretch md:items-center">
+                    
+                    <div class="pipe-block border-slate-300 bg-slate-50">
+                        <div class="text-3xl mb-2">📊</div>
+                        <div class="font-bold text-sm text-slate-700">Datos<br>Crudos</div>
+                    </div>
+                    
+                    <div class="pipe-arrow">➔</div>
+                    <div class="pipe-arrow-down">⬇</div>
+
+                    <div class="bg-amber-50 border-2 border-amber-400 rounded-xl p-4 flex flex-col md:flex-row shadow-sm flex-grow items-center">
+                        <div class="pipe-block border-indigo-200">
+                            <div class="text-2xl mb-1">📏</div>
+                            <div class="font-bold text-xs text-indigo-700">StandardScaler</div>
+                            <div class="text-[10px] text-slate-500">Transformador</div>
+                        </div>
+                        
+                        <div class="pipe-arrow">➔</div>
+                        <div class="pipe-arrow-down">⬇</div>
+
+                        <div class="pipe-block border-emerald-200">
+                            <div class="text-2xl mb-1">✂️</div>
+                            <div class="font-bold text-xs text-emerald-700">SelectKBest</div>
+                            <div class="text-[10px] text-slate-500">Transformador</div>
+                        </div>
+                        
+                        <div class="pipe-arrow">➔</div>
+                        <div class="pipe-arrow-down">⬇</div>
+
+                        <div class="pipe-block border-fuchsia-200 bg-fuchsia-50 shadow-md">
+                            <div class="text-2xl mb-1">🧠</div>
+                            <div class="font-bold text-xs text-fuchsia-700">RandomForest</div>
+                            <div class="text-[10px] text-slate-500">Estimador Final</div>
+                        </div>
+                    </div>
+
+                    <div class="pipe-arrow">➔</div>
+                    <div class="pipe-arrow-down">⬇</div>
+
+                    <div class="pipe-block border-blue-400 bg-blue-50 shadow-md">
+                        <div class="text-3xl mb-2">🎯</div>
+                        <div class="font-bold text-sm text-blue-800">Predicción<br>Limpia</div>
+                    </div>
+
+                </div>
+                
+                <div class="mt-8 bg-slate-800 text-emerald-400 p-4 rounded-lg font-mono text-sm overflow-x-auto shadow-inner">
+                    <span class="text-pink-400">from</span> sklearn.pipeline <span class="text-pink-400">import</span> make_pipeline<br>
+                    <br>
+                    mi_pipeline = make_pipeline( StandardScaler(), SelectKBest(k=5), RandomForestClassifier() )<br>
+                    mi_pipeline.fit(X_train, y_train)<br>
+                    predicciones = mi_pipeline.predict(X_test)
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección 3: Proyecto -->
+        <section id="proyecto" class="section-content max-w-5xl mx-auto">
+            <div class="mb-8">
+                <h2 class="text-4xl font-extrabold text-slate-800 mb-4">Guía del Mini-Proyecto Final</h2>
+                <p class="text-lg text-slate-600 leading-relaxed bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    Tu objetivo para finalizar el módulo es construir un flujo completo, desde la carga de los datos hasta la justificación del modelo. Sigue esta lista de verificación.
+                </p>
+            </div>
+
+            <div class="space-y-4">
+                <div class="bg-white p-5 rounded-xl border-l-8 border-slate-400 shadow-sm flex items-start gap-4">
+                    <div class="bg-slate-100 w-8 h-8 rounded-full flex items-center justify-center font-bold text-slate-500 shrink-0">1</div>
+                    <div>
+                        <h4 class="font-bold text-slate-800">Selección y Carga de Datos</h4>
+                        <p class="text-sm text-slate-600 mt-1">Elige un dataset de clasificación (ej. <code>load_breast_cancer</code> o <code>load_digits</code>). Divídelo en entrenamiento (80%) y prueba (20%).</p>
+                    </div>
+                </div>
+
+                <div class="bg-white p-5 rounded-xl border-l-8 border-indigo-400 shadow-sm flex items-start gap-4">
+                    <div class="bg-indigo-100 w-8 h-8 rounded-full flex items-center justify-center font-bold text-indigo-600 shrink-0">2</div>
+                    <div>
+                        <h4 class="font-bold text-slate-800">Construcción de Pipelines</h4>
+                        <p class="text-sm text-slate-600 mt-1">Crea <strong>dos pipelines distintos</strong>. Uno que finalice en un modelo lineal (ej. Regresión Logística) y otro que finalice en un modelo complejo (ej. Random Forest o SVM). Incluye el escalado en ambos.</p>
+                    </div>
+                </div>
+
+                <div class="bg-white p-5 rounded-xl border-l-8 border-violet-400 shadow-sm flex items-start gap-4">
+                    <div class="bg-violet-100 w-8 h-8 rounded-full flex items-center justify-center font-bold text-violet-600 shrink-0">3</div>
+                    <div>
+                        <h4 class="font-bold text-slate-800">Evaluación con Validación Cruzada</h4>
+                        <p class="text-sm text-slate-600 mt-1">Somete ambos pipelines a <code>cross_val_score</code> sobre los datos de entrenamiento para comparar su estabilidad y rendimiento promedio.</p>
+                    </div>
+                </div>
+
+                <div class="bg-white p-5 rounded-xl border-l-8 border-amber-500 shadow-md flex items-start gap-4 transform hover:translate-x-2 transition">
+                    <div class="bg-amber-100 w-8 h-8 rounded-full flex items-center justify-center font-bold text-amber-600 shrink-0">4</div>
+                    <div>
+                        <h4 class="font-bold text-slate-800">Test Final y Justificación</h4>
+                        <p class="text-sm text-slate-600 mt-1">Evalúa el modelo ganador en tu set de prueba (test). Imprime la matriz de confusión y escribe una breve conclusión explicando por qué elegiste ese modelo (Interpretabilidad vs Rendimiento).</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección 4: Laboratorio Colab -->
+        <section id="laboratorio" class="section-content max-w-5xl mx-auto">
+            <div class="mb-8">
+                <h2 class="text-4xl font-extrabold text-slate-800 mb-4">Reto Final: Colab</h2>
+            </div>
+
+            <div class="bg-slate-900 p-8 rounded-2xl shadow-xl flex flex-col border border-slate-700">
+                <div class="flex items-center gap-3 mb-6 pb-4 border-b border-slate-700">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/d/d0/Google_Colaboratory_SVG_Logo.svg" alt="Colab" class="h-8 w-8">
+                    <h3 class="font-bold text-white text-xl">Generador del Proyecto con IA</h3>
+                </div>
+                
+                <p class="text-slate-300 mb-4">
+                    Para la base de tu proyecto final, usa este prompt. Luego, modifícalo a tu gusto para cumplir con los requisitos.
+                </p>
+
+                <div class="bg-slate-800 p-5 rounded-xl border border-amber-500/30 relative mb-8 shadow-inner">
+                    <div class="absolute top-0 right-0 bg-amber-500/20 text-amber-300 text-xs px-2 py-1 rounded-bl-lg rounded-tr-xl">Prompt IA</div>
+                    <p class="font-mono text-sm text-amber-300 italic leading-relaxed">
+                        "En Python con scikit-learn, utiliza el dataset 'load_breast_cancer'. <br>
+                        1. Importa 'make_pipeline', 'StandardScaler', 'LogisticRegression' y 'RandomForestClassifier'.<br>
+                        2. Construye dos pipelines: uno para Regresión Logística y otro para Random Forest. Asegúrate de que ambos incluyan el escalado de datos.<br>
+                        3. Utiliza 'cross_val_score' (cv=5) en ambos pipelines para imprimir la media de precisión (accuracy).<br>
+                        Añade comentarios en el código explicando por qué usar un pipeline previene el Data Leakage."
+                    </p>
+                </div>
+
+                <div class="mt-4 p-4 bg-amber-900/20 border border-amber-500/30 rounded-lg mb-6">
+                    <h4 class="text-amber-400 font-bold text-sm mb-1">💡 Tip para mejores resultados con la IA:</h4>
+                    <p class="text-xs text-slate-400">Si utilizas modelos avanzados como <strong>Gemini Advanced, Claude 3.5 Sonnet o GPT-4o</strong>, puedes pedirles que actúen como "Code Reviewers". Pasa tu código final y pídeles: <em>"Revisa este pipeline de scikit-learn. ¿Existe alguna fuga de datos o mala práctica? Sugiere mejoras de optimización usando GridSearchCV."</em></p>
+                </div>
+
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <a href="https://colab.research.google.com/github/Pastor-E-Perez-Estigarribia/curso-iaa/blob/main/colab_notebook/7-proyecto_final.ipynb" target="_blank" rel="noopener noreferrer" class="flex-1 bg-amber-600 hover:bg-amber-500 text-white font-bold py-4 px-6 rounded-xl shadow-md transition transform hover:-translate-y-1 flex items-center justify-center gap-3">
+                        <span class="text-2xl">⚡</span> Crear Proyecto en Colab
+                    </a>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        const navState = { current: 'intro' };
+        
+        function navigate(sectionId) {
+            document.querySelectorAll('.nav-item').forEach(el => {
+                el.classList.remove('active', 'bg-fffbeb', 'text-amber-700', 'border-r-4', 'border-amber-500', 'font-bold');
+                el.classList.add('text-slate-600');
+                el.style.backgroundColor = 'transparent';
+            });
+            
+            const btn = document.querySelector(`button[onclick="navigate('${sectionId}')"]`);
+            if(btn) {
+                btn.classList.add('active', 'text-amber-700', 'border-r-4', 'border-amber-500', 'font-bold');
+                btn.classList.remove('text-slate-600');
+                btn.style.backgroundColor = '#fffbeb';
+            }
+
+            document.querySelectorAll('.section-content').forEach(el => el.classList.remove('active'));
+            document.getElementById(sectionId).classList.add('active');
+            navState.current = sectionId;
+        }
+    </script>
+</body>
+</html>
