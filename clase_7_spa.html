@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clase 7: Técnicas de Regresión - Módulo IAA</title>
+    
+    <!-- Chosen Palette: Slate & Rose (Slate-50 bg, Slate-800 text, Rose-500 primary action) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        body { font-family: 'Segoe UI', system-ui, sans-serif; background-color: #f8fafc; color: #1e293b; }
+        .chart-container { position: relative; width: 100%; max-width: 700px; margin: 0 auto; height: 350px; }
+        .nav-item { transition: all 0.2s ease; }
+        .nav-item.active { background-color: #fff1f2; color: #e11d48; border-right: 4px solid #e11d48; font-weight: 600; }
+        .section-content { display: none; animation: fadeIn 0.4s ease-in-out; }
+        .section-content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .math-box { font-family: 'Courier New', Courier, monospace; background-color: #f1f5f9; padding: 0.5rem; border-radius: 0.375rem; border: 1px solid #e2e8f0; font-size: 0.875rem; color: #334155; }
+    </style>
+</head>
+<body class="flex flex-col md:flex-row h-screen overflow-hidden">
+
+    <!-- Navegación Lateral -->
+    <nav class="w-full md:w-72 bg-white shadow-xl h-auto md:h-full flex flex-col z-20 shrink-0">
+        <div class="p-6 bg-slate-900 text-white border-b-4 border-rose-500">
+            <h1 class="text-2xl font-bold tracking-tight">Módulo IAA</h1>
+            <p class="text-sm text-rose-300 mt-1">Clase 7: Regresión</p>
+        </div>
+        <div class="flex-1 overflow-y-auto py-4 flex flex-row md:flex-col overflow-x-auto hide-scrollbar" id="nav-menu">
+            <button onclick="navigate('intro')" class="nav-item active text-left px-6 py-4 hover:bg-slate-50 whitespace-nowrap md:whitespace-normal flex items-center gap-3 text-rose-700">
+                <span class="text-xl">📈</span> OLS y Limitaciones
+            </button>
+            <button onclick="navigate('regularizacion')" class="nav-item text-left px-6 py-4 hover:bg-slate-50 whitespace-nowrap md:whitespace-normal flex items-center gap-3 text-slate-600">
+                <span class="text-xl">⚖️</span> Ridge, Lasso y ElasticNet
+            </button>
+            <button onclick="navigate('avanzada')" class="nav-item text-left px-6 py-4 hover:bg-slate-50 whitespace-nowrap md:whitespace-normal flex items-center gap-3 text-slate-600">
+                <span class="text-xl">〰️</span> Polinomios y Cuantiles
+            </button>
+            <button onclick="navigate('simulador')" class="nav-item text-left px-6 py-4 hover:bg-slate-50 whitespace-nowrap md:whitespace-normal flex items-center gap-3 text-slate-600">
+                <span class="text-xl">🎯</span> Simulador: Sesgo-Varianza
+            </button>
+            <button onclick="navigate('laboratorio')" class="nav-item text-left px-6 py-4 hover:bg-slate-50 whitespace-nowrap md:whitespace-normal flex items-center gap-3 text-slate-600">
+                <span class="text-xl">🚀</span> Retos Colab (3)
+            </button>
+            
+            <a href="https://notebooklm.google.com/notebook/e564a7c8-11a3-43bb-bd67-7793d7f3e6e6" target="_blank" rel="noopener noreferrer" class="md:mt-auto text-left px-6 py-4 bg-amber-50 hover:bg-amber-100 text-amber-800 font-bold flex items-center gap-3 whitespace-nowrap md:whitespace-normal transition-colors border-t border-amber-200 shadow-inner">
+                <span class="text-xl">🤖</span> Asistente NotebookLM
+            </a>
+        </div>
+    </nav>
+
+    <!-- Contenido Principal -->
+    <main class="flex-1 overflow-y-auto p-6 md:p-12 bg-slate-50">
+
+        <!-- Sección 1: Intro -->
+        <section id="intro" class="section-content active max-w-5xl mx-auto">
+            <div class="mb-10">
+                <h2 class="text-4xl font-extrabold text-slate-800 mb-4">Regresión: Prediciendo Valores Continuos</h2>
+                <p class="text-lg text-slate-600 leading-relaxed bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    A diferencia de la clasificación, en regresión buscamos predecir un valor numérico (ej. precio, temperatura). El enfoque clásico es la <strong>Estimación OLS (Mínimos Cuadrados Ordinarios)</strong>, que busca minimizar la suma de cuadrados de los residuos.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-200">
+                    <h3 class="text-xl font-bold text-slate-800 mb-4">El Criterio OLS</h3>
+                    <p class="text-sm text-slate-600 mb-4">El objetivo matemático es encontrar los coeficientes (\(\beta\)) que minimicen el error entre la predicción y el valor real.</p>
+                    <div class="math-box text-center mb-4">
+                        β_OLS = arg min ||y - Xβ||²
+                    </div>
+                    <ul class="text-xs text-slate-500 space-y-2">
+                        <li>✔️ Es un estimador insesgado.</li>
+                        <li>✔️ Tiene solución cerrada analítica.</li>
+                    </ul>
+                </div>
+                
+                <div class="bg-rose-50 p-8 rounded-2xl shadow-sm border border-rose-200">
+                    <h3 class="text-xl font-bold text-rose-800 mb-4">Problemas de OLS</h3>
+                    <p class="text-sm text-rose-900/80 mb-4">Aunque es el estándar, OLS sufre gravemente bajo ciertas condiciones de los datos:</p>
+                    <ul class="space-y-3 text-sm text-rose-800">
+                        <li class="flex items-start gap-2"><span>⚠️</span> <strong>Multicolinealidad:</strong> Si dos variables están muy correlacionadas, la varianza de los coeficientes explota.</li>
+                        <li class="flex items-start gap-2"><span>⚠️</span> <strong>Sobreajuste (Overfitting):</strong> Si tenemos demasiadas variables (p grande vs n pequeño).</li>
+                        <li class="flex items-start gap-2"><span>⚠️</span> <strong>Falta de Selección:</strong> OLS usa todas las variables, no descarta las inútiles automáticamente.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección 2: Regularización -->
+        <section id="regularizacion" class="section-content max-w-5xl mx-auto">
+            <div class="mb-8">
+                <h2 class="text-4xl font-extrabold text-slate-800 mb-4">La Solución: Regularización</h2>
+                <p class="text-lg text-slate-600 leading-relaxed bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    Para solucionar el sobreajuste y la multicolinealidad, añadimos una <strong>penalización (\(\lambda\))</strong> a la función de pérdida. Esto obliga al modelo a mantener los coeficientes "bajo control" a cambio de introducir un poco de sesgo.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Ridge -->
+                <div class="bg-white p-6 rounded-xl border-t-4 border-blue-500 shadow-sm">
+                    <h4 class="font-bold text-slate-800 mb-2">1. Ridge Regression (L2)</h4>
+                    <div class="math-box text-xs mb-3 text-center">OLS + λ||β||₂²</div>
+                    <p class="text-sm text-slate-600 mb-3">Penaliza el cuadrado de los coeficientes. Los reduce hacia cero, pero rara vez exactamente a cero.</p>
+                    <span class="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded font-bold">Ideal para Multicolinealidad</span>
+                </div>
+                <!-- Lasso -->
+                <div class="bg-white p-6 rounded-xl border-t-4 border-emerald-500 shadow-sm">
+                    <h4 class="font-bold text-slate-800 mb-2">2. Lasso Regression (L1)</h4>
+                    <div class="math-box text-xs mb-3 text-center">OLS + λ||β||₁</div>
+                    <p class="text-sm text-slate-600 mb-3">Penaliza el valor absoluto. Induce <strong>esparsidad</strong>, llevando coeficientes inútiles exactamente a cero.</p>
+                    <span class="inline-block bg-emerald-100 text-emerald-800 text-xs px-2 py-1 rounded font-bold">Ideal para Selección de Variables</span>
+                </div>
+                <!-- ElasticNet -->
+                <div class="bg-white p-6 rounded-xl border-t-4 border-rose-500 shadow-sm">
+                    <h4 class="font-bold text-slate-800 mb-2">3. Elastic Net</h4>
+                    <div class="math-box text-xs mb-3 text-center">OLS + L1 + L2</div>
+                    <p class="text-sm text-slate-600 mb-3">Combina ambas penalizaciones controladas por un parámetro \(\alpha\). Agrupa lo mejor de ambos mundos.</p>
+                    <span class="inline-block bg-rose-100 text-rose-800 text-xs px-2 py-1 rounded font-bold">Recomendado en la práctica</span>
+                </div>
+            </div>
+            
+            <div class="mt-6 bg-slate-800 text-amber-300 p-4 rounded-xl text-sm flex items-center gap-3">
+                <span class="text-2xl">⚠️</span>
+                <p><strong>Regla de Oro:</strong> Es obligatorio estandarizar/escalar tus datos (StandardScaler) antes de aplicar cualquier regularización.</p>
+            </div>
+        </section>
+
+        <!-- Sección 3: Avanzada -->
+        <section id="avanzada" class="section-content max-w-5xl mx-auto">
+            <div class="mb-8">
+                <h2 class="text-4xl font-extrabold text-slate-800 mb-4">Más Allá de lo Lineal y la Media</h2>
+            </div>
+            
+            <div class="space-y-6">
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col md:flex-row gap-6">
+                    <div class="flex-1">
+                        <h3 class="text-xl font-bold text-slate-800 mb-3">Regresión Polinómica</h3>
+                        <p class="text-sm text-slate-600 mb-3">
+                            Permite modelar curvas agregando potencias de las variables (\(x^2, x^3\)). Sigue siendo "regresión lineal" porque es lineal respecto a los coeficientes \(\beta\).
+                        </p>
+                        <p class="text-sm text-slate-600">
+                            <strong>Problema:</strong> Grados altos causan un sobreajuste extremo. <br>
+                            <strong>Solución:</strong> Utilizar <code>PolynomialFeatures</code> dentro de un Pipeline y aplicar regularización Ridge/Lasso.
+                        </p>
+                    </div>
+                    <div class="w-full md:w-1/3 bg-slate-50 flex items-center justify-center p-4 rounded-xl border border-slate-200">
+                        <div class="text-center font-mono text-sm text-slate-500">y = β₀ + β₁x + β₂x² + ... + β_dx^d</div>
+                    </div>
+                </div>
+
+                <div class="bg-slate-900 p-6 rounded-2xl shadow-sm flex flex-col md:flex-row gap-6 text-white">
+                    <div class="flex-1">
+                        <h3 class="text-xl font-bold text-rose-400 mb-3">Regresión de Cuantiles</h3>
+                        <p class="text-sm text-slate-300 mb-3">
+                            En lugar de predecir el "promedio" (la media condicional), predecimos la <strong>mediana</strong> o cualquier cuantil (p.ej. el percentil 90).
+                        </p>
+                        <ul class="text-sm text-slate-400 space-y-1 list-disc pl-4">
+                            <li>Usa la función de pérdida "Pinball Loss".</li>
+                            <li>Es ultra resistente a valores atípicos (outliers).</li>
+                            <li>Permite modelar escenarios de riesgo e intervalos de confianza condicionales.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección 4: Simulador -->
+        <section id="simulador" class="section-content max-w-5xl mx-auto">
+            <div class="mb-8">
+                <h2 class="text-4xl font-extrabold text-slate-800 mb-4">Simulador: Dilema Sesgo-Varianza</h2>
+                <p class="text-lg text-slate-600 leading-relaxed bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    Comprueba qué sucede cuando intentas ajustar datos curvos con polinomios de distinto grado.
+                </p>
+            </div>
+
+            <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-md">
+                <div class="flex flex-wrap gap-2 mb-6 justify-center">
+                    <button onclick="updatePoly(1)" id="btn-deg1" class="px-4 py-2 bg-slate-200 text-slate-700 rounded font-bold hover:bg-slate-300 transition text-sm active-btn">Grado 1 (Subajuste)</button>
+                    <button onclick="updatePoly(3)" id="btn-deg3" class="px-4 py-2 bg-slate-200 text-slate-700 rounded font-bold hover:bg-slate-300 transition text-sm">Grado 3 (Óptimo)</button>
+                    <button onclick="updatePoly(15)" id="btn-deg15" class="px-4 py-2 bg-slate-200 text-slate-700 rounded font-bold hover:bg-slate-300 transition text-sm">Grado 15 (Sobreajuste)</button>
+                </div>
+                <div class="chart-container">
+                    <canvas id="polyChart"></canvas>
+                </div>
+                <p id="poly-desc" class="text-center text-sm text-slate-500 mt-4 font-bold text-red-500">Sesgo Alto: El modelo es demasiado simple para capturar la curva (Underfitting).</p>
+            </div>
+        </section>
+
+        <!-- Sección 5: Laboratorio Colab -->
+        <section id="laboratorio" class="section-content max-w-5xl mx-auto">
+            <div class="mb-8">
+                <h2 class="text-4xl font-extrabold text-slate-800 mb-4">Retos Colab: Regresión Aplicada</h2>
+                <p class="text-lg text-slate-600 leading-relaxed bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    Para esta clase, tenemos 3 libretas preparadas en el repositorio. Ejecuta los flujos y analiza el impacto de la regularización en los pesos del modelo.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                <a href="https://colab.research.google.com/github/Pastor-E-Perez-Estigarribia/curso-iaa/blob/main/colab_notebook/7.1-Regresion_Lineal_Minimos_Cuadrados_y_Maxima_Verosimilitud.ipynb" target="_blank" class="bg-white p-5 rounded-xl border-t-4 border-slate-400 shadow-sm hover:shadow-md transition group">
+                    <div class="text-slate-400 group-hover:text-slate-600 font-bold mb-2">Libreta 7.1</div>
+                    <h3 class="font-bold text-slate-800 mb-3 text-sm">Regresión Lineal y Mínimos Cuadrados</h3>
+                    <div class="flex items-center text-rose-600 text-sm font-bold gap-1">Abrir Colab ➔</div>
+                </a>
+                
+                <a href="https://colab.research.google.com/github/Pastor-E-Perez-Estigarribia/curso-iaa/blob/main/colab_notebook/7.2-Regresion_Logistica.ipynb" target="_blank" class="bg-white p-5 rounded-xl border-t-4 border-slate-400 shadow-sm hover:shadow-md transition group">
+                    <div class="text-slate-400 group-hover:text-slate-600 font-bold mb-2">Libreta 7.2</div>
+                    <h3 class="font-bold text-slate-800 mb-3 text-sm">Regresión Logística (Repaso/Clasificación)</h3>
+                    <div class="flex items-center text-rose-600 text-sm font-bold gap-1">Abrir Colab ➔</div>
+                </a>
+
+                <a href="https://colab.research.google.com/github/Pastor-E-Perez-Estigarribia/curso-iaa/blob/main/colab_notebook/7.3-Regularizacion_en_Modelos_de_Regresion.ipynb" target="_blank" class="bg-rose-50 p-5 rounded-xl border-t-4 border-rose-500 shadow-sm hover:shadow-md transition group">
+                    <div class="text-rose-400 group-hover:text-rose-600 font-bold mb-2">Libreta 7.3 ⭐</div>
+                    <h3 class="font-bold text-rose-900 mb-3 text-sm">Regularización en Regresión (Ridge/Lasso)</h3>
+                    <div class="flex items-center text-rose-600 text-sm font-bold gap-1">Abrir Colab ➔</div>
+                </a>
+            </div>
+
+            <!-- Sugerencia IA -->
+            <div class="bg-slate-900 p-6 rounded-xl border border-slate-700">
+                <h4 class="text-amber-400 font-bold text-sm mb-2 flex items-center gap-2"><span>🤖</span> Alternativa para mejorar tu análisis con IA Especializada</h4>
+                <p class="text-sm text-slate-300">
+                    Al ejecutar la libreta 7.3, te sugiero copiar la salida de los coeficientes de Lasso y Ridge y pasarlos a un modelo especializado en matemáticas (como **Claude 3.5 Sonnet** o **Gemini 1.5 Pro**). Pídeles: <br>
+                    <em class="text-amber-200">"Tengo estos coeficientes de Ridge y Lasso. Explícame matemáticamente por qué Lasso forzó exactamente a cero algunos de estos atributos (esparsidad) mientras que Ridge solo los hizo pequeños."</em>
+                </p>
+            </div>
+
+        </section>
+
+    </main>
+
+    <script>
+        const navState = { current: 'intro' };
+        
+        function navigate(sectionId) {
+            document.querySelectorAll('.nav-item').forEach(el => {
+                el.classList.remove('active', 'bg-fff1f2', 'text-rose-700', 'border-r-4', 'border-rose-500', 'font-bold');
+                el.classList.add('text-slate-600');
+                el.style.backgroundColor = 'transparent';
+            });
+            
+            const btn = document.querySelector(`button[onclick="navigate('${sectionId}')"]`);
+            if(btn) {
+                btn.classList.add('active', 'text-rose-700', 'border-r-4', 'border-rose-500', 'font-bold');
+                btn.classList.remove('text-slate-600');
+                btn.style.backgroundColor = '#fff1f2';
+            }
+
+            document.querySelectorAll('.section-content').forEach(el => el.classList.remove('active'));
+            document.getElementById(sectionId).classList.add('active');
+            navState.current = sectionId;
+
+            if(sectionId === 'simulador' && !window.polyChartObj) initPolyChart();
+        }
+
+        // --- Simulador Polinomial ---
+        let polyChartObj = null;
+
+        // Data real: sin(x) + noise
+        const rawX = Array.from({length: 20}, (_, i) => (i / 19) * 5); // 0 to 5
+        const rawY = rawX.map(x => Math.sin(x) + (Math.random() - 0.5) * 0.5);
+        const dataPoints = rawX.map((x, i) => ({x: x, y: rawY[i]}));
+
+        // Curves calculated via simple math approx for demo purposes
+        // Degree 1 (Underfit): y = -0.3x + 1
+        const line1 = rawX.map(x => ({x: x, y: -0.2*x + 0.8}));
+        // Degree 3 (Good fit): approx sin(x)
+        const line3 = Array.from({length: 50}, (_, i) => { let x = (i/49)*5; return {x: x, y: Math.sin(x)}; });
+        // Degree 15 (Overfit): erratic curve that hits points exactly
+        const line15 = dataPoints.map(p => ({x: p.x, y: p.y})); // Just connecting the dots creates the overfit look in Chart.js using tension
+        
+        function initPolyChart() {
+            const ctx = document.getElementById('polyChart').getContext('2d');
+            polyChartObj = new Chart(ctx, {
+                type: 'scatter',
+                data: {
+                    datasets: [
+                        { label: 'Datos', data: dataPoints, backgroundColor: '#3b82f6', pointRadius: 5, order: 2 },
+                        { label: 'Modelo (Grado 1)', data: line1, type: 'line', borderColor: '#e11d48', borderWidth: 3, pointRadius: 0, fill: false, order: 1, tension: 0 }
+                    ]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { position: 'bottom' } },
+                    scales: { x: { min: -0.5, max: 5.5 }, y: { min: -1.5, max: 2 } },
+                    animation: { duration: 800 }
+                }
+            });
+            updateButtons(1);
+        }
+
+        function updatePoly(degree) {
+            if(!polyChartObj) return;
+            const ds = polyChartObj.data.datasets[1];
+            const desc = document.getElementById('poly-desc');
+
+            if(degree === 1) {
+                ds.label = 'Modelo (Grado 1)'; ds.data = line1; ds.tension = 0; ds.borderColor = '#ef4444'; // Red
+                desc.innerHTML = "<strong>Sesgo Alto:</strong> El modelo lineal es demasiado rígido para capturar la curvatura de los datos (Underfitting).";
+                desc.className = "text-center text-sm mt-4 font-bold text-red-500";
+            } 
+            else if (degree === 3) {
+                ds.label = 'Modelo (Grado 3)'; ds.data = line3; ds.tension = 0.4; ds.borderColor = '#10b981'; // Emerald
+                desc.innerHTML = "<strong>Equilibrio Óptimo:</strong> Captura la tendencia real subyacente sin memorizar el ruido (Generaliza bien).";
+                desc.className = "text-center text-sm mt-4 font-bold text-emerald-600";
+            }
+            else if (degree === 15) {
+                ds.label = 'Modelo (Grado 15)'; ds.data = line15; ds.tension = 0.4; ds.borderColor = '#f59e0b'; // Amber
+                desc.innerHTML = "<strong>Varianza Alta:</strong> El modelo memorizó los datos y el ruido. Fallará miserablemente con datos nuevos (Overfitting).";
+                desc.className = "text-center text-sm mt-4 font-bold text-amber-500";
+            }
+            polyChartObj.update();
+            updateButtons(degree);
+        }
+
+        function updateButtons(activeDeg) {
+            [1,3,15].forEach(deg => {
+                const btn = document.getElementById(`btn-deg${deg}`);
+                if(deg === activeDeg) {
+                    btn.classList.replace('bg-slate-200', 'bg-rose-500');
+                    btn.classList.replace('text-slate-700', 'text-white');
+                    btn.classList.replace('hover:bg-slate-300', 'hover:bg-rose-600');
+                } else {
+                    btn.classList.replace('bg-rose-500', 'bg-slate-200');
+                    btn.classList.replace('text-white', 'text-slate-700');
+                    btn.classList.replace('hover:bg-rose-600', 'hover:bg-slate-300');
+                }
+            });
+        }
+    </script>
+</body>
+</html>
