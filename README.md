@@ -1,6 +1,6 @@
 # **🤖 Módulo: Introducción al Aprendizaje Automático (IAA)**
 
-Bienvenido al repositorio oficial del módulo **Introducción al Aprendizaje Automático**, desarrollado para el programa de Postgrado de la **Facultad Politécnica de la Universidad Nacional de Asunción (FP-UNA)**.
+Bienvenido al repositorio oficial del módulo **Introducción al Aprendizaje Automático**.
 
 Este curso busca proporcionar a los estudiantes una inmersión profunda, combinando conceptos teóricos fundamentales con el desarrollo de habilidades de programación aplicada.
 
@@ -32,8 +32,8 @@ El módulo está dividido en 9 clases progresivas. Cada clase incluye su teoría
 | **5** | **Aprendizaje No Supervisado** *Algoritmos de Clustering (K-means, DBSCAN, Jerárquico) y PCA.* |  |
 | **6** | **Evaluación y Selección de Modelos** *Matriz de confusión, curvas ROC, Validación Cruzada (k-fold).* |  |
 | **7** | **Técnicas de Regresión** *OLS, Regularización (Ridge, Lasso, ElasticNet) y Polinomios.* | [📘 7.1 Lineal](https://colab.research.google.com/github/Pastor-E-Perez-Estigarribia/curso-iaa/blob/main/colab_notebook/7.1-Regresion_Lineal_Minimos_Cuadrados_y_Maxima_Verosimilitud.ipynb) [📘 7.2 Logística](https://colab.research.google.com/github/Pastor-E-Perez-Estigarribia/curso-iaa/blob/main/colab_notebook/7.2-Regresion_Logistica.ipynb) [📘 7.3 Regularización](https://colab.research.google.com/github/Pastor-E-Perez-Estigarribia/curso-iaa/blob/main/colab_notebook/7.3-Regularizacion_en_Modelos_de_Regresion.ipynb) |
-| **8** | **Ensamble de Modelos** *Técnicas avanzadas para combinar algoritmos predictivos.* | 🔒 *Próximamente* |
-| **9** | **Integración, Pipelines y Proyecto Final** *Construcción de pipelines reproducibles en scikit-learn.* | 🔒 *Próximamente* |
+| **8** | **Ensamble de Modelos** *Bagging, Boosting, Voting y Stacking.* | [📘 8.1 Ensemble](https://colab.research.google.com/github/Pastor-E-Perez-Estigarribia/curso-iaa/blob/main/colab_notebook/8.1-ML_ensemble.ipynb) [📘 8.2 Voting](https://colab.research.google.com/github/Pastor-E-Perez-Estigarribia/curso-iaa/blob/main/colab_notebook/8.2-Voting.ipynb) [📘 8.3 Boosting](https://colab.research.google.com/github/Pastor-E-Perez-Estigarribia/curso-iaa/blob/main/colab_notebook/8.3-Boosting.ipynb) [📘 8.4 Bagging](https://colab.research.google.com/github/Pastor-E-Perez-Estigarribia/curso-iaa/blob/main/colab_notebook/8.4-Bagging_Ensemble.ipynb) [📘 8.5 Stacking](https://colab.research.google.com/github/Pastor-E-Perez-Estigarribia/curso-iaa/blob/main/colab_notebook/8.5-Stacking_Ensemble_.ipynb) |
+| **9** | **Integración, Pipelines y Proyecto Final** *Construcción de pipelines reproducibles en scikit-learn.* |  |
 
 ## **🛠️ Herramientas y Recursos**
 
@@ -47,3 +47,4 @@ El módulo está dividido en 9 clases progresivas. Cada clase incluye su teoría
 1. **Aurélien Géron (2019).** *Hands-on Machine Learning with Scikit-Learn, Keras, and TensorFlow (2nd Ed).* O'Reilly Media.  
 2. **John P. Mueller & Luca Massaron (2016).** *Machine Learning For Dummies.* John Wiley & Sons.  
 3. **scikit-learn developers.** *Official User Guide & API Documentation.*
+
