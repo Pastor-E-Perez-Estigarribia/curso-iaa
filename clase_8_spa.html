@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clase 8: Ensamble de Modelos - Módulo IAA</title>
+    
+    <!-- Chosen Palette: Slate & Orange (Slate-50 bg, Slate-800 text, Orange-500 primary action) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        body { font-family: 'Segoe UI', system-ui, sans-serif; background-color: #f8fafc; color: #1e293b; }
+        .chart-container { position: relative; width: 100%; max-width: 700px; margin: 0 auto; height: 350px; }
+        .nav-item { transition: all 0.2s ease; }
+        .nav-item.active { background-color: #fff7ed; color: #ea580c; border-right: 4px solid #f97316; font-weight: 600; }
+        .section-content { display: none; animation: fadeIn 0.4s ease-in-out; }
+        .section-content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .model-card { @apply bg-white p-4 rounded-xl border-2 border-slate-200 text-center flex flex-col items-center justify-center gap-2 shadow-sm; }
+    </style>
+</head>
+<body class="flex flex-col md:flex-row h-screen overflow-hidden">
+
+    <!-- Navegación Lateral -->
+    <nav class="w-full md:w-72 bg-white shadow-xl h-auto md:h-full flex flex-col z-20 shrink-0">
+        <div class="p-6 bg-slate-900 text-white border-b-4 border-orange-500">
+            <h1 class="text-2xl font-bold tracking-tight">Módulo IAA</h1>
+            <p class="text-sm text-orange-300 mt-1">Clase 8: Ensambles</p>
+        </div>
+        <div class="flex-1 overflow-y-auto py-4 flex flex-row md:flex-col overflow-x-auto hide-scrollbar" id="nav-menu">
+            <button onclick="navigate('intro')" class="nav-item active text-left px-6 py-4 hover:bg-slate-50 whitespace-nowrap md:whitespace-normal flex items-center gap-3 text-orange-700">
+                <span class="text-xl">🤝</span> La Sabiduría de la Multitud
+            </button>
+            <button onclick="navigate('bagboost')" class="nav-item text-left px-6 py-4 hover:bg-slate-50 whitespace-nowrap md:whitespace-normal flex items-center gap-3 text-slate-600">
+                <span class="text-xl">⚖️</span> Bagging vs Boosting
+            </button>
+            <button onclick="navigate('stacking')" class="nav-item text-left px-6 py-4 hover:bg-slate-50 whitespace-nowrap md:whitespace-normal flex items-center gap-3 text-slate-600">
+                <span class="text-xl">🏗️</span> Voting y Stacking
+            </button>
+            <button onclick="navigate('simulador')" class="nav-item text-left px-6 py-4 hover:bg-slate-50 whitespace-nowrap md:whitespace-normal flex items-center gap-3 text-slate-600">
+                <span class="text-xl">🎯</span> Simulador: Votación
+            </button>
+            <button onclick="navigate('laboratorio')" class="nav-item text-left px-6 py-4 hover:bg-slate-50 whitespace-nowrap md:whitespace-normal flex items-center gap-3 text-slate-600">
+                <span class="text-xl">🚀</span> Retos Colab (5)
+            </button>
+            <button onclick="navigate('evaluacion')" class="nav-item text-left px-6 py-4 hover:bg-slate-50 whitespace-nowrap md:whitespace-normal flex items-center gap-3 text-slate-600">
+                <span class="text-xl">📝</span> Desafíos y Rúbrica
+            </button>
+            
+            <a href="https://notebooklm.google.com/notebook/e564a7c8-11a3-43bb-bd67-7793d7f3e6e6" target="_blank" rel="noopener noreferrer" class="md:mt-auto text-left px-6 py-4 bg-amber-50 hover:bg-amber-100 text-amber-800 font-bold flex items-center gap-3 whitespace-nowrap md:whitespace-normal transition-colors border-t border-amber-200 shadow-inner">
+                <span class="text-xl">🤖</span> Asistente NotebookLM
+            </a>
+        </div>
+    </nav>
+
+    <!-- Contenido Principal -->
+    <main class="flex-1 overflow-y-auto p-6 md:p-12 bg-slate-50">
+
+        <!-- Sección 1: Intro -->
+        <section id="intro" class="section-content active max-w-5xl mx-auto">
+            <div class="mb-10">
+                <h2 class="text-4xl font-extrabold text-slate-800 mb-4">La Sabiduría de la Multitud</h2>
+                <p class="text-lg text-slate-600 leading-relaxed bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    En Machine Learning, un modelo por sí solo puede ser débil o inestable. Las técnicas de <strong>Ensamble</strong> combinan las predicciones de múltiples modelos base para crear un único "Súper Modelo" mucho más robusto, preciso y menos propenso al sobreajuste.
+                </p>
+            </div>
+
+            <div class="bg-orange-500 p-8 rounded-2xl shadow-md text-white flex flex-col md:flex-row gap-8 items-center border border-orange-600">
+                <div class="flex-1 space-y-4">
+                    <h3 class="text-2xl font-bold text-orange-100 flex items-center gap-2"><span>❓</span> ¿Por qué ensamblar?</h3>
+                    <ul class="space-y-3">
+                        <li class="flex items-start gap-3"><span class="text-orange-200">1.</span> <strong>Reducción de Varianza:</strong> Promediar varios modelos inestables (como los Árboles) hace que el resultado final sea consistente y suave.</li>
+                        <li class="flex items-start gap-3"><span class="text-orange-200">2.</span> <strong>Reducción de Sesgo:</strong> Combinar modelos que se equivocan de diferentes maneras permite cancelar los errores mutuos.</li>
+                        <li class="flex items-start gap-3"><span class="text-orange-200">3.</span> <strong>Robustez:</strong> Menor sensibilidad al ruido y a las anomalías en los datos.</li>
+                    </ul>
+                </div>
+                <div class="w-full md:w-1/3 bg-slate-900 p-6 rounded-xl shadow-inner text-center">
+                    <div class="text-4xl mb-2">🧑‍⚖️🧑‍🔬🧑‍🏫</div>
+                    <div class="text-xl font-bold text-orange-400">➔ 👑</div>
+                    <p class="text-sm text-slate-400 mt-2">Varios expertos promedios son mejores que un solo genio que se equivoca.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección 2: Bagging vs Boosting -->
+        <section id="bagboost" class="section-content max-w-5xl mx-auto">
+            <div class="mb-8">
+                <h2 class="text-4xl font-extrabold text-slate-800 mb-4">Bagging vs. Boosting</h2>
+                <p class="text-lg text-slate-600 leading-relaxed bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    Existen dos familias principales que entrenan docenas o cientos de modelos (generalmente árboles de decisión) y los combinan. La diferencia radica en <strong>cómo</strong> se entrenan.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Bagging -->
+                <div class="bg-white p-8 rounded-2xl shadow-sm border-t-8 border-blue-500">
+                    <div class="flex items-center gap-3 mb-4">
+                        <span class="text-4xl">👜</span>
+                        <h3 class="text-2xl font-bold text-slate-800">Bagging</h3>
+                    </div>
+                    <p class="text-slate-500 text-xs font-bold uppercase tracking-wider mb-4">(Bootstrap Aggregating)</p>
+                    <ul class="space-y-3 text-sm text-slate-600 mb-6">
+                        <li><strong>Proceso:</strong> Entrena múltiples modelos en <strong>paralelo</strong>, cada uno con una sub-muestra aleatoria de los datos.</li>
+                        <li><strong>Objetivo:</strong> Reducir la <span class="font-bold text-blue-600">Varianza</span> (evitar el overfitting).</li>
+                        <li><strong>Representante:</strong> Random Forest.</li>
+                    </ul>
+                    <div class="flex justify-between items-center bg-blue-50 p-3 rounded-lg border border-blue-200 font-mono text-xs text-blue-800">
+                        <span>🌲</span><span>+</span><span>🌲</span><span>+</span><span>🌲</span><span>➔ Promedio</span>
+                    </div>
+                </div>
+
+                <!-- Boosting -->
+                <div class="bg-white p-8 rounded-2xl shadow-sm border-t-8 border-orange-500">
+                    <div class="flex items-center gap-3 mb-4">
+                        <span class="text-4xl">🚀</span>
+                        <h3 class="text-2xl font-bold text-slate-800">Boosting</h3>
+                    </div>
+                    <p class="text-slate-500 text-xs font-bold uppercase tracking-wider mb-4">(Impulso Secuencial)</p>
+                    <ul class="space-y-3 text-sm text-slate-600 mb-6">
+                        <li><strong>Proceso:</strong> Entrena modelos en <strong>secuencia</strong>. Cada modelo nuevo intenta corregir los errores que cometió el modelo anterior.</li>
+                        <li><strong>Objetivo:</strong> Reducir el <span class="font-bold text-orange-600">Sesgo</span> (aumentar la precisión).</li>
+                        <li><strong>Representante:</strong> Gradient Boosting, XGBoost.</li>
+                    </ul>
+                    <div class="flex justify-between items-center bg-orange-50 p-3 rounded-lg border border-orange-200 font-mono text-xs text-orange-800">
+                        <span>🌱</span><span>➔ corrige ➔</span><span>🌿</span><span>➔ corrige ➔</span><span>🌳</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección 3: Voting & Stacking -->
+        <section id="stacking" class="section-content max-w-5xl mx-auto">
+            <div class="mb-8">
+                <h2 class="text-4xl font-extrabold text-slate-800 mb-4">Voting y Stacking</h2>
+                <p class="text-lg text-slate-600 leading-relaxed bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    A diferencia del Bagging y Boosting (que usan cientos de modelos iguales, ej. árboles), el Voting y el Stacking se utilizan para combinar <strong>modelos de diferente naturaleza</strong> (Ej: Regresión Logística + SVM + KNN).
+                </p>
+            </div>
+
+            <div class="space-y-6">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col md:flex-row gap-6 items-center">
+                    <div class="flex-1">
+                        <h3 class="text-xl font-bold text-indigo-600 mb-2 flex items-center gap-2"><span>🗳️</span> Voting (Votación)</h3>
+                        <p class="text-sm text-slate-600 mb-2">Combina las predicciones directamente:</p>
+                        <ul class="text-sm text-slate-500 list-disc pl-5 space-y-1">
+                            <li><strong>Hard Voting:</strong> Gana la clase con más votos ("Mayoría simple").</li>
+                            <li><strong>Soft Voting:</strong> Promedia las probabilidades matemáticas de todos los modelos (Suele ser más preciso si los modelos están bien calibrados).</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col md:flex-row gap-6 items-center">
+                    <div class="flex-1">
+                        <h3 class="text-xl font-bold text-fuchsia-600 mb-2 flex items-center gap-2"><span>🥞</span> Stacking (Apilamiento)</h3>
+                        <p class="text-sm text-slate-600 mb-2">En lugar de promediar, usa las predicciones de los modelos base como <strong>nuevos datos de entrada</strong> para entrenar un modelo final ("Meta-Modelo").</p>
+                        <ul class="text-sm text-slate-500 list-disc pl-5 space-y-1">
+                            <li>El Meta-Modelo aprende en quién confiar para qué tipo de predicciones.</li>
+                            <li>Requiere Validación Cruzada para generar las predicciones intermedias sin fugas de datos.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección 4: Simulador -->
+        <section id="simulador" class="section-content max-w-5xl mx-auto">
+            <div class="mb-8">
+                <h2 class="text-4xl font-extrabold text-slate-800 mb-4">Simulador: El Poder del "Soft Voting"</h2>
+                <p class="text-lg text-slate-600 leading-relaxed bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    Si combinamos modelos que cometen errores <em>diferentes</em> e independientes, el ensamble logrará corregirlos. Presiona el botón para observar cómo 3 modelos moderados forman un Ensamble muy superior.
+                </p>
+            </div>
+
+            <div class="bg-white p-8 rounded-2xl border border-slate-200 shadow-md">
+                <div class="flex justify-center mb-6">
+                    <button onclick="runEnsemble()" id="btn-ens" class="px-6 py-3 bg-orange-500 text-white rounded-lg font-bold hover:bg-orange-600 transition shadow-md">
+                        Ejecutar Ensamble (Voting) ➔
+                    </button>
+                </div>
+                
+                <div class="chart-container">
+                    <canvas id="ensembleChart"></canvas>
+                </div>
+                
+                <p id="ens-caption" class="text-center text-sm text-slate-500 mt-6 font-medium">Los tres modelos base tienen precisiones de 70%, 75% y 80%. ¿Qué pasará al combinarlos?</p>
+            </div>
+        </section>
+
+        <!-- Sección 5: Laboratorio Colab -->
+        <section id="laboratorio" class="section-content max-w-5xl mx-auto">
+            <div class="mb-8">
+                <h2 class="text-4xl font-extrabold text-slate-800 mb-4">Retos Colab: El Arsenal Completo</h2>
+                <p class="text-lg text-slate-600 leading-relaxed bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    Esta clase cuenta con <strong>5 libretas de Colab</strong> para que explores a fondo cada familia de algoritmos y sus correspondientes hiperparámetros en <code>scikit-learn</code>.
+                </p>
+            </div>
+
+            <!-- Grilla de Libretas -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+                
+                <a href="https://colab.research.google.com/github/Pastor-E-Perez-Estigarribia/curso-iaa/blob/main/colab_notebook/8.1-ML_ensemble.ipynb" target="_blank" class="bg-white p-4 rounded-xl border-l-4 border-slate-400 shadow-sm hover:shadow-md transition">
+                    <div class="text-slate-400 text-xs font-bold mb-1">Libreta 8.1</div>
+                    <h3 class="font-bold text-slate-800 text-sm mb-2">Fundamentos ML Ensemble</h3>
+                    <div class="text-orange-600 text-xs font-bold">Abrir Colab ↗</div>
+                </a>
+
+                <a href="https://colab.research.google.com/github/Pastor-E-Perez-Estigarribia/curso-iaa/blob/main/colab_notebook/8.2-Voting.ipynb" target="_blank" class="bg-white p-4 rounded-xl border-l-4 border-indigo-400 shadow-sm hover:shadow-md transition">
+                    <div class="text-indigo-400 text-xs font-bold mb-1">Libreta 8.2</div>
+                    <h3 class="font-bold text-slate-800 text-sm mb-2">Voting Classifier (Hard/Soft)</h3>
+                    <div class="text-orange-600 text-xs font-bold">Abrir Colab ↗</div>
+                </a>
+
+                <a href="https://colab.research.google.com/github/Pastor-E-Perez-Estigarribia/curso-iaa/blob/main/colab_notebook/8.4-Bagging_Ensemble.ipynb" target="_blank" class="bg-white p-4 rounded-xl border-l-4 border-blue-400 shadow-sm hover:shadow-md transition">
+                    <div class="text-blue-400 text-xs font-bold mb-1">Libreta 8.4</div>
+                    <h3 class="font-bold text-slate-800 text-sm mb-2">Bagging & Random Forest</h3>
+                    <div class="text-orange-600 text-xs font-bold">Abrir Colab ↗</div>
+                </a>
+
+                <a href="https://colab.research.google.com/github/Pastor-E-Perez-Estigarribia/curso-iaa/blob/main/colab_notebook/8.3-Boosting.ipynb" target="_blank" class="bg-white p-4 rounded-xl border-l-4 border-orange-500 shadow-sm hover:shadow-md transition lg:col-span-1">
+                    <div class="text-orange-400 text-xs font-bold mb-1">Libreta 8.3 ⭐</div>
+                    <h3 class="font-bold text-slate-800 text-sm mb-2">Boosting (AdaBoost, GBM, XGBoost)</h3>
+                    <div class="text-orange-600 text-xs font-bold">Abrir Colab ↗</div>
+                </a>
+
+                <a href="https://colab.research.google.com/github/Pastor-E-Perez-Estigarribia/curso-iaa/blob/main/colab_notebook/8.5-Stacking_Ensemble_.ipynb" target="_blank" class="bg-white p-4 rounded-xl border-l-4 border-fuchsia-500 shadow-sm hover:shadow-md transition lg:col-span-2">
+                    <div class="text-fuchsia-400 text-xs font-bold mb-1">Libreta 8.5 🥞</div>
+                    <h3 class="font-bold text-slate-800 text-sm mb-2">Stacking Ensemble (Meta-Modelos Avanzados)</h3>
+                    <div class="text-orange-600 text-xs font-bold">Abrir Colab ↗</div>
+                </a>
+
+            </div>
+
+        </section>
+
+        <!-- Sección 6: Evaluación y Desafíos -->
+        <section id="evaluacion" class="section-content max-w-5xl mx-auto">
+            <div class="mb-8">
+                <h2 class="text-4xl font-extrabold text-slate-800 mb-4">Actividades y Entregables</h2>
+                <p class="text-lg text-slate-600 leading-relaxed bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    Pon a prueba tus conocimientos. Completa los siguientes desafíos en un cuaderno de Colab y preséntalos siguiendo la rúbrica de evaluación oficial.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Desafíos -->
+                <div class="bg-white p-8 rounded-2xl shadow-sm border-t-8 border-orange-500 flex flex-col">
+                    <h3 class="text-2xl font-bold text-slate-800 mb-6 flex items-center gap-2"><span>🎯</span> Desafíos Prácticos</h3>
+                    <ul class="space-y-5 text-sm text-slate-600 flex-1">
+                        <li class="flex items-start gap-3">
+                            <span class="bg-orange-100 text-orange-600 font-bold w-6 h-6 rounded-full flex items-center justify-center shrink-0">1</span>
+                            <span><strong>Unificación:</strong> Reproduce las Demos 1, 2 y 3 en un único notebook. Guarda las figuras generadas en una carpeta <code>figures/</code> y los resultados en <code>outputs/</code>.</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="bg-orange-100 text-orange-600 font-bold w-6 h-6 rounded-full flex items-center justify-center shrink-0">2</span>
+                            <span><strong>Desafío A:</strong> Compara <em>Random Forest</em> vs <em>XGBoost</em> utilizando el dataset <code>Digits</code>. Mide y compara accuracy, tiempo de entrenamiento y estabilidad.</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="bg-orange-100 text-orange-600 font-bold w-6 h-6 rounded-full flex items-center justify-center shrink-0">3</span>
+                            <span><strong>Desafío B:</strong> Construye un modelo de <em>Stacking</em> combinando Pipelines. Justifica detalladamente la elección de tu meta-modelo.</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="bg-orange-100 text-orange-600 font-bold w-6 h-6 rounded-full flex items-center justify-center shrink-0">4</span>
+                            <span><strong>Informe Final:</strong> Redacta un informe breve (máx. 1 página) con conclusiones, métricas de Cross-Validation y tus recomendaciones para llevar el modelo a producción.</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Rúbrica -->
+                <div class="bg-slate-900 p-8 rounded-2xl shadow-sm border-t-8 border-slate-700 flex flex-col">
+                    <h3 class="text-2xl font-bold text-white mb-6 flex items-center gap-2"><span>📋</span> Rúbrica de Evaluación</h3>
+                    
+                    <div class="space-y-4 flex-1">
+                        <div>
+                            <div class="flex justify-between text-sm mb-1"><span class="text-slate-300">Código reproducible y correcto</span><span class="text-orange-400 font-bold">30 pts</span></div>
+                            <div class="w-full bg-slate-700 rounded-full h-2"><div class="bg-orange-500 h-2 rounded-full" style="width: 30%"></div></div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-sm mb-1"><span class="text-slate-300">Análisis y conclusiones</span><span class="text-orange-400 font-bold">25 pts</span></div>
+                            <div class="w-full bg-slate-700 rounded-full h-2"><div class="bg-orange-500 h-2 rounded-full" style="width: 25%"></div></div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-sm mb-1"><span class="text-slate-300">Visualizaciones y entregables</span><span class="text-orange-400 font-bold">15 pts</span></div>
+                            <div class="w-full bg-slate-700 rounded-full h-2"><div class="bg-orange-500 h-2 rounded-full" style="width: 15%"></div></div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-sm mb-1"><span class="text-slate-300">Buenas prácticas (Pipelines, Seeds, CV)</span><span class="text-orange-400 font-bold">15 pts</span></div>
+                            <div class="w-full bg-slate-700 rounded-full h-2"><div class="bg-orange-500 h-2 rounded-full" style="width: 15%"></div></div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-sm mb-1"><span class="text-slate-300">Documentación y presentación</span><span class="text-orange-400 font-bold">15 pts</span></div>
+                            <div class="w-full bg-slate-700 rounded-full h-2"><div class="bg-orange-500 h-2 rounded-full" style="width: 15%"></div></div>
+                        </div>
+                        <div class="pt-4 mt-2 border-t border-slate-700 flex justify-between text-white font-bold text-lg">
+                            <span>Total</span><span class="text-orange-500">100 pts</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tip de IA Generativa -->
+            <div class="mt-8 bg-orange-50 p-6 rounded-xl border border-orange-200">
+                <h4 class="text-orange-800 font-bold mb-2 flex items-center gap-2"><span>🤖</span> Alternativa Avanzada: Auto-evaluación con IA</h4>
+                <p class="text-sm text-orange-900/80 mb-3">Antes de entregar tus desafíos, puedes simular la calificación de un profesor utilizando un LLM avanzado especializado en código (como <strong>Gemini 1.5 Pro</strong> o <strong>Claude 3.5 Sonnet</strong>).</p>
+                <div class="bg-white p-4 rounded border border-orange-100 font-mono text-xs text-slate-600">
+                    "Actúa como un profesor estricto de Machine Learning. Revisa el siguiente script de Python donde comparo Random Forest y XGBoost. Evalúalo rigurosamente basándote en esta rúbrica: [Pega la rúbrica]. Dime exactamente dónde perdería puntos por 'Buenas prácticas' y cómo mejorarlo."
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        const navState = { current: 'intro' };
+        
+        function navigate(sectionId) {
+            document.querySelectorAll('.nav-item').forEach(el => {
+                el.classList.remove('active', 'bg-fff7ed', 'text-orange-700', 'border-r-4', 'border-orange-500', 'font-bold');
+                el.classList.add('text-slate-600');
+                el.style.backgroundColor = 'transparent';
+            });
+            
+            const btn = document.querySelector(`button[onclick="navigate('${sectionId}')"]`);
+            if(btn) {
+                btn.classList.add('active', 'text-orange-700', 'border-r-4', 'border-orange-500', 'font-bold');
+                btn.classList.remove('text-slate-600');
+                btn.style.backgroundColor = '#fff7ed';
+            }
+
+            document.querySelectorAll('.section-content').forEach(el => el.classList.remove('active'));
+            document.getElementById(sectionId).classList.add('active');
+            navState.current = sectionId;
+
+            if(sectionId === 'simulador' && !window.ensembleChartObj) initEnsembleChart();
+        }
+
+        // --- Simulador de Votación ---
+        let ensembleChartObj = null;
+        let isEnsembled = false;
+
+        function initEnsembleChart() {
+            const ctx = document.getElementById('ensembleChart').getContext('2d');
+            ensembleChartObj = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Modelo A (Árbol)', 'Modelo B (KNN)', 'Modelo C (LogReg)'],
+                    datasets: [{
+                        label: 'Precisión (Accuracy) %',
+                        data: [70, 75, 80],
+                        backgroundColor: ['#94a3b8', '#94a3b8', '#94a3b8'], // Slate
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { 
+                        legend: { display: false },
+                        tooltip: { callbacks: { label: (ctx) => `${ctx.raw}%` } }
+                    },
+                    scales: {
+                        y: { min: 50, max: 100, title: {display: true, text: 'Precisión (%)'}, grid: {color: '#f1f5f9'} },
+                        x: { grid: {display: false} }
+                    },
+                    animation: { duration: 1000 }
+                }
+            });
+        }
+
+        function runEnsemble() {
+            if(!ensembleChartObj) return;
+            const btn = document.getElementById('btn-ens');
+            const caption = document.getElementById('ens-caption');
+
+            isEnsembled = !isEnsembled;
+
+            if(isEnsembled) {
+                // Añadir Ensamble
+                if(ensembleChartObj.data.labels.length === 3) {
+                    ensembleChartObj.data.labels.push('👑 ENSAMBLE (Voting)');
+                    ensembleChartObj.data.datasets[0].data.push(92);
+                    ensembleChartObj.data.datasets[0].backgroundColor.push('#f97316'); // Orange
+                    ensembleChartObj.update();
+                }
+                btn.innerText = "Reiniciar";
+                btn.classList.replace('bg-orange-500', 'bg-slate-500');
+                btn.classList.replace('hover:bg-orange-600', 'hover:bg-slate-600');
+                caption.innerHTML = "<strong class='text-orange-600'>¡Sinergia en acción!</strong> Al promediar los errores, el Ensamble supera ampliamente a cualquiera de sus partes individuales.";
+            } else {
+                // Remover Ensamble
+                if(ensembleChartObj.data.labels.length === 4) {
+                    ensembleChartObj.data.labels.pop();
+                    ensembleChartObj.data.datasets[0].data.pop();
+                    ensembleChartObj.data.datasets[0].backgroundColor.pop();
+                    ensembleChartObj.update();
+                }
+                btn.innerText = "Ejecutar Ensamble (Voting) ➔";
+                btn.classList.replace('bg-slate-500', 'bg-orange-500');
+                btn.classList.replace('hover:bg-slate-600', 'hover:bg-orange-600');
+                caption.innerText = "Los tres modelos base tienen precisiones de 70%, 75% y 80%. ¿Qué pasará al combinarlos?";
+            }
+        }
+    </script>
+</body>
+</html>
