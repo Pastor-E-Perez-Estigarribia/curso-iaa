@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clase 7: Integración y Proyecto Final - Módulo IAA</title>
+    <title>Clase 9: Integración y Proyecto Final - Módulo IAA</title>
     
-    <!-- Chosen Palette: Slate & Amber (Slate-50 bg, Slate-800 text, Amber-500 primary action) -->
     <script src="https://cdn.tailwindcss.com"></script>
     
     <style>
@@ -26,11 +25,10 @@
 </head>
 <body class="flex flex-col md:flex-row h-screen overflow-hidden">
 
-    <!-- Navegación Lateral -->
     <nav class="w-full md:w-72 bg-white shadow-xl h-auto md:h-full flex flex-col z-20 shrink-0">
         <div class="p-6 bg-slate-900 text-white border-b-4 border-amber-500">
             <h1 class="text-2xl font-bold tracking-tight">Módulo IAA</h1>
-            <p class="text-sm text-amber-400 mt-1">Clase 7: Proyecto Final</p>
+            <p class="text-sm text-amber-400 mt-1">Clase 9: Proyecto Final</p>
         </div>
         <div class="flex-1 overflow-y-auto py-4 flex flex-row md:flex-col overflow-x-auto hide-scrollbar" id="nav-menu">
             <button onclick="navigate('intro')" class="nav-item active text-left px-6 py-4 hover:bg-slate-50 whitespace-nowrap md:whitespace-normal flex items-center gap-3 text-amber-700">
@@ -52,7 +50,6 @@
         </div>
     </nav>
 
-    <!-- Contenido Principal -->
     <main class="flex-1 overflow-y-auto p-6 md:p-12 bg-slate-50">
 
         <!-- Sección 1: Intro -->
@@ -61,7 +58,7 @@
                 <div class="text-6xl mb-4">🎉</div>
                 <h2 class="text-4xl font-extrabold text-slate-800 mb-4">¡Has llegado a la recta final!</h2>
                 <p class="text-lg text-slate-600 leading-relaxed bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-                    A lo largo del módulo hemos aprendido sobre datos, algoritmos, y evaluación. Sin embargo, en el mundo real no ejecutamos estas tareas aisladas en celdas separadas. Hoy aprenderemos a empaquetar todo el conocimiento en un <strong>flujo de trabajo (Pipeline) profesional y reproducible.</strong>
+                    A lo largo del módulo hemos aprendido sobre datos, algoritmos (Clasificación, Regresión, Ensambles) y evaluación. Sin embargo, en el mundo real no ejecutamos estas tareas aisladas en celdas separadas. Hoy aprenderemos a empaquetar todo el conocimiento en un <strong>flujo de trabajo (Pipeline) profesional y reproducible.</strong>
                 </p>
             </div>
 
@@ -173,7 +170,7 @@
                     <div class="bg-slate-100 w-8 h-8 rounded-full flex items-center justify-center font-bold text-slate-500 shrink-0">1</div>
                     <div>
                         <h4 class="font-bold text-slate-800">Selección y Carga de Datos</h4>
-                        <p class="text-sm text-slate-600 mt-1">Elige un dataset de clasificación (ej. <code>load_breast_cancer</code> o <code>load_digits</code>). Divídelo en entrenamiento (80%) y prueba (20%).</p>
+                        <p class="text-sm text-slate-600 mt-1">Elige un dataset desafiante (Clasificación o Regresión). Divídelo correctamente en entrenamiento (80%) y prueba (20%).</p>
                     </div>
                 </div>
 
@@ -181,15 +178,15 @@
                     <div class="bg-indigo-100 w-8 h-8 rounded-full flex items-center justify-center font-bold text-indigo-600 shrink-0">2</div>
                     <div>
                         <h4 class="font-bold text-slate-800">Construcción de Pipelines</h4>
-                        <p class="text-sm text-slate-600 mt-1">Crea <strong>dos pipelines distintos</strong>. Uno que finalice en un modelo lineal (ej. Regresión Logística) y otro que finalice en un modelo complejo (ej. Random Forest o SVM). Incluye el escalado en ambos.</p>
+                        <p class="text-sm text-slate-600 mt-1">Crea al menos <strong>dos pipelines distintos</strong>. Por ejemplo, uno que finalice en un modelo lineal (Regresión Logística / OLS) y otro que finalice en un Ensamble Avanzado (XGBoost / Random Forest). Asegúrate de incluir preprocesamiento (escalado/imputación).</p>
                     </div>
                 </div>
 
                 <div class="bg-white p-5 rounded-xl border-l-8 border-violet-400 shadow-sm flex items-start gap-4">
                     <div class="bg-violet-100 w-8 h-8 rounded-full flex items-center justify-center font-bold text-violet-600 shrink-0">3</div>
                     <div>
-                        <h4 class="font-bold text-slate-800">Evaluación con Validación Cruzada</h4>
-                        <p class="text-sm text-slate-600 mt-1">Somete ambos pipelines a <code>cross_val_score</code> sobre los datos de entrenamiento para comparar su estabilidad y rendimiento promedio.</p>
+                        <h4 class="font-bold text-slate-800">Optimización y Validación</h4>
+                        <p class="text-sm text-slate-600 mt-1">Utiliza <code>GridSearchCV</code> o <code>cross_val_score</code> sobre los pipelines para afinar los hiperparámetros de manera segura sin tocar los datos de prueba.</p>
                     </div>
                 </div>
 
@@ -197,7 +194,7 @@
                     <div class="bg-amber-100 w-8 h-8 rounded-full flex items-center justify-center font-bold text-amber-600 shrink-0">4</div>
                     <div>
                         <h4 class="font-bold text-slate-800">Test Final y Justificación</h4>
-                        <p class="text-sm text-slate-600 mt-1">Evalúa el modelo ganador en tu set de prueba (test). Imprime la matriz de confusión y escribe una breve conclusión explicando por qué elegiste ese modelo (Interpretabilidad vs Rendimiento).</p>
+                        <p class="text-sm text-slate-600 mt-1">Evalúa el modelo ganador en tu set de prueba (test). Imprime la matriz de confusión/curva ROC (si aplica) y escribe una breve conclusión técnica justificando tu elección.</p>
                     </div>
                 </div>
             </div>
@@ -206,17 +203,17 @@
         <!-- Sección 4: Laboratorio Colab -->
         <section id="laboratorio" class="section-content max-w-5xl mx-auto">
             <div class="mb-8">
-                <h2 class="text-4xl font-extrabold text-slate-800 mb-4">Reto Final: Colab</h2>
+                <h2 class="text-4xl font-extrabold text-slate-800 mb-4">Ejecución del Proyecto Final</h2>
             </div>
 
             <div class="bg-slate-900 p-8 rounded-2xl shadow-xl flex flex-col border border-slate-700">
                 <div class="flex items-center gap-3 mb-6 pb-4 border-b border-slate-700">
                     <img src="https://upload.wikimedia.org/wikipedia/commons/d/d0/Google_Colaboratory_SVG_Logo.svg" alt="Colab" class="h-8 w-8">
-                    <h3 class="font-bold text-white text-xl">Generador del Proyecto con IA</h3>
+                    <h3 class="font-bold text-white text-xl">Generador Base con IA</h3>
                 </div>
                 
                 <p class="text-slate-300 mb-4">
-                    Para la base de tu proyecto final, usa este prompt. Luego, modifícalo a tu gusto para cumplir con los requisitos.
+                    Usa este prompt en Google Colab para construir el esqueleto de tu proyecto final. Luego, modifícalo según el dataset de tu elección.
                 </p>
 
                 <div class="bg-slate-800 p-5 rounded-xl border border-amber-500/30 relative mb-8 shadow-inner">
@@ -225,19 +222,14 @@
                         "En Python con scikit-learn, utiliza el dataset 'load_breast_cancer'. <br>
                         1. Importa 'make_pipeline', 'StandardScaler', 'LogisticRegression' y 'RandomForestClassifier'.<br>
                         2. Construye dos pipelines: uno para Regresión Logística y otro para Random Forest. Asegúrate de que ambos incluyan el escalado de datos.<br>
-                        3. Utiliza 'cross_val_score' (cv=5) en ambos pipelines para imprimir la media de precisión (accuracy).<br>
-                        Añade comentarios en el código explicando por qué usar un pipeline previene el Data Leakage."
+                        3. Utiliza 'GridSearchCV' (cv=5) en el pipeline de Random Forest para encontrar el mejor 'n_estimators'.<br>
+                        Añade comentarios en el código explicando detalladamente cómo el pipeline previene el Data Leakage durante la validación cruzada."
                     </p>
                 </div>
 
-                <div class="mt-4 p-4 bg-amber-900/20 border border-amber-500/30 rounded-lg mb-6">
-                    <h4 class="text-amber-400 font-bold text-sm mb-1">💡 Tip para mejores resultados con la IA:</h4>
-                    <p class="text-xs text-slate-400">Si utilizas modelos avanzados como <strong>Gemini Advanced, Claude 3.5 Sonnet o GPT-4o</strong>, puedes pedirles que actúen como "Code Reviewers". Pasa tu código final y pídeles: <em>"Revisa este pipeline de scikit-learn. ¿Existe alguna fuga de datos o mala práctica? Sugiere mejoras de optimización usando GridSearchCV."</em></p>
-                </div>
-
                 <div class="flex flex-col sm:flex-row gap-4">
-                    <a href="https://colab.research.google.com/github/Pastor-E-Perez-Estigarribia/curso-iaa/blob/main/colab_notebook/7-proyecto_final.ipynb" target="_blank" rel="noopener noreferrer" class="flex-1 bg-amber-600 hover:bg-amber-500 text-white font-bold py-4 px-6 rounded-xl shadow-md transition transform hover:-translate-y-1 flex items-center justify-center gap-3">
-                        <span class="text-2xl">⚡</span> Crear Proyecto en Colab
+                    <a href="https://colab.research.google.com/github/Pastor-E-Perez-Estigarribia/curso-iaa/blob/main/colab_notebook/9-proyecto_final.ipynb" target="_blank" rel="noopener noreferrer" class="flex-1 bg-amber-600 hover:bg-amber-500 text-white font-bold py-4 px-6 rounded-xl shadow-md transition transform hover:-translate-y-1 flex items-center justify-center gap-3">
+                        <span class="text-2xl">⚡</span> Crear Proyecto Final en Colab
                     </a>
                 </div>
             </div>
