@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clase 10: Series Temporales - Módulo IAA</title>
+    
+    <!-- Chosen Palette: Slate & Sky (Slate-50 bg, Slate-800 text, Sky-600 primary action) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        body { font-family: 'Segoe UI', system-ui, sans-serif; background-color: #f8fafc; color: #1e293b; }
+        .chart-container { position: relative; width: 100%; max-width: 800px; margin: 0 auto; height: 350px; }
+        .nav-item { transition: all 0.2s ease; }
+        .nav-item.active { background-color: #f0f9ff; color: #0284c7; border-right: 4px solid #0ea5e9; font-weight: 600; }
+        .section-content { display: none; animation: fadeIn 0.4s ease-in-out; }
+        .section-content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .math-box { font-family: 'Courier New', Courier, monospace; background-color: #f1f5f9; padding: 0.75rem; border-radius: 0.5rem; border: 1px solid #e2e8f0; font-size: 0.9rem; color: #334155; text-align: center; overflow-x: auto;}
+    </style>
+</head>
+<body class="flex flex-col md:flex-row h-screen overflow-hidden">
+
+    <!-- Navegación Lateral -->
+    <nav class="w-full md:w-72 bg-white shadow-xl h-auto md:h-full flex flex-col z-20 shrink-0">
+        <div class="p-6 bg-slate-900 text-white border-b-4 border-sky-500">
+            <h1 class="text-2xl font-bold tracking-tight">Módulo IAA</h1>
+            <p class="text-sm text-sky-300 mt-1">Clase 10: Series Temporales</p>
+        </div>
+        <div class="flex-1 overflow-y-auto py-4 flex flex-row md:flex-col overflow-x-auto hide-scrollbar" id="nav-menu">
+            <button onclick="navigate('intro')" class="nav-item active text-left px-6 py-4 hover:bg-slate-50 whitespace-nowrap md:whitespace-normal flex items-center gap-3 text-sky-700">
+                <span class="text-xl">⏳</span> El Factor Tiempo
+            </button>
+            <button onclick="navigate('conceptos')" class="nav-item text-left px-6 py-4 hover:bg-slate-50 whitespace-nowrap md:whitespace-normal flex items-center gap-3 text-slate-600">
+                <span class="text-xl">🧮</span> Conceptos Matemáticos
+            </button>
+            <button onclick="navigate('modelos')" class="nav-item text-left px-6 py-4 hover:bg-slate-50 whitespace-nowrap md:whitespace-normal flex items-center gap-3 text-slate-600">
+                <span class="text-xl">📈</span> Modelos ARIMA
+            </button>
+            <button onclick="navigate('simulador')" class="nav-item text-left px-6 py-4 hover:bg-slate-50 whitespace-nowrap md:whitespace-normal flex items-center gap-3 text-slate-600">
+                <span class="text-xl">🎢</span> Simulador: Estacionariedad
+            </button>
+            <button onclick="navigate('laboratorio')" class="nav-item text-left px-6 py-4 hover:bg-slate-50 whitespace-nowrap md:whitespace-normal flex items-center gap-3 text-slate-600">
+                <span class="text-xl">🚀</span> Retos Colab (3)
+            </button>
+            
+            <a href="https://notebooklm.google.com/notebook/e564a7c8-11a3-43bb-bd67-7793d7f3e6e6" target="_blank" rel="noopener noreferrer" class="md:mt-auto text-left px-6 py-4 bg-amber-50 hover:bg-amber-100 text-amber-800 font-bold flex items-center gap-3 whitespace-nowrap md:whitespace-normal transition-colors border-t border-amber-200 shadow-inner">
+                <span class="text-xl">🤖</span> Asistente NotebookLM
+            </a>
+        </div>
+    </nav>
+
+    <!-- Contenido Principal -->
+    <main class="flex-1 overflow-y-auto p-6 md:p-12 bg-slate-50">
+
+        <!-- Sección 1: Intro -->
+        <section id="intro" class="section-content active max-w-5xl mx-auto">
+            <div class="mb-10">
+                <div class="inline-block px-3 py-1 bg-sky-100 text-sky-800 rounded-full text-xs font-bold tracking-widest uppercase mb-4 border border-sky-200">Analítica de Datos Complejos</div>
+                <h2 class="text-4xl font-extrabold text-slate-800 mb-4">El Factor Tiempo en los Datos</h2>
+                <p class="text-lg text-slate-600 leading-relaxed bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    Hasta ahora, nuestros datos eran "transversales" (ej. pacientes en un hospital donde el orden no importa). Una <strong>Serie Temporal</strong> es una secuencia de observaciones indexadas cronológicamente. Aquí, <strong>el orden es fundamental</strong> porque el pasado influye en el futuro.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="bg-white p-8 rounded-2xl shadow-sm border-t-4 border-slate-400">
+                    <h3 class="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2"><span>📊</span> Datos Tradicionales</h3>
+                    <ul class="space-y-3 text-sm text-slate-600">
+                        <li>• Filas independientes entre sí.</li>
+                        <li>• Barajar los datos no afecta el modelo.</li>
+                        <li>• Validación: Random Split (K-Fold normal).</li>
+                    </ul>
+                </div>
+                
+                <div class="bg-sky-50 p-8 rounded-2xl shadow-sm border-t-4 border-sky-500">
+                    <h3 class="text-xl font-bold text-sky-900 mb-4 flex items-center gap-2"><span>⏳</span> Series Temporales</h3>
+                    <ul class="space-y-3 text-sm text-sky-800">
+                        <li>• Autocorrelación: Hoy depende de ayer.</li>
+                        <li>• Barajar los datos destruye la información.</li>
+                        <li>• Validación: Time Series Split (prohibido mirar el futuro para predecir el pasado).</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección 2: Conceptos Matemáticos -->
+        <section id="conceptos" class="section-content max-w-5xl mx-auto">
+            <div class="mb-8">
+                <h2 class="text-4xl font-extrabold text-slate-800 mb-4">Fundamentos Estocásticos</h2>
+                <p class="text-lg text-slate-600 leading-relaxed bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    Para predecir (hacer <em>forecasting</em>), necesitamos entender el comportamiento subyacente de la serie modelándola con matemáticas.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    <h4 class="font-bold text-slate-800 mb-3 flex items-center gap-2"><span>🎲</span> Ruido Blanco (White Noise)</h4>
+                    <p class="text-sm text-slate-600 mb-3">Innovaciones puramente aleatorias sin patrones. Es lo que debería quedar en nuestros residuos si el modelo es perfecto.</p>
+                    <div class="math-box font-bold">ε_t ~ N(0, σ²)</div>
+                    <p class="text-xs text-slate-500 mt-2 text-center">Media cero, varianza constante, sin autocorrelación.</p>
+                </div>
+                
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    <h4 class="font-bold text-slate-800 mb-3 flex items-center gap-2"><span>⏪</span> Operador de Retardo (Lag)</h4>
+                    <p class="text-sm text-slate-600 mb-3">Una forma algebraica de referirnos a los pasos anteriores en el tiempo. Facilita la escritura de ecuaciones largas.</p>
+                    <div class="math-box font-bold">B(X_t) = X_{t-1} <br> B²(X_t) = X_{t-2}</div>
+                </div>
+            </div>
+
+            <div class="bg-slate-900 p-8 rounded-2xl text-white shadow-xl relative overflow-hidden">
+                <div class="absolute -right-4 -top-4 text-8xl opacity-10">⚓</div>
+                <h3 class="text-2xl font-bold text-sky-400 mb-4 relative z-10">Estacionariedad (El Santo Grial)</h3>
+                <p class="text-slate-300 mb-4 relative z-10">
+                    Un modelo clásico no puede predecir algo que cambia sus reglas constantemente. Una serie es estacionaria si sus propiedades estadísticas <strong>no varían con el tiempo</strong>.
+                </p>
+                <ul class="space-y-2 text-sm text-slate-400 relative z-10 list-disc pl-5">
+                    <li><strong>Media constante:</strong> No hay una tendencia que suba o baje al infinito.</li>
+                    <li><strong>Varianza constante:</strong> La amplitud de las oscilaciones es estable (homocedasticidad).</li>
+                    <li><strong>Autocovarianza:</strong> Depende de la distancia entre puntos, no del momento en que se midió.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Sección 3: Modelos Clásicos -->
+        <section id="modelos" class="section-content max-w-5xl mx-auto">
+            <div class="mb-8">
+                <h2 class="text-4xl font-extrabold text-slate-800 mb-4">Modelos Clásicos: Familia ARIMA</h2>
+                <p class="text-lg text-slate-600 leading-relaxed bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    ARIMA (AutoRegressive Integrated Moving Average) es el estándar de oro estadístico para series de tiempo. Se compone de 3 partes fundamentales que se ajustan juntas.
+                </p>
+            </div>
+
+            <div class="space-y-6">
+                <!-- AR -->
+                <div class="bg-white p-6 rounded-2xl border-l-8 border-sky-400 shadow-sm flex flex-col md:flex-row gap-6 items-center">
+                    <div class="flex-1">
+                        <h3 class="text-xl font-bold text-slate-800 mb-2">AR(p): Proceso Autorregresivo</h3>
+                        <p class="text-sm text-slate-600 mb-2">El valor actual depende linealmente de sus <strong>p</strong> valores pasados (como si la serie hiciera una regresión sobre sí misma).</p>
+                    </div>
+                    <div class="w-full md:w-1/2 math-box">
+                        X_t = φ₁X_{t-1} + ... + φ_pX_{t-p} + ε_t
+                    </div>
+                </div>
+
+                <!-- I -->
+                <div class="bg-white p-6 rounded-2xl border-l-8 border-slate-400 shadow-sm flex flex-col md:flex-row gap-6 items-center">
+                    <div class="flex-1">
+                        <h3 class="text-xl font-bold text-slate-800 mb-2">I(d): Integración (Diferenciación)</h3>
+                        <p class="text-sm text-slate-600 mb-2">Si la serie tiene tendencia (no es estacionaria), le restamos el valor anterior <strong>d</strong> veces hasta aplanarla.</p>
+                    </div>
+                    <div class="w-full md:w-1/2 math-box">
+                        Y_t = X_t - X_{t-1}
+                    </div>
+                </div>
+
+                <!-- MA -->
+                <div class="bg-white p-6 rounded-2xl border-l-8 border-indigo-400 shadow-sm flex flex-col md:flex-row gap-6 items-center">
+                    <div class="flex-1">
+                        <h3 class="text-xl font-bold text-slate-800 mb-2">MA(q): Medias Móviles</h3>
+                        <p class="text-sm text-slate-600 mb-2">El valor actual depende linealmente de los <strong>q</strong> errores/shocks pasados (el ruido aleatorio de días anteriores afecta hoy).</p>
+                    </div>
+                    <div class="w-full md:w-1/2 math-box">
+                        X_t = ε_t + θ₁ε_{t-1} + ... + θ_qε_{t-q}
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección 4: Simulador -->
+        <section id="simulador" class="section-content max-w-5xl mx-auto">
+            <div class="mb-8">
+                <h2 class="text-4xl font-extrabold text-slate-800 mb-4">Simulador: Buscando la Estacionariedad</h2>
+                <p class="text-lg text-slate-600 leading-relaxed bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    Para que ARIMA funcione, los datos deben ser estacionarios. Usa el simulador para aplicarle <strong>Diferenciación</strong> a una serie con tendencia y estacionalidad para ver cómo se transforma.
+                </p>
+            </div>
+
+            <div class="bg-white p-8 rounded-2xl border border-slate-200 shadow-md">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+                    <h3 class="font-bold text-slate-700 text-lg">Visualizador de Serie</h3>
+                    <div class="flex bg-slate-100 p-1 rounded-lg">
+                        <button onclick="toggleStationary(false)" id="btn-nonstat" class="px-4 py-2 bg-white text-slate-800 shadow-sm rounded font-bold transition text-sm">Cruda (Con Tendencia)</button>
+                        <button onclick="toggleStationary(true)" id="btn-stat" class="px-4 py-2 text-slate-500 hover:text-slate-800 rounded font-bold transition text-sm">Aplicar Diferenciación</button>
+                    </div>
+                </div>
+                
+                <div class="chart-container">
+                    <canvas id="tsChart"></canvas>
+                </div>
+                
+                <p id="ts-caption" class="text-center text-sm text-slate-500 mt-6 font-medium">Esta serie no es estacionaria: su media sube constantemente con el tiempo.</p>
+            </div>
+        </section>
+
+        <!-- Sección 5: Laboratorio Colab -->
+        <section id="laboratorio" class="section-content max-w-5xl mx-auto">
+            <div class="mb-8">
+                <h2 class="text-4xl font-extrabold text-slate-800 mb-4">Retos Colab: Análisis y Forecasting</h2>
+                <p class="text-lg text-slate-600 leading-relaxed bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    Aplica la teoría en Python explorando la autocorrelación, realizando tests de Dickey-Fuller y ajustando modelos predictivos para el futuro.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-8">
+                <a href="https://colab.research.google.com/github/Pastor-E-Perez-Estigarribia/curso-iaa/blob/main/colab_notebook/10.1-Introduccion_a_series_de_tiempo.ipynb" target="_blank" class="bg-white p-5 rounded-xl border-t-4 border-slate-400 shadow-sm hover:shadow-md transition group">
+                    <div class="text-slate-400 group-hover:text-slate-600 font-bold mb-2">Libreta 10.1</div>
+                    <h3 class="font-bold text-slate-800 mb-3 text-sm">Introducción a Series de Tiempo</h3>
+                    <div class="flex items-center text-sky-600 text-sm font-bold gap-1">Abrir Colab ➔</div>
+                </a>
+                
+                <a href="https://colab.research.google.com/github/Pastor-E-Perez-Estigarribia/curso-iaa/blob/main/colab_notebook/10.2-Analisis_de_series_temporales_en_python.ipynb" target="_blank" class="bg-white p-5 rounded-xl border-t-4 border-sky-400 shadow-sm hover:shadow-md transition group">
+                    <div class="text-sky-400 group-hover:text-sky-600 font-bold mb-2">Libreta 10.2</div>
+                    <h3 class="font-bold text-slate-800 mb-3 text-sm">Análisis y Estacionariedad</h3>
+                    <div class="flex items-center text-sky-600 text-sm font-bold gap-1">Abrir Colab ➔</div>
+                </a>
+
+                <a href="https://colab.research.google.com/github/Pastor-E-Perez-Estigarribia/curso-iaa/blob/main/colab_notebook/10.3-Forecasting_con_python.ipynb" target="_blank" class="bg-sky-50 p-5 rounded-xl border-t-4 border-sky-600 shadow-sm hover:shadow-md transition group">
+                    <div class="text-sky-600 group-hover:text-sky-800 font-bold mb-2">Libreta 10.3 ⭐</div>
+                    <h3 class="font-bold text-sky-900 mb-3 text-sm">Forecasting (ARIMA) en Python</h3>
+                    <div class="flex items-center text-sky-600 text-sm font-bold gap-1">Abrir Colab ➔</div>
+                </a>
+            </div>
+
+            <!-- Tip de IA Generativa -->
+            <div class="bg-slate-900 p-6 rounded-xl border border-slate-700">
+                <h4 class="text-amber-400 font-bold text-sm mb-3 flex items-center gap-2"><span>🤖</span> Alternativa Avanzada: Prompt para Forecasting</h4>
+                <div class="bg-slate-800 p-4 rounded text-xs font-mono text-sky-300 border border-sky-500/30">
+                    "Actúa como un experto en Series Temporales usando Python y la librería 'statsmodels'. Genera un script que cargue un dataset de pasajeros de aerolíneas, aplique una prueba de Augmented Dickey-Fuller (ADF) para verificar estacionariedad, diferencie la serie si es necesario, y ajuste un modelo auto_arima (pmdarima) para predecir los próximos 12 meses. Grafica el resultado."
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        const navState = { current: 'intro' };
+        
+        function navigate(sectionId) {
+            document.querySelectorAll('.nav-item').forEach(el => {
+                el.classList.remove('active', 'bg-f0f9ff', 'text-sky-700', 'border-r-4', 'border-sky-500', 'font-bold');
+                el.classList.add('text-slate-600');
+                el.style.backgroundColor = 'transparent';
+            });
+            
+            const btn = document.querySelector(`button[onclick="navigate('${sectionId}')"]`);
+            if(btn) {
+                btn.classList.add('active', 'text-sky-700', 'border-r-4', 'border-sky-500', 'font-bold');
+                btn.classList.remove('text-slate-600');
+                btn.style.backgroundColor = '#f0f9ff';
+            }
+
+            document.querySelectorAll('.section-content').forEach(el => el.classList.remove('active'));
+            document.getElementById(sectionId).classList.add('active');
+            navState.current = sectionId;
+
+            if(sectionId === 'simulador' && !window.tsChartObj) initTsChart();
+        }
+
+        // --- Simulador Series Temporales ---
+        let tsChartObj = null;
+        
+        // Generar datos base
+        const labels = Array.from({length: 100}, (_, i) => `T+${i}`);
+        
+        // Serie no estacionaria (Tendencia + Estacionalidad + Ruido)
+        const nonStatData = labels.map((_, i) => {
+            const trend = i * 0.5;
+            const season = Math.sin(i * 0.5) * 10;
+            const noise = (Math.random() - 0.5) * 5;
+            return trend + season + noise + 50;
+        });
+
+        // Serie Estacionaria (Diferenciada Y_t - Y_{t-1})
+        const statData = [0]; // Primer valor perdido
+        for(let i=1; i<nonStatData.length; i++) {
+            statData.push(nonStatData[i] - nonStatData[i-1]);
+        }
+
+        function initTsChart() {
+            const ctx = document.getElementById('tsChart').getContext('2d');
+            tsChartObj = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Valor de la Serie',
+                        data: nonStatData,
+                        borderColor: '#0284c7', // sky-600
+                        borderWidth: 2,
+                        pointRadius: 0,
+                        tension: 0.3,
+                        fill: true,
+                        backgroundColor: 'rgba(2, 132, 199, 0.1)'
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { grid: { display: false }, ticks: { maxTicksLimit: 10 } },
+                        y: { title: { display: true, text: 'Valor' } }
+                    },
+                    animation: { duration: 800 }
+                }
+            });
+        }
+
+        function toggleStationary(makeStationary) {
+            if(!tsChartObj) return;
+            const btnNonStat = document.getElementById('btn-nonstat');
+            const btnStat = document.getElementById('btn-stat');
+            const caption = document.getElementById('ts-caption');
+
+            if(makeStationary) {
+                btnStat.className = "px-4 py-2 bg-white text-slate-800 shadow-sm rounded font-bold transition text-sm";
+                btnNonStat.className = "px-4 py-2 text-slate-500 hover:text-slate-800 rounded font-bold transition text-sm bg-transparent";
+                
+                tsChartObj.data.datasets[0].data = statData;
+                tsChartObj.data.datasets[0].borderColor = '#10b981'; // emerald
+                tsChartObj.data.datasets[0].backgroundColor = 'rgba(16, 185, 129, 0.1)';
+                
+                caption.innerHTML = "<strong>Serie Diferenciada (Estacionaria):</strong> Al restar el valor actual menos el anterior, eliminamos la tendencia. La media vuelve a ser cero y constante. ¡Lista para ARIMA!";
+                caption.className = "text-center text-sm text-emerald-600 mt-6 font-bold";
+            } else {
+                btnNonStat.className = "px-4 py-2 bg-white text-slate-800 shadow-sm rounded font-bold transition text-sm";
+                btnStat.className = "px-4 py-2 text-slate-500 hover:text-slate-800 rounded font-bold transition text-sm bg-transparent";
+                
+                tsChartObj.data.datasets[0].data = nonStatData;
+                tsChartObj.data.datasets[0].borderColor = '#0284c7'; // sky
+                tsChartObj.data.datasets[0].backgroundColor = 'rgba(2, 132, 199, 0.1)';
+                
+                caption.innerHTML = "Esta serie no es estacionaria: su media sube constantemente con el tiempo.";
+                caption.className = "text-center text-sm text-slate-500 mt-6 font-medium";
+            }
+            tsChartObj.update();
+        }
+    </script>
+</body>
+</html>
