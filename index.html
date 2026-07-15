@@ -19,6 +19,7 @@
         .class-card.active-rose:hover { transform: translateY(-5px); box-shadow: 0 10px 25px -5px rgba(225, 29, 72, 0.2); border-color: #e11d48; }
         .class-card.active-orange:hover { transform: translateY(-5px); box-shadow: 0 10px 25px -5px rgba(249, 115, 22, 0.2); border-color: #f97316; }
         .class-card.active-amber:hover { transform: translateY(-5px); box-shadow: 0 10px 25px -5px rgba(245, 158, 11, 0.2); border-color: #f59e0b; }
+        .class-card.active-sky:hover { transform: translateY(-5px); box-shadow: 0 10px 25px -5px rgba(14, 165, 233, 0.2); border-color: #0ea5e9; }
         .class-card.disabled { opacity: 0.65; filter: grayscale(80%); cursor: not-allowed; }
         .class-card.disabled:hover { opacity: 0.8; filter: grayscale(40%); }
         .badge-pulse { animation: pulse-badge 2s infinite; }
@@ -221,14 +222,19 @@
                     </div>
                 </div>
 
-                <div class="class-card disabled bg-white rounded-2xl shadow-sm border border-slate-200 relative h-full flex flex-col">
-                    <div class="bg-slate-50 p-6 rounded-t-xl border-b border-slate-100">
-                        <span class="text-slate-500 font-extrabold text-xs tracking-widest uppercase">Clase 10</span>
+                <div class="class-card active-sky block bg-white rounded-2xl shadow-sm border-2 border-sky-500 relative overflow-visible h-full flex flex-col hover:z-10 group">
+                    <a href="clase_10_spa.html" class="absolute inset-0 z-0 rounded-2xl"></a>
+                    <div class="absolute -top-3 -right-3 bg-slate-200 text-slate-600 text-xs font-bold px-4 py-1.5 rounded-full z-10 shadow-sm pointer-events-none">DISPONIBLE</div>
+                    <div class="bg-sky-50 p-6 rounded-t-xl border-b border-sky-100 relative z-10 pointer-events-none">
+                        <span class="text-sky-600 font-extrabold text-xs tracking-widest uppercase">Clase 10</span>
                         <h3 class="text-xl font-bold text-slate-800 mt-2 leading-tight">Series Temporales</h3>
                     </div>
-                    <div class="p-6 flex-1 flex flex-col justify-between">
-                        <p class="text-slate-600 text-sm mb-6 leading-relaxed">Analítica de datos complejos. Técnicas de análisis y pronóstico de datos secuenciales en el tiempo.</p>
-                        <div class="flex items-center gap-2 text-xs font-bold text-slate-400 bg-slate-100 w-fit px-3 py-1.5 rounded-md"><span>🔒 Próximamente</span></div>
+                    <div class="p-6 flex-1 flex flex-col justify-between relative z-10">
+                        <p class="text-slate-600 text-sm mb-6 leading-relaxed pointer-events-none">Analítica de datos complejos. Técnicas de análisis, estacionariedad y pronóstico (ARIMA) en el tiempo.</p>
+                        <div class="flex flex-wrap gap-2 relative z-20">
+                            <span class="bg-blue-50 text-blue-700 border border-blue-200 px-2 py-1 rounded text-xs font-semibold">Teoría</span>
+                            <a href="clase_10_spa.html#laboratorio" class="bg-sky-100 text-sky-800 border border-sky-300 px-2 py-1 rounded text-xs font-semibold hover:bg-sky-200 transition cursor-pointer flex items-center gap-1">3 Colabs ↗</a>
+                        </div>
                     </div>
                 </div>
 
