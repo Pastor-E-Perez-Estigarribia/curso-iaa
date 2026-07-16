@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clase 11: Aprendizaje Profundo - Módulo IAA</title>
+    
+    <!-- Chosen Palette: Slate & Indigo (Deep Learning vibe) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        body { font-family: 'Segoe UI', system-ui, sans-serif; background-color: #f8fafc; color: #1e293b; }
+        .chart-container { position: relative; width: 100%; max-width: 700px; margin: 0 auto; height: 300px; }
+        .nav-item { transition: all 0.2s ease; }
+        .nav-item.active { background-color: #eef2ff; color: #4f46e5; border-right: 4px solid #4f46e5; font-weight: 600; }
+        .section-content { display: none; animation: fadeIn 0.4s ease-in-out; }
+        .section-content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .math-box { font-family: 'Courier New', Courier, monospace; background-color: #f1f5f9; padding: 0.75rem; border-radius: 0.5rem; border: 1px solid #e2e8f0; font-size: 0.9rem; color: #334155; text-align: center; overflow-x: auto;}
+        
+        /* NN Simulator Styles */
+        .nn-layer { display: flex; flex-direction: column; gap: 10px; justify-content: center; z-index: 10; }
+        .nn-node { width: 35px; height: 35px; border-radius: 50%; background-color: #cbd5e1; border: 3px solid #94a3b8; transition: all 0.3s; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: bold; color: white;}
+        .nn-node.active-fw { background-color: #6366f1; border-color: #4338ca; box-shadow: 0 0 10px #818cf8; transform: scale(1.1); }
+        .nn-node.active-bw { background-color: #ec4899; border-color: #be185d; box-shadow: 0 0 10px #f472b6; transform: scale(1.1); }
+        .nn-node.dropped { opacity: 0.2; background-color: #64748b; }
+    </style>
+</head>
+<body class="flex flex-col md:flex-row h-screen overflow-hidden">
+
+    <!-- Navegación Lateral -->
+    <nav class="w-full md:w-72 bg-white shadow-xl h-auto md:h-full flex flex-col z-20 shrink-0">
+        <div class="p-6 bg-slate-900 text-white border-b-4 border-indigo-500">
+            <h1 class="text-2xl font-bold tracking-tight">Módulo IAA</h1>
+            <p class="text-sm text-indigo-300 mt-1">Clase 11: Deep Learning</p>
+        </div>
+        <div class="flex-1 overflow-y-auto py-4 flex flex-row md:flex-col overflow-x-auto hide-scrollbar" id="nav-menu">
+            <button onclick="navigate('intro')" class="nav-item active text-left px-6 py-4 hover:bg-slate-50 whitespace-nowrap md:whitespace-normal flex items-center gap-3 text-indigo-700">
+                <span class="text-xl">🧠</span> Neurona y Arquitectura
+            </button>
+            <button onclick="navigate('activacion')" class="nav-item text-left px-6 py-4 hover:bg-slate-50 whitespace-nowrap md:whitespace-normal flex items-center gap-3 text-slate-600">
+                <span class="text-xl">⚡</span> Funciones de Activación
+            </button>
+            <button onclick="navigate('entrenamiento')" class="nav-item text-left px-6 py-4 hover:bg-slate-50 whitespace-nowrap md:whitespace-normal flex items-center gap-3 text-slate-600">
+                <span class="text-xl">📉</span> Backprop & Optimizadores
+            </button>
+            <button onclick="navigate('regularizacion')" class="nav-item text-left px-6 py-4 hover:bg-slate-50 whitespace-nowrap md:whitespace-normal flex items-center gap-3 text-slate-600">
+                <span class="text-xl">🛡️</span> Regularización y Dropout
+            </button>
+            <button onclick="navigate('simulador')" class="nav-item text-left px-6 py-4 hover:bg-slate-50 whitespace-nowrap md:whitespace-normal flex items-center gap-3 text-slate-600">
+                <span class="text-xl">🕹️</span> Simulador: Flujo de Red
+            </button>
+            <button onclick="navigate('laboratorio')" class="nav-item text-left px-6 py-4 hover:bg-slate-50 whitespace-nowrap md:whitespace-normal flex items-center gap-3 text-slate-600">
+                <span class="text-xl">🚀</span> Reto Colab (Digits)
+            </button>
+            
+            <a href="https://notebooklm.google.com/notebook/3099e703-8805-4519-8d2c-a15d95ca0b54" target="_blank" rel="noopener noreferrer" class="md:mt-auto text-left px-6 py-4 bg-amber-50 hover:bg-amber-100 text-amber-800 font-bold flex items-center gap-3 whitespace-nowrap md:whitespace-normal transition-colors border-t border-amber-200 shadow-inner">
+                <span class="text-xl">🤖</span> Asistente Especializado
+            </a>
+        </div>
+    </nav>
+
+    <!-- Contenido Principal -->
+    <main class="flex-1 overflow-y-auto p-6 md:p-12 bg-slate-50">
+
+        <!-- Sección 1: Intro -->
+        <section id="intro" class="section-content active max-w-5xl mx-auto">
+            <div class="mb-10">
+                <div class="inline-block px-3 py-1 bg-indigo-100 text-indigo-800 rounded-full text-xs font-bold tracking-widest uppercase mb-4 border border-indigo-200">Analítica de Datos Complejos</div>
+                <h2 class="text-4xl font-extrabold text-slate-800 mb-4">La Neurona Artificial y el MLP</h2>
+                <p class="text-lg text-slate-600 leading-relaxed bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    El Aprendizaje Profundo (Deep Learning) se basa en la composición de funciones matemáticas simples conectadas en red. La unidad básica es la <strong>Neurona Artificial</strong>, que procesa entradas, aplica pesos y emite una señal.
+                </p>
+            </div>
+
+            <!-- NUEVO: Tarjeta del Asistente -->
+            <div class="mb-8 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 p-6 rounded-2xl shadow-sm flex flex-col md:flex-row items-center gap-6">
+                <div class="text-5xl shrink-0">🤖</div>
+                <div class="flex-1">
+                    <h3 class="text-lg font-bold text-amber-900 mb-2">Consulta tus dudas con nuestro Asistente de NotebookLM</h3>
+                    <p class="text-slate-700 text-sm mb-4">
+                        Este asistente ha sido diseñado específicamente para guiarte en el diseño, entrenamiento y evaluación de redes neuronales profundas, priorizando buenas prácticas, rigor matemático y experimentación directa en Google Colab.
+                    </p>
+                    <a href="https://notebooklm.google.com/notebook/3099e703-8805-4519-8d2c-a15d95ca0b54" target="_blank" rel="noopener noreferrer" class="inline-block px-5 py-2 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-lg shadow transition text-sm">
+                        Abrir Asistente Interactivo ↗
+                    </a>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                <div class="bg-white p-8 rounded-2xl shadow-sm border-t-4 border-indigo-500">
+                    <h3 class="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2"><span>🔬</span> Anatomía de una Neurona</h3>
+                    <ul class="space-y-3 text-sm text-slate-600">
+                        <li><strong>Entradas (x):</strong> Las señales que llegan (datos u otra capa).</li>
+                        <li><strong>Pesos (w):</strong> La "importancia" que la neurona le da a cada entrada.</li>
+                        <li><strong>Sesgo (bias, w₀):</strong> Un umbral de activación independiente.</li>
+                        <li><strong>Suma ponderada:</strong> $z = w_0 + \sum (x_i \cdot w_i)$</li>
+                        <li><strong>Activación (f):</strong> La salida final $y = f(z)$ introduce no-linealidad.</li>
+                    </ul>
+                </div>
+                
+                <div class="bg-slate-900 p-8 rounded-2xl shadow-sm border-t-4 border-pink-500 text-white">
+                    <h3 class="text-xl font-bold text-pink-400 mb-4 flex items-center gap-2"><span>🏗️</span> Perceptrón Multicapa (MLP)</h3>
+                    <p class="text-slate-300 text-sm mb-4">
+                        Una red neuronal *Feedforward* se construye apilando estas neuronas en capas:
+                    </p>
+                    <ul class="space-y-2 text-sm text-slate-400 list-disc pl-5">
+                        <li><strong>Capa de Entrada:</strong> Recibe los features del dataset (ej. 64 píxeles).</li>
+                        <li><strong>Capas Ocultas:</strong> Extraen representaciones abstractas y jerárquicas. "Profundo" significa tener múltiples capas ocultas.</li>
+                        <li><strong>Capa de Salida:</strong> Emite la predicción final (ej. probabilidad de clase 0-9).</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección 2: Activaciones -->
+        <section id="activacion" class="section-content max-w-5xl mx-auto">
+            <div class="mb-8">
+                <h2 class="text-4xl font-extrabold text-slate-800 mb-4">Funciones de Activación</h2>
+                <p class="text-lg text-slate-600 leading-relaxed bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    Sin funciones de activación no-lineales, una red neuronal de 100 capas colapsaría matemáticamente a una simple regresión lineal. Éstas deciden si una neurona "se dispara" o no.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    <h4 class="font-bold text-indigo-700 mb-2 text-lg">Sigmoide / Tanh</h4>
+                    <p class="text-sm text-slate-600 mb-3">Comprime los valores entre [0, 1] o [-1, 1].</p>
+                    <div class="bg-red-50 text-red-700 p-2 rounded text-xs border border-red-200">
+                        <strong>Problema:</strong> Sufren de <em>Desvanecimiento de Gradiente</em> en redes profundas, congelando el aprendizaje en las primeras capas.
+                    </div>
+                </div>
+                
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 border-t-4 border-t-emerald-500">
+                    <h4 class="font-bold text-emerald-700 mb-2 text-lg">ReLU</h4>
+                    <p class="text-sm text-slate-600 mb-3">$f(x) = max(0, x)$. Si es negativo, da 0. Si es positivo, lo deja pasar tal cual.</p>
+                    <div class="bg-emerald-50 text-emerald-800 p-2 rounded text-xs border border-emerald-200">
+                        <strong>Ventaja:</strong> Computacionalmente barata y mitiga el desvanecimiento del gradiente. Estándar en capas ocultas.
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    <h4 class="font-bold text-blue-700 mb-2 text-lg">Softmax</h4>
+                    <p class="text-sm text-slate-600 mb-3">Transforma un vector de números (logits) en una distribución de probabilidades que suman 1.</p>
+                    <div class="bg-blue-50 text-blue-800 p-2 rounded text-xs border border-blue-200">
+                        <strong>Uso:</strong> Exclusiva de la capa de salida para clasificación multiclase.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección 3: Entrenamiento y Optimizadores -->
+        <section id="entrenamiento" class="section-content max-w-5xl mx-auto">
+            <div class="mb-8">
+                <h2 class="text-4xl font-extrabold text-slate-800 mb-4">El Motor del Aprendizaje</h2>
+                <p class="text-lg text-slate-600 leading-relaxed bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    ¿Cómo aprende la red? Ajustando progresivamente millones de pesos (w) para que la predicción final se acerque a la etiqueta real, minimizando una Función de Pérdida (Loss Function).
+                </p>
+            </div>
+
+            <div class="space-y-6">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border-l-8 border-indigo-500 flex flex-col md:flex-row gap-6">
+                    <div class="flex-1">
+                        <h3 class="text-xl font-bold text-slate-800 mb-2">Backpropagation (Propagación hacia atrás)</h3>
+                        <p class="text-sm text-slate-600 mb-2">Es el algoritmo para calcular cómo debe cambiar cada peso de la red. Utiliza la <strong>Regla de la Cadena</strong> del cálculo diferencial para propagar el error desde la salida hasta la capa de entrada.</p>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-2xl shadow-sm border-l-8 border-pink-500 flex flex-col md:flex-row gap-6">
+                    <div class="flex-1">
+                        <h3 class="text-xl font-bold text-slate-800 mb-2">Descenso de Gradiente y Optimizadores</h3>
+                        <p class="text-sm text-slate-600 mb-4">Una vez calculado el gradiente (la dirección del error), el optimizador ajusta los pesos. La velocidad del ajuste la define el <strong>Learning Rate (Tasa de aprendizaje)</strong>.</p>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="bg-slate-50 p-3 rounded border border-slate-200 text-sm">
+                                <strong>SGD:</strong> Avanza a paso constante en la dirección del gradiente en cada mini-batch.
+                            </div>
+                            <div class="bg-slate-50 p-3 rounded border border-slate-200 text-sm">
+                                <strong>Adam:</strong> Optimizador adaptativo. Modifica el paso dinámicamente usando momento (inercia). Suele converger más rápido.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección 4: Regularización -->
+        <section id="regularizacion" class="section-content max-w-5xl mx-auto">
+            <div class="mb-8">
+                <h2 class="text-4xl font-extrabold text-slate-800 mb-4">Evitando la Memorización (Overfitting)</h2>
+                <p class="text-lg text-slate-600 leading-relaxed bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    Las redes profundas tienen tantos parámetros que son expertas en "memorizar" el set de entrenamiento en lugar de aprender patrones generales. Necesitamos técnicas de regularización agresivas.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="bg-slate-900 p-8 rounded-2xl text-white shadow-xl">
+                    <h3 class="text-2xl font-bold text-pink-400 mb-4 flex items-center gap-2"><span>🎲</span> Dropout</h3>
+                    <p class="text-slate-300 text-sm mb-4">Durante cada iteración de entrenamiento, <strong>se "apaga" aleatoriamente una fracción de las neuronas</strong> (ej. 30%).</p>
+                    <ul class="text-sm text-slate-400 space-y-2 list-disc pl-5">
+                        <li>Obliga a la red a no depender de un solo camino (co-adaptación).</li>
+                        <li>Aproxima matemáticamente un gigantesco ensamble de subredes.</li>
+                        <li>Se desactiva durante la fase de prueba (Inferencia).</li>
+                    </ul>
+                </div>
+
+                <div class="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm">
+                    <h3 class="text-2xl font-bold text-indigo-700 mb-4 flex items-center gap-2"><span>🛑</span> Early Stopping</h3>
+                    <p class="text-slate-600 text-sm mb-4">No podemos entrenar infinitas épocas. El Early Stopping monitorea el <em>Validation Loss</em> al final de cada época.</p>
+                    <div class="bg-indigo-50 p-4 rounded-lg border border-indigo-100 text-sm text-indigo-900 mb-4">
+                        Si el error de entrenamiento sigue bajando, pero el de validación empieza a subir (signo claro de Overfitting), <strong>se detiene el entrenamiento de golpe</strong> y se restauran los mejores pesos guardados.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección 5: Simulador -->
+        <section id="simulador" class="section-content max-w-5xl mx-auto">
+            <div class="mb-8">
+                <h2 class="text-4xl font-extrabold text-slate-800 mb-4">Simulador: Ciclo Forward y Backprop</h2>
+                <p class="text-lg text-slate-600 leading-relaxed bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    Observa cómo fluye la información. El <strong>Forward Pass</strong> calcula las predicciones, y el <strong>Backward Pass</strong> distribuye el error de vuelta para ajustar los pesos. Puedes activar el "Dropout" para ver la regularización en acción.
+                </p>
+            </div>
+
+            <div class="bg-white p-8 rounded-2xl border border-slate-200 shadow-md">
+                <div class="flex flex-col md:flex-row gap-4 justify-between items-center mb-8 border-b pb-4">
+                    <div class="flex gap-2">
+                        <button onclick="simulateNetwork('forward')" class="px-4 py-2 bg-indigo-600 text-white rounded font-bold shadow hover:bg-indigo-700">1. Forward Pass ➔</button>
+                        <button onclick="simulateNetwork('backward')" class="px-4 py-2 bg-pink-600 text-white rounded font-bold shadow hover:bg-pink-700">2. Backward Pass ⬅</button>
+                    </div>
+                    <div>
+                        <label class="flex items-center gap-2 cursor-pointer font-bold text-slate-600">
+                            <input type="checkbox" id="toggle-dropout" onchange="applyDropout()" class="w-5 h-5 text-indigo-600">
+                            Activar Dropout (30%)
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="relative w-full max-w-lg mx-auto h-64 flex justify-between items-center px-4" id="nn-container">
+                    <!-- Lines container (CSS/JS drawn) -->
+                    <div id="svg-lines" class="absolute inset-0 z-0"></div>
+                    
+                    <!-- Input Layer -->
+                    <div class="nn-layer" id="l1">
+                        <div class="nn-node">I1</div>
+                        <div class="nn-node">I2</div>
+                        <div class="nn-node">I3</div>
+                    </div>
+                    
+                    <!-- Hidden Layer 1 -->
+                    <div class="nn-layer" id="l2">
+                        <div class="nn-node h-node">H1</div>
+                        <div class="nn-node h-node">H2</div>
+                        <div class="nn-node h-node">H3</div>
+                        <div class="nn-node h-node">H4</div>
+                    </div>
+
+                    <!-- Hidden Layer 2 -->
+                    <div class="nn-layer" id="l3">
+                        <div class="nn-node h-node">H5</div>
+                        <div class="nn-node h-node">H6</div>
+                        <div class="nn-node h-node">H7</div>
+                    </div>
+                    
+                    <!-- Output Layer -->
+                    <div class="nn-layer" id="l4">
+                        <div class="nn-node">O1</div>
+                        <div class="nn-node">O2</div>
+                    </div>
+                </div>
+                
+                <div class="mt-6 text-center text-sm font-medium text-slate-500 h-6" id="sim-status">
+                    Inicia el flujo enviando los datos a través de la red.
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección 6: Laboratorio Colab -->
+        <section id="laboratorio" class="section-content max-w-5xl mx-auto">
+            <div class="mb-8">
+                <h2 class="text-4xl font-extrabold text-slate-800 mb-4">Reto Colab: Optimizando un MLP</h2>
+                <p class="text-lg text-slate-600 leading-relaxed bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    Tu misión es entrenar redes neuronales sobre el dataset <code>digits</code> (clasificación de números 8x8). Analizaremos el impacto de la inicialización, activaciones y optimizadores.
+                </p>
+            </div>
+
+            <div class="bg-slate-900 p-8 rounded-2xl shadow-xl border border-slate-700">
+                <div class="flex items-center justify-between border-b border-slate-700 pb-4 mb-6">
+                    <div class="flex items-center gap-3">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/d/d0/Google_Colaboratory_SVG_Logo.svg" alt="Colab" class="h-8 w-8">
+                        <h3 class="font-bold text-white text-xl">Ejecución del Laboratorio</h3>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-6">
+                    <div>
+                        <h4 class="text-indigo-400 font-bold mb-3 flex items-center gap-2"><span>🎯</span> Entregables y Rúbrica</h4>
+                        <ul class="text-slate-300 text-sm space-y-3">
+                            <li class="flex items-start gap-2"><span>✔️</span> <strong>Tabla comparativa:</strong> Accuracy y Loss en Train y Test para los distintos modelos.</li>
+                            <li class="flex items-start gap-2"><span>✔️</span> <strong>Diagnóstico de Gradiente:</strong> Reporte de medias de gradientes (grad_means) y análisis del Vanishing Gradient.</li>
+                            <li class="flex items-start gap-2"><span>✔️</span> <strong>Justificación Técnica:</strong> Breve ensayo proponiendo mejoras (ReLU, Inicialización He, BatchNorm, Early Stopping).</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="bg-slate-800 p-5 rounded-xl border border-indigo-500/30">
+                        <h4 class="text-amber-400 font-bold mb-2 text-sm flex items-center gap-2"><span>🤖</span> Asistente NotebookLM Personalizado</h4>
+                        <p class="text-slate-400 text-xs mb-3">
+                            Recuerda que tienes el asistente oficial disponible en todo momento. Está cargado con la teoría específica de Backprop y Optimizadores para orientarte durante tu práctica.
+                        </p>
+                        <a href="https://notebooklm.google.com/notebook/3099e703-8805-4519-8d2c-a15d95ca0b54" target="_blank" class="inline-block text-xs font-bold text-slate-900 bg-amber-500 hover:bg-amber-400 px-3 py-2 rounded">Abrir Asistente Especializado ↗</a>
+                    </div>
+                </div>
+
+                <div class="flex flex-col sm:flex-row gap-4 mt-8 pt-6 border-t border-slate-700">
+                    <a href="https://colab.research.google.com/github/Pastor-E-Perez-Estigarribia/curso-iaa/blob/main/colab_notebook/11-Intro_Deep_learning.ipynb" target="_blank" rel="noopener noreferrer" class="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-4 px-6 rounded-xl shadow-md transition text-center flex items-center justify-center gap-2">
+                        <span>⚡</span> Abrir Libreta de Deep Learning en Colab
+                    </a>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        const navState = { current: 'intro' };
+        
+        function navigate(sectionId) {
+            document.querySelectorAll('.nav-item').forEach(el => {
+                el.classList.remove('active', 'bg-eef2ff', 'text-indigo-700', 'border-r-4', 'border-indigo-500', 'font-bold');
+                el.classList.add('text-slate-600');
+                el.style.backgroundColor = 'transparent';
+            });
+            
+            const btn = document.querySelector(`button[onclick="navigate('${sectionId}')"]`);
+            if(btn) {
+                btn.classList.add('active', 'text-indigo-700', 'border-r-4', 'border-indigo-500', 'font-bold');
+                btn.classList.remove('text-slate-600');
+                btn.style.backgroundColor = '#eef2ff';
+            }
+
+            document.querySelectorAll('.section-content').forEach(el => el.classList.remove('active'));
+            document.getElementById(sectionId).classList.add('active');
+            navState.current = sectionId;
+        }
+
+        // --- NN Simulator Logic ---
+        function sleep(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
+
+        function applyDropout() {
+            const isChecked = document.getElementById('toggle-dropout').checked;
+            const hiddenNodes = document.querySelectorAll('.h-node');
+            
+            hiddenNodes.forEach(node => {
+                node.classList.remove('dropped');
+                if (isChecked && Math.random() < 0.3) {
+                    node.classList.add('dropped');
+                }
+            });
+        }
+
+        async function simulateNetwork(pass) {
+            const status = document.getElementById('sim-status');
+            const layers = [
+                document.getElementById('l1').children,
+                document.getElementById('l2').children,
+                document.getElementById('l3').children,
+                document.getElementById('l4').children
+            ];
+
+            // Clear previous states
+            document.querySelectorAll('.nn-node').forEach(n => {
+                n.classList.remove('active-fw', 'active-bw');
+            });
+
+            if (pass === 'forward') {
+                status.innerText = "Forward Pass: Las multiplicaciones matriciales y activaciones viajan a la salida.";
+                for (let i = 0; i < layers.length; i++) {
+                    for (let node of layers[i]) {
+                        if (!node.classList.contains('dropped')) node.classList.add('active-fw');
+                    }
+                    await sleep(400);
+                    for (let node of layers[i]) node.classList.remove('active-fw');
+                }
+                status.innerText = "Predicción generada. Se calcula la Función de Pérdida (Loss).";
+            } 
+            else if (pass === 'backward') {
+                status.innerText = "Backward Pass: Aplicando Regla de la Cadena para calcular Gradientes.";
+                for (let i = layers.length - 1; i >= 0; i--) {
+                    for (let node of layers[i]) {
+                        if (!node.classList.contains('dropped')) node.classList.add('active-bw');
+                    }
+                    await sleep(400);
+                    for (let node of layers[i]) node.classList.remove('active-bw');
+                }
+                status.innerText = "Gradientes calculados. El Optimizador (ej. Adam) actualiza los pesos.";
+            }
+        }
+    </script
+</body>
+</html>
