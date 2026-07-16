@@ -5,7 +5,7 @@
 ![Google Colab](https://img.shields.io/badge/Google%20Colab-Active-F9AB00.svg?logo=googlecolab&logoColor=white)
 ![Status](https://img.shields.io/badge/Estado-En%20Desarrollo-success.svg)
 
-Bienvenido al repositorio oficial del módulo **Introducción al Aprendizaje Automático**, desarrollado para el programa de Postgrado de la **Facultad Politécnica de la Universidad Nacional de Asunción (FP-UNA)**.
+Bienvenido al repositorio oficial del módulo **Introducción al Aprendizaje Automático**, desarrollado para como programa de Postgrado.
 
 Este curso busca proporcionar a los estudiantes una inmersión profunda, combinando conceptos teóricos fundamentales de Machine Learning clásico y Analítica de Datos Complejos con el desarrollo de habilidades de programación aplicada.
 
