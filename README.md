@@ -45,8 +45,8 @@ El módulo está estructurado en 13 clases progresivas. Cada clase incluye su te
 | **9** | **Integración y Pipelines** <br> *Construcción de flujos reproducibles en scikit-learn.* | [![Abrir en Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Pastor-E-Perez-Estigarribia/curso-iaa/blob/main/colab_notebook/9-proyecto_final.ipynb) |
 | **10** | **Series Temporales (Analítica Compleja)** <br> *Introducción, análisis de estacionariedad y forecasting.* | [📘 10.1 Introducción](https://colab.research.google.com/github/Pastor-E-Perez-Estigarribia/curso-iaa/blob/main/colab_notebook/10.1-Introduccion_a_series_de_tiempo.ipynb) <br> [📘 10.2 Análisis](https://colab.research.google.com/github/Pastor-E-Perez-Estigarribia/curso-iaa/blob/main/colab_notebook/10.2-Analisis_de_series_temporales_en_python.ipynb) <br> [📘 10.3 Forecasting](https://colab.research.google.com/github/Pastor-E-Perez-Estigarribia/curso-iaa/blob/main/colab_notebook/10.3-Forecasting_con_python.ipynb) |
 | **11** | **Aprendizaje Profundo (Deep Learning)** <br> *Redes neuronales, backpropagation, optimizadores y regularización.* | [![Abrir en Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Pastor-E-Perez-Estigarribia/curso-iaa/blob/main/colab_notebook/11-Intro_Deep_learning.ipynb) |
-| **12** | **IA Explicable (XAI)** <br> *Apertura de la caja negra e interpretabilidad de IA.* | 🔒 *Próximamente* |
-| **13** | **Evaluación Integradora Final** <br> *Ciclo de vida completo del proyecto de ciencia de datos y sustentación en video.* | 🔒 *Próximamente* |
+| **12** | **IA Explicable (XAI)** <br> *Apertura de la caja negra e interpretabilidad de IA.* | *📘* |
+| **13** | **Evaluación Integradora Final** <br> *Ciclo de vida completo del proyecto de ciencia de datos y sustentación en video.*  | [![Abrir en Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Pastor-E-Perez-Estigarribia/curso-iaa/blob/main/colab_notebook/13-Plantilla_Proyecto.ipynb) |
 
 ---
 

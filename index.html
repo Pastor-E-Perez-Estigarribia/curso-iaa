@@ -24,7 +24,7 @@
         .class-card.disabled { opacity: 0.65; filter: grayscale(80%); cursor: not-allowed; }
         .class-card.disabled:hover { opacity: 0.8; filter: grayscale(40%); }
         .badge-pulse { animation: pulse-badge 2s infinite; }
-        @keyframes pulse-badge { 0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4); } 70% { box-shadow: 0 0 0 6px rgba(59, 130, 246, 0); } 100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); } }
+        @keyframes pulse-badge { 0% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.4); } 70% { box-shadow: 0 0 0 6px rgba(245, 158, 11, 0); } 100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0); } }
     </style>
 </head>
 <body class="text-slate-800 antialiased selection:bg-teal-200 selection:text-teal-900">
@@ -168,26 +168,22 @@
                     </div>
                 </a>
 
-                <!-- CLASE 12 (ACTIVA) -->
                 <a href="clase_12_spa.html" class="block">
                     <div class="class-card active-blue bg-white rounded-2xl shadow-sm border-2 border-blue-500 relative overflow-visible h-full flex flex-col group">
-                        <div class="absolute -top-3 -right-3 bg-blue-500 text-white text-xs font-bold px-4 py-1.5 rounded-full z-10 shadow-md badge-pulse pointer-events-none">NUEVO</div>
+                        <div class="absolute -top-3 -right-3 bg-slate-200 text-slate-600 text-xs font-bold px-4 py-1.5 rounded-full z-10 shadow-sm">DISPONIBLE</div>
                         <div class="bg-blue-50 p-6 rounded-t-xl border-b border-blue-100"><span class="text-blue-600 font-extrabold text-xs tracking-widest uppercase">Clase 12</span><h3 class="text-xl font-bold text-slate-800 mt-2 leading-tight">IA Explicable (XAI)</h3></div>
                         <div class="p-6 flex-1 flex flex-col justify-between"><p class="text-slate-600 text-sm mb-6 leading-relaxed">Apertura de la "caja negra". Métodos para interpretar y explicar decisiones de modelos complejos mediante LIME y SHAP.</p></div>
                     </div>
                 </a>
 
-                <!-- CLASE 13 (EVALUACIÓN FINAL) -->
-                <div class="class-card disabled bg-white rounded-2xl shadow-sm border border-slate-200 relative h-full flex flex-col lg:col-span-3 bg-gradient-to-br from-slate-50 to-slate-100">
-                    <div class="bg-slate-100/50 p-6 rounded-t-xl border-b border-slate-200">
-                        <span class="text-slate-500 font-extrabold text-xs tracking-widest uppercase flex items-center gap-2"><span>🏆</span> Clase 13 (Final)</span>
-                        <h3 class="text-xl font-bold text-slate-800 mt-2 leading-tight">Proyecto Integrador Final</h3>
+                <!-- CLASE 13 (ACTIVA - EVALUACIÓN FINAL) -->
+                <a href="clase_13_spa.html" class="block lg:col-span-3">
+                    <div class="class-card active-amber bg-white rounded-2xl shadow-lg border-2 border-amber-500 relative overflow-visible h-full flex flex-col bg-gradient-to-br from-slate-50 to-slate-100 group">
+                        <div class="absolute -top-3 -right-3 bg-amber-500 text-white text-xs font-bold px-4 py-1.5 rounded-full z-10 shadow-md badge-pulse pointer-events-none">FINAL</div>
+                        <div class="bg-amber-50 p-6 rounded-t-xl border-b border-amber-200"><span class="text-amber-600 font-extrabold text-xs tracking-widest uppercase flex items-center gap-2"><span>🏆</span> Clase 13 (Final)</span><h3 class="text-xl font-bold text-slate-800 mt-2 leading-tight">Proyecto Integrador Final</h3></div>
+                        <div class="p-6 flex-1 flex flex-col justify-between"><p class="text-slate-600 text-sm mb-6 leading-relaxed">Evaluación integradora del módulo. Planteamiento, metodología y ejecución de un ciclo de vida completo de ciencia de datos con sustentación en video explicativo de 10 minutos.</p></div>
                     </div>
-                    <div class="p-6 flex-1 flex flex-col justify-between">
-                        <p class="text-slate-600 text-sm mb-6 leading-relaxed">Evaluación integradora del módulo. Planteamiento, metodología y ejecución de un ciclo de vida completo de ciencia de datos con sustentación en video explicativo.</p>
-                        <div class="flex items-center gap-2 text-xs font-bold text-slate-400 bg-slate-200 w-fit px-3 py-1.5 rounded-md"><span>🏁 Evaluación Final</span></div>
-                    </div>
-                </div>
+                </a>
 
             </div>
         </section>
