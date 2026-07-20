@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clase 13: Proyecto Integrador Final - Módulo IAA</title>
+    
+    <!-- Chosen Palette: Slate & Amber (Trophy/Final concept) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        body { font-family: 'Segoe UI', system-ui, sans-serif; background-color: #f8fafc; color: #1e293b; }
+        .nav-item { transition: all 0.2s ease; }
+        .nav-item.active { background-color: #fffbeb; color: #d97706; border-right: 4px solid #f59e0b; font-weight: 600; }
+        .section-content { display: none; animation: fadeIn 0.4s ease-in-out; }
+        .section-content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        /* Checklist Styles */
+        .check-item { transition: all 0.2s; }
+        .check-item.active { background-color: #fef3c7; border-color: #f59e0b; }
+        .check-item.active .check-icon { background-color: #f59e0b; color: white; border-color: #f59e0b; }
+    </style>
+</head>
+<body class="flex flex-col md:flex-row h-screen overflow-hidden">
+
+    <!-- Navegación Lateral -->
+    <nav class="w-full md:w-72 bg-white shadow-xl h-auto md:h-full flex flex-col z-20 shrink-0">
+        <div class="p-6 bg-slate-900 text-white border-b-4 border-amber-500">
+            <h1 class="text-2xl font-bold tracking-tight">Módulo IAA</h1>
+            <p class="text-sm text-amber-400 mt-1">Clase 13: Proyecto Final</p>
+        </div>
+        <div class="flex-1 overflow-y-auto py-4 flex flex-row md:flex-col overflow-x-auto hide-scrollbar" id="nav-menu">
+            <button onclick="navigate('intro')" class="nav-item active text-left px-6 py-4 hover:bg-slate-50 whitespace-nowrap md:whitespace-normal flex items-center gap-3 text-amber-700">
+                <span class="text-xl">🏆</span> La Meta Final
+            </button>
+            <button onclick="navigate('modulos')" class="nav-item text-left px-6 py-4 hover:bg-slate-50 whitespace-nowrap md:whitespace-normal flex items-center gap-3 text-slate-600">
+                <span class="text-xl">🔄</span> Integración de Módulos
+            </button>
+            <button onclick="navigate('rubrica')" class="nav-item text-left px-6 py-4 hover:bg-slate-50 whitespace-nowrap md:whitespace-normal flex items-center gap-3 text-slate-600">
+                <span class="text-xl">📋</span> Rúbrica de Evaluación
+            </button>
+            <button onclick="navigate('simulador')" class="nav-item text-left px-6 py-4 hover:bg-slate-50 whitespace-nowrap md:whitespace-normal flex items-center gap-3 text-slate-600">
+                <span class="text-xl">✅</span> Simulador de Calificación
+            </button>
+            <button onclick="navigate('plantilla')" class="nav-item text-left px-6 py-4 hover:bg-slate-50 whitespace-nowrap md:whitespace-normal flex items-center gap-3 text-slate-600">
+                <span class="text-xl">💻</span> Plantilla y Entregables
+            </button>
+        </div>
+    </nav>
+
+    <!-- Contenido Principal -->
+    <main class="flex-1 overflow-y-auto p-6 md:p-12 bg-slate-50">
+
+        <!-- Sección 1: Intro -->
+        <section id="intro" class="section-content active max-w-5xl mx-auto">
+            <div class="mb-10 text-center">
+                <div class="text-6xl mb-4">🎓</div>
+                <h2 class="text-4xl font-extrabold text-slate-800 mb-4">Proyecto Integrador Final</h2>
+                <p class="text-lg text-slate-600 leading-relaxed bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    El objetivo principal del proyecto es desarrollar una solución analítica de principio a fin aplicada a un problema empresarial, médico o industrial realista. Demostrarás cómo obtener datos, prepararlos, modelarlos y comunicar los resultados a un público directivo.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="bg-white p-8 rounded-2xl shadow-sm border-t-4 border-slate-400">
+                    <h3 class="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2"><span>📂</span> Formato de Entrega</h3>
+                    <ul class="space-y-4 text-sm text-slate-600">
+                        <li class="flex items-start gap-3">
+                            <span class="text-amber-500 font-bold text-lg">1.</span>
+                            <span><strong>Un único archivo Jupyter/Colab (.ipynb):</strong> Combina texto explicativo (Markdown) justificando cada decisión, junto con código ejecutable.</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="text-amber-500 font-bold text-lg">2.</span>
+                            <span><strong>Video de Sustentación (10 min):</strong> Grabación explicando el proyecto, los hallazgos técnicos y las recomendaciones de negocio.</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="bg-amber-50 p-8 rounded-2xl shadow-sm border-t-4 border-amber-500">
+                    <h3 class="text-xl font-bold text-amber-900 mb-4 flex items-center gap-2"><span>💡</span> Recomendaciones Clave</h3>
+                    <ul class="space-y-3 text-sm text-amber-800">
+                        <li>• Elige un problema que te apasione y con datos accesibles.</li>
+                        <li>• Prioriza el <strong>razonamiento y la calidad</strong> sobre la cantidad de modelos entrenados.</li>
+                        <li>• Documenta las limitaciones de tus datos.</li>
+                        <li>• <strong>El "Y ahora qué":</strong> Finaliza siempre recomendando una decisión de negocio.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección 2: Módulos -->
+        <section id="modulos" class="section-content max-w-5xl mx-auto">
+            <div class="mb-8">
+                <h2 class="text-4xl font-extrabold text-slate-800 mb-4">El Ciclo de Vida de los Datos</h2>
+                <p class="text-lg text-slate-600 leading-relaxed bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    El proyecto no es una yuxtaposición de técnicas aisladas, sino un flujo de trabajo analítico coherente. Tu cuaderno debe atravesar obligatoriamente las siguientes fases:
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 relative">
+                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex flex-col h-full">
+                    <div class="bg-slate-100 text-slate-500 text-xs font-bold uppercase tracking-wider py-1 px-3 rounded w-fit mb-3">Fase 1</div>
+                    <h4 class="font-bold text-slate-800 text-lg mb-2">Bases de Datos</h4>
+                    <p class="text-sm text-slate-600">Obtención y carga en bases de datos (SQL/SQLite o NoSQL). Consultas mediante SQL y mención al despliegue reproducible (Docker).</p>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex flex-col h-full">
+                    <div class="bg-slate-100 text-slate-500 text-xs font-bold uppercase tracking-wider py-1 px-3 rounded w-fit mb-3">Fase 2</div>
+                    <h4 class="font-bold text-slate-800 text-lg mb-2">Estadística y EDA</h4>
+                    <p class="text-sm text-slate-600">Análisis exploratorio, distribuciones, correlaciones, contrastes de hipótesis e intervalos de confianza.</p>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex flex-col h-full">
+                    <div class="bg-slate-100 text-slate-500 text-xs font-bold uppercase tracking-wider py-1 px-3 rounded w-fit mb-3">Fase 3</div>
+                    <h4 class="font-bold text-slate-800 text-lg mb-2">Preprocesamiento y ML Clásico</h4>
+                    <p class="text-sm text-slate-600">Limpieza, imputación, codificación, escalado. Entrenamiento de modelos supervisados, ensambles, hyperparameter tuning y métricas robustas.</p>
+                </div>
+
+                <div class="bg-gradient-to-br from-amber-50 to-orange-50 p-6 rounded-xl border border-amber-200 shadow-sm flex flex-col h-full">
+                    <div class="bg-amber-200 text-amber-800 text-xs font-bold uppercase tracking-wider py-1 px-3 rounded w-fit mb-3">Fase 4 (Extensión)</div>
+                    <h4 class="font-bold text-amber-900 text-lg mb-2">Modelado Avanzado</h4>
+                    <p class="text-sm text-amber-800/80">Introducción a <strong>Series Temporales</strong> o <strong>Deep Learning (Redes Neuronales)</strong> como mejora o comparación frente al modelo base de ML.</p>
+                </div>
+            </div>
+            
+            <div class="mt-6 bg-slate-900 text-white p-4 rounded-xl flex items-center justify-center text-sm">
+                <span class="mr-2 text-xl">⚠️</span> 
+                <span><strong>Aviso:</strong> Un proyecto que no aborde uno de los módulos principales no podrá superar los 70 puntos.</span>
+            </div>
+        </section>
+
+        <!-- Sección 3: Rúbrica -->
+        <section id="rubrica" class="section-content max-w-5xl mx-auto">
+            <div class="mb-8">
+                <h2 class="text-4xl font-extrabold text-slate-800 mb-4">Rúbrica de Evaluación (100 pts)</h2>
+                <p class="text-lg text-slate-600 leading-relaxed bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    La transparencia es clave. A continuación, se detalla exactamente cómo se asignarán los puntos de tu entrega.
+                </p>
+            </div>
+
+            <div class="bg-white p-8 rounded-2xl border border-slate-200 shadow-md">
+                <div class="space-y-6">
+                    
+                    <!-- Item -->
+                    <div>
+                        <div class="flex justify-between items-end mb-1">
+                            <h4 class="font-bold text-slate-800">1. Planteamiento del Negocio</h4>
+                            <span class="text-amber-600 font-bold">10 pts</span>
+                        </div>
+                        <p class="text-xs text-slate-500 mb-2">Problema claro, relevante y accionable; objetivo analítico bien definido.</p>
+                        <div class="w-full bg-slate-100 rounded-full h-2"><div class="bg-amber-400 h-2 rounded-full" style="width: 10%"></div></div>
+                    </div>
+
+                    <!-- Item -->
+                    <div>
+                        <div class="flex justify-between items-end mb-1">
+                            <h4 class="font-bold text-slate-800">2. Bases de Datos (SQL/NoSQL)</h4>
+                            <span class="text-amber-600 font-bold">12 pts</span>
+                        </div>
+                        <p class="text-xs text-slate-500 mb-2">Carga en DB y consultas SQL correctas y justificadas.</p>
+                        <div class="w-full bg-slate-100 rounded-full h-2"><div class="bg-amber-400 h-2 rounded-full" style="width: 12%"></div></div>
+                    </div>
+
+                    <!-- Item -->
+                    <div>
+                        <div class="flex justify-between items-end mb-1">
+                            <h4 class="font-bold text-slate-800">3. Estadística (EDA e Inferencia)</h4>
+                            <span class="text-amber-600 font-bold">15 pts</span>
+                        </div>
+                        <p class="text-xs text-slate-500 mb-2">EDA sólido + contraste de hipótesis e Intervalos de Confianza interpretados.</p>
+                        <div class="w-full bg-slate-100 rounded-full h-2"><div class="bg-amber-400 h-2 rounded-full" style="width: 15%"></div></div>
+                    </div>
+
+                    <!-- Item -->
+                    <div>
+                        <div class="flex justify-between items-end mb-1">
+                            <h4 class="font-bold text-slate-800">4. Preprocesamiento</h4>
+                            <span class="text-amber-600 font-bold">15 pts</span>
+                        </div>
+                        <p class="text-xs text-slate-500 mb-2">Limpieza, codificación, escalado y reducción bien aplicados.</p>
+                        <div class="w-full bg-slate-100 rounded-full h-2"><div class="bg-amber-400 h-2 rounded-full" style="width: 15%"></div></div>
+                    </div>
+
+                    <!-- Item -->
+                    <div>
+                        <div class="flex justify-between items-end mb-1">
+                            <h4 class="font-bold text-slate-800">5. Modelado Machine Learning</h4>
+                            <span class="text-amber-600 font-bold">20 pts</span>
+                        </div>
+                        <p class="text-xs text-slate-500 mb-2">Varios modelos, ensambles, hyperparameter tuning y evaluación rigurosa (matriz, roc, cv).</p>
+                        <div class="w-full bg-slate-100 rounded-full h-2"><div class="bg-amber-500 h-2 rounded-full" style="width: 20%"></div></div>
+                    </div>
+
+                    <!-- Item -->
+                    <div>
+                        <div class="flex justify-between items-end mb-1">
+                            <h4 class="font-bold text-slate-800">6. Modelado Avanzado (Series/DL)</h4>
+                            <span class="text-amber-600 font-bold">8 pts</span>
+                        </div>
+                        <p class="text-xs text-slate-500 mb-2">Extensión con series temporales o redes neuronales profundas.</p>
+                        <div class="w-full bg-slate-100 rounded-full h-2"><div class="bg-amber-400 h-2 rounded-full" style="width: 8%"></div></div>
+                    </div>
+
+                    <!-- Item -->
+                    <div>
+                        <div class="flex justify-between items-end mb-1">
+                            <h4 class="font-bold text-slate-800">7. Integración y Coherencia</h4>
+                            <span class="text-amber-600 font-bold">10 pts</span>
+                        </div>
+                        <p class="text-xs text-slate-500 mb-2">Los módulos encajan en un flujo coherente de principio a fin.</p>
+                        <div class="w-full bg-slate-100 rounded-full h-2"><div class="bg-amber-400 h-2 rounded-full" style="width: 10%"></div></div>
+                    </div>
+
+                    <!-- Item -->
+                    <div>
+                        <div class="flex justify-between items-end mb-1">
+                            <h4 class="font-bold text-slate-800">8. Comunicación (Texto + Video)</h4>
+                            <span class="text-amber-600 font-bold">10 pts</span>
+                        </div>
+                        <p class="text-xs text-slate-500 mb-2">Notebook claro que ejecuta sin errores. Explicación fluida en la sustentación.</p>
+                        <div class="w-full bg-slate-100 rounded-full h-2"><div class="bg-amber-400 h-2 rounded-full" style="width: 10%"></div></div>
+                    </div>
+
+                </div>
+
+                <div class="mt-10 bg-slate-50 p-6 rounded-xl border border-slate-200">
+                    <h4 class="font-bold text-slate-700 uppercase tracking-wider text-xs mb-4">Escala de Calificación</h4>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+                        <div class="p-3 bg-emerald-100 text-emerald-800 rounded">
+                            <div class="font-bold text-lg">90-100</div>
+                            <div class="text-xs">Sobresaliente</div>
+                        </div>
+                        <div class="p-3 bg-blue-100 text-blue-800 rounded">
+                            <div class="font-bold text-lg">80-89</div>
+                            <div class="text-xs">Notable</div>
+                        </div>
+                        <div class="p-3 bg-amber-100 text-amber-800 rounded">
+                            <div class="font-bold text-lg">70-79</div>
+                            <div class="text-xs">Aprobado</div>
+                        </div>
+                        <div class="p-3 bg-red-100 text-red-800 rounded">
+                            <div class="font-bold text-lg">&lt; 70</div>
+                            <div class="text-xs">A revisar</div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Sección 4: Simulador -->
+        <section id="simulador" class="section-content max-w-5xl mx-auto">
+            <div class="mb-8">
+                <h2 class="text-4xl font-extrabold text-slate-800 mb-4">Checklist y Simulador de Puntos</h2>
+                <p class="text-lg text-slate-600 leading-relaxed bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    Antes de entregar, utiliza este simulador. Marca las casillas de los requerimientos que crees haber cumplido a un nivel "Excelente" para estimar si tu proyecto alcanzará la nota de aprobación.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="lg:col-span-2 space-y-3">
+                    
+                    <div class="check-item flex items-center p-4 bg-white border border-slate-200 rounded-lg cursor-pointer hover:bg-slate-50" onclick="toggleCheck(this, 10)">
+                        <div class="check-icon w-6 h-6 rounded border-2 border-slate-300 flex items-center justify-center mr-4 text-transparent font-bold">✓</div>
+                        <div class="flex-1">
+                            <div class="font-bold text-slate-800 text-sm">Problema de Negocio</div>
+                            <div class="text-xs text-slate-500">¿Está claro el objetivo y justifica la decisión?</div>
+                        </div>
+                        <div class="text-slate-400 font-mono text-sm">+10</div>
+                    </div>
+
+                    <div class="check-item flex items-center p-4 bg-white border border-slate-200 rounded-lg cursor-pointer hover:bg-slate-50" onclick="toggleCheck(this, 12)">
+                        <div class="check-icon w-6 h-6 rounded border-2 border-slate-300 flex items-center justify-center mr-4 text-transparent font-bold">✓</div>
+                        <div class="flex-1">
+                            <div class="font-bold text-slate-800 text-sm">Base de Datos & SQL</div>
+                            <div class="text-xs text-slate-500">¿Cargaste datos en DB local y extrajiste con consultas SQL?</div>
+                        </div>
+                        <div class="text-slate-400 font-mono text-sm">+12</div>
+                    </div>
+
+                    <div class="check-item flex items-center p-4 bg-white border border-slate-200 rounded-lg cursor-pointer hover:bg-slate-50" onclick="toggleCheck(this, 15)">
+                        <div class="check-icon w-6 h-6 rounded border-2 border-slate-300 flex items-center justify-center mr-4 text-transparent font-bold">✓</div>
+                        <div class="flex-1">
+                            <div class="font-bold text-slate-800 text-sm">Estadística y EDA</div>
+                            <div class="text-xs text-slate-500">¿Incluye gráficos, test de hipótesis y análisis descriptivo?</div>
+                        </div>
+                        <div class="text-slate-400 font-mono text-sm">+15</div>
+                    </div>
+
+                    <div class="check-item flex items-center p-4 bg-white border border-slate-200 rounded-lg cursor-pointer hover:bg-slate-50" onclick="toggleCheck(this, 15)">
+                        <div class="check-icon w-6 h-6 rounded border-2 border-slate-300 flex items-center justify-center mr-4 text-transparent font-bold">✓</div>
+                        <div class="flex-1">
+                            <div class="font-bold text-slate-800 text-sm">Preprocesamiento y Pipelines</div>
+                            <div class="text-xs text-slate-500">¿Los datos se codificaron, escalaron y limpiaron sin Data Leakage?</div>
+                        </div>
+                        <div class="text-slate-400 font-mono text-sm">+15</div>
+                    </div>
+
+                    <div class="check-item flex items-center p-4 bg-white border border-slate-200 rounded-lg cursor-pointer hover:bg-slate-50" onclick="toggleCheck(this, 20)">
+                        <div class="check-icon w-6 h-6 rounded border-2 border-slate-300 flex items-center justify-center mr-4 text-transparent font-bold">✓</div>
+                        <div class="flex-1">
+                            <div class="font-bold text-slate-800 text-sm">Machine Learning & Tuning</div>
+                            <div class="text-xs text-slate-500">¿Entrenaste y optimizaste hiperparámetros de Ensambles u otros?</div>
+                        </div>
+                        <div class="text-slate-400 font-mono text-sm">+20</div>
+                    </div>
+
+                    <div class="check-item flex items-center p-4 bg-white border border-slate-200 rounded-lg cursor-pointer hover:bg-slate-50" onclick="toggleCheck(this, 8)">
+                        <div class="check-icon w-6 h-6 rounded border-2 border-slate-300 flex items-center justify-center mr-4 text-transparent font-bold">✓</div>
+                        <div class="flex-1">
+                            <div class="font-bold text-slate-800 text-sm">Modelado Avanzado (DL/Series)</div>
+                            <div class="text-xs text-slate-500">¿Incluiste un modelo profundo o temporal de validación extra?</div>
+                        </div>
+                        <div class="text-slate-400 font-mono text-sm">+8</div>
+                    </div>
+
+                    <div class="check-item flex items-center p-4 bg-white border border-slate-200 rounded-lg cursor-pointer hover:bg-slate-50" onclick="toggleCheck(this, 20)">
+                        <div class="check-icon w-6 h-6 rounded border-2 border-slate-300 flex items-center justify-center mr-4 text-transparent font-bold">✓</div>
+                        <div class="flex-1">
+                            <div class="font-bold text-slate-800 text-sm">Flujo e Interpretación de Negocio</div>
+                            <div class="text-xs text-slate-500">¿El notebook ejecuta perfecto y el video dura ~10min?</div>
+                        </div>
+                        <div class="text-slate-400 font-mono text-sm">+20</div>
+                    </div>
+
+                </div>
+
+                <div class="bg-slate-900 p-8 rounded-2xl shadow-xl border border-slate-700 text-white flex flex-col justify-center items-center text-center sticky top-8">
+                    <h3 class="font-bold text-slate-400 mb-2 uppercase tracking-widest text-sm">Puntuación Estimada</h3>
+                    <div class="text-7xl font-bold mb-4 font-mono text-amber-400" id="sim-score">0</div>
+                    <div id="sim-message" class="text-sm px-4 py-2 rounded-lg bg-slate-800 text-slate-300 w-full font-medium border border-slate-700">
+                        Selecciona los requerimientos completados para calcular.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección 5: Plantilla Colab -->
+        <section id="plantilla" class="section-content max-w-5xl mx-auto">
+            <div class="mb-8">
+                <h2 class="text-4xl font-extrabold text-slate-800 mb-4">Plantilla del Proyecto (Colab)</h2>
+            </div>
+
+            <div class="bg-white p-8 rounded-2xl shadow-xl flex flex-col border border-slate-200">
+                <div class="flex items-center gap-3 mb-6 pb-4 border-b border-slate-200">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/d/d0/Google_Colaboratory_SVG_Logo.svg" alt="Colab" class="h-8 w-8">
+                    <h3 class="font-bold text-slate-800 text-xl">Punto de Partida Oficial</h3>
+                </div>
+                
+                <p class="text-slate-600 mb-6">
+                    Hemos preparado un <strong>esqueleto estructurado en Colab</strong>. Contiene las secciones de Markdown necesarias y las instrucciones <code>[TODO]</code> para que construyas tu proyecto sobre una base ordenada.
+                </p>
+
+                <div class="bg-amber-50 border-l-4 border-amber-500 p-4 rounded mb-8">
+                    <h4 class="font-bold text-amber-900 text-sm mb-1">Instrucciones:</h4>
+                    <p class="text-sm text-amber-800">Al abrir el enlace, ve al menú superior de Google Colab: <strong>Archivo > Guardar una copia en Drive</strong>. Trabaja exclusivamente sobre esa copia tuya.</p>
+                </div>
+
+                <div class="flex flex-col sm:flex-row gap-4 mt-auto">
+                    <a href="https://colab.research.google.com/github/Pastor-E-Perez-Estigarribia/curso-iaa/blob/main/colab_notebook/13-Plantilla_Proyecto.ipynb" target="_blank" rel="noopener noreferrer" class="flex-1 bg-slate-900 hover:bg-slate-800 text-white font-bold py-4 px-6 rounded-xl shadow-md transition transform hover:-translate-y-1 flex items-center justify-center gap-3">
+                        <span class="text-2xl">📋</span> Abrir Plantilla en Google Colab
+                    </a>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        const navState = { current: 'intro' };
+        let currentScore = 0;
+        
+        function navigate(sectionId) {
+            document.querySelectorAll('.nav-item').forEach(el => {
+                el.classList.remove('active', 'bg-fffbeb', 'text-amber-700', 'border-r-4', 'border-amber-500', 'font-bold');
+                el.classList.add('text-slate-600');
+                el.style.backgroundColor = 'transparent';
+            });
+            
+            const btn = document.querySelector(`button[onclick="navigate('${sectionId}')"]`);
+            if(btn) {
+                btn.classList.add('active', 'text-amber-700', 'border-r-4', 'border-amber-500', 'font-bold');
+                btn.classList.remove('text-slate-600');
+                btn.style.backgroundColor = '#fffbeb';
+            }
+
+            document.querySelectorAll('.section-content').forEach(el => el.classList.remove('active'));
+            document.getElementById(sectionId).classList.add('active');
+            navState.current = sectionId;
+        }
+
+        // --- Simulator Logic ---
+        function toggleCheck(element, points) {
+            element.classList.toggle('active');
+            
+            if(element.classList.contains('active')) {
+                currentScore += points;
+            } else {
+                currentScore -= points;
+            }
+            
+            // Limit just in case (though math should be exact 100)
+            if (currentScore > 100) currentScore = 100;
+            if (currentScore < 0) currentScore = 0;
+
+            const scoreDisplay = document.getElementById('sim-score');
+            const msgBox = document.getElementById('sim-message');
+            
+            scoreDisplay.innerText = currentScore;
+            
+            // UI Feedback
+            if(currentScore === 100) {
+                scoreDisplay.className = "text-7xl font-bold mb-4 font-mono text-emerald-400";
+                msgBox.className = "text-sm px-4 py-2 rounded-lg bg-emerald-900/50 text-emerald-300 w-full font-medium border border-emerald-700";
+                msgBox.innerText = "¡Sobresaliente! Proyecto perfecto listo para presentar.";
+            } else if (currentScore >= 80) {
+                scoreDisplay.className = "text-7xl font-bold mb-4 font-mono text-blue-400";
+                msgBox.className = "text-sm px-4 py-2 rounded-lg bg-blue-900/50 text-blue-300 w-full font-medium border border-blue-700";
+                msgBox.innerText = "Notable. Muy sólido con posibilidades de mejora menor.";
+            } else if (currentScore >= 70) {
+                scoreDisplay.className = "text-7xl font-bold mb-4 font-mono text-amber-400";
+                msgBox.className = "text-sm px-4 py-2 rounded-lg bg-amber-900/50 text-amber-300 w-full font-medium border border-amber-700";
+                msgBox.innerText = "Aprobado. Cumples los requisitos mínimos del módulo.";
+            } else {
+                scoreDisplay.className = "text-7xl font-bold mb-4 font-mono text-red-400";
+                msgBox.className = "text-sm px-4 py-2 rounded-lg bg-red-900/50 text-red-300 w-full font-medium border border-red-700";
+                if(currentScore === 0) {
+                    msgBox.innerText = "Selecciona los requerimientos completados para calcular.";
+                } else {
+                    msgBox.innerText = "A Revisar. No alcanzas el mínimo de 70 puntos.";
+                }
+            }
+        }
+    </script>
+</body>
+</html>
